@@ -1,0 +1,35 @@
+{
+  "name": "@bloom-trade/utilities",
+  "version": "0.0.1",
+  "main": "dist/main.js",
+  "module": "dist/main.js",
+  "repository": "https://github.com/Bloom-Finance/bloom-trade.git",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx ts-node src/main.ts",
+    "start:sandbox": "npx ts-node src/sandbox/test.ts",
+    "build": "npx tsc",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [
+    "biz",
+    "web3",
+    "utilities"
+  ],
+  "author": "Bloom Trade",
+  "license": "MIT",
+  "description": "Utilities to help with services and formating",
+  "dependencies": {
+    "axios": "^1.2.2",
+    "firebase": "^9.15.0",
+    "moment": "^2.29.4",
+    "numeral": "^2.0.6",
+    "wagmi": "^0.10.11"
+  },
+  "devDependencies": {
+    "@bloom-trade/types": "^0.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

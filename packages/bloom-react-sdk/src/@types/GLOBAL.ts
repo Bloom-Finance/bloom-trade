@@ -1,0 +1,13 @@
+export enum STABLECOINS {
+  USDC = 'USDC',
+  USDT = 'USDT',
+  DAI = 'DAI',
+}
+export enum CHAINS {
+  ETH = 'ETHEREUM',
+  POLYGON = 'POLYGON',
+  AVALANCHE = 'AVALANCHE',
+}
+
+export type Stablecoin = STABLECOINS.USDC | STABLECOINS.USDT | STABLECOINS.DAI
+export type Chain = CHAINS.ETH | CHAINS.POLYGON | CHAINS.AVALANCHE

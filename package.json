@@ -1,0 +1,26 @@
+{
+  "name": "bloom-trade",
+  "version": "1.0.0",
+  "description": "Bloom Trade is a platform that simplifies your economical positions in crypto",
+  "main": "index.js",
+  "author": "Bloom Trade",
+  "scripts": {
+    "setup": "yarn && lerna bootstrap",
+    "docs": "npx lerna run dev --scope=bloom-trade-docs",
+    "graph": "npx nx graph",
+    "build:all": "npx lerna run build",
+    "dev:merchant-standard": "npx lerna run dev --scope=merchant-standard",
+    "prepare": "husky install"
+  },
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "docs/*"
+  ],
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lerna": "^6.4.1"
+  }
+}

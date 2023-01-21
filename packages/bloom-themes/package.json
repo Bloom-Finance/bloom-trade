@@ -1,0 +1,28 @@
+{
+  "name": "@bloom-trade/themes",
+  "version": "0.0.1",
+  "main": "dist/main.js",
+  "module": "dist/main.js",
+  "repository": "https://github.com/Bloom-Finance/bloom-trade.git",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx ts-node src/main.ts",
+    "start:sandbox": "npx ts-node src/sandbox/test.ts",
+    "build": "npx tsc",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [
+    "bloom",
+    "mui",
+    "themes"
+  ],
+  "author": "Bloom Trade",
+  "license": "MIT",
+  "description": "Utilities to help with services and formating",
+  "dependencies": {
+    "@mui/material": "^5.11.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

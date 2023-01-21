@@ -1,0 +1,13 @@
+{
+  "name": "@bloom-trade/types",
+  "version": "0.0.1",
+  "description": "Types declarations for bloom trade",
+  "types": "index.d.ts",
+  "main": "index.js",
+  "repository": "https://github.com/Bloom-Finance/bloom-trade",
+  "author": "Bloom Trade",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
