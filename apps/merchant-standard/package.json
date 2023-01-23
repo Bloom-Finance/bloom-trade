@@ -1,6 +1,6 @@
 {
   "name": "merchant-standard",
-  "version": "0.0.1",
+  "version": "0.0.15",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,11 +12,11 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@bloom-trade/finance-connector": "*",
-    "@bloom-trade/react-sdk": "*",
-    "@bloom-trade/types": "*",
-    "@bloom-trade/utilities": "*",
-    "@bloom-trade/themes": "*",
+    "@bloom-trade/finance-connector": "^0.0.15",
+    "@bloom-trade/react-sdk": "^0.0.15",
+    "@bloom-trade/themes": "^0.0.15",
+    "@bloom-trade/types": "^0.0.15",
+    "@bloom-trade/utilities": "^0.0.15",
     "@certusone/wormhole-sdk": "^0.9.3",
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
