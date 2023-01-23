@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import Connector from '../../../../../packages/bloom-finance-connector/dist/main';
+import Connector from '@bloom-trade/finance-connector';
 import {
   ProviderCredentials,
   Chains,
