@@ -3,7 +3,7 @@
 branch="$(git rev-parse --abbrev-ref HEAD)"
 if [ "$branch" = "master" ]; then
     echo "Checking npm session..."
-    exec < /dev/tty && yarn login --scope @bloom-trade
-	exec < /dev/tty && yarn publish:packages
+    exec < /dev/tty && npm login --scope @bloom-trade
+	exec < /dev/tty && npm publish:packages
 fi
 
