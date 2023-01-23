@@ -5,5 +5,4 @@ if [ "$branch" = "master" ]; then
     echo "Checking builds..."
 	yarn build:all
 fi
-
-
+ 
