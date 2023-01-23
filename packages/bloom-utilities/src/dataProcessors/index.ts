@@ -6,7 +6,7 @@ import {
   CUSTODIALPROVIDERS,
   CustodialProvider,
 } from '@bloom-trade/types';
-import { sumTwoFloatingStrings } from '../strings';
+import { sumTwoFloatingStrings } from '../strings/index.js';
 
 const getLatestBlocksAndDatesByTx = (
   transactions: Transaction[]
