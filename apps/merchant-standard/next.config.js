@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: false,
+  experimental: {
+    esmExternals: false,
+  },
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     POLYGON_SCAN_API_KEY: process.env.POLYGON_SCAN_API_KEY,
