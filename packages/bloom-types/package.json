@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/types",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Types declarations for bloom trade",
   "types": "index.d.ts",
   "main": "index.js",
