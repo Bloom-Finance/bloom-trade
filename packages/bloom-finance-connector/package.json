@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/finance-connector",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "main": "dist/main.js",
   "module": "dist/main.js",
   "repository": "https://github.com/Bloom-Finance/bloom-trade.git",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "description": "",
   "devDependencies": {
-    "@bloom-trade/types": "^0.0.18",
+    "@bloom-trade/types": "^0.0.19",
     "@types/node": "^18.7.13",
     "@typescript-eslint/eslint-plugin": "^5.35.1",
     "@typescript-eslint/parser": "^5.35.1",

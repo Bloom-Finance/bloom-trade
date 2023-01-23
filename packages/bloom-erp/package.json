@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/erp",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "A package to internally connect a merchant with erp that bloom could handle",
   "main": "dist/main.js",
   "module": "dist/main.js",
