@@ -4,7 +4,7 @@ branch="$(git rev-parse --abbrev-ref HEAD)"
 if [ "$branch" = "master" ]; then
     echo "Checking npm session..."
     exec < /dev/tty && npm login --scope @bloom-trade
-	exec < /dev/tty && npm run  publish:packages
+	exec < /dev/tty && HUSKY_SKIP_HOOKS=1  npm run  publish:packages
 fi
 
 
