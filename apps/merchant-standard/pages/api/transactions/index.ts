@@ -1,9 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import Connector from '@bloom-trade/positions-connector';
+import Connector from '@bloom-trade/finance-connector';
 import { Chain, Provider } from '@bloom-trade/types';
-import { ProviderCredentials } from '@bloom-trade/positions-connector/dist/@types';
+import { ProviderCredentials } from '@bloom-trade/finance-connector/dist/@types';
 import jwt from 'jsonwebtoken';
 interface IProvidersRequest {
   type: 'circle' | 'binance' | 'coinbase';

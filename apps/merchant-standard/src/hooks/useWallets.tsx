@@ -1,4 +1,4 @@
-import { Balance } from '@bloom-trade/positions-connector/dist/@types';
+import { Balance } from '@bloom-trade/finance-connector/dist/@types';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { cryptoWalletServices } from '../services/cryptoWallet.services';

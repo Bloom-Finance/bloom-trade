@@ -35,7 +35,7 @@ yarn setup
 - [bloom-themes](./packages/bloom-themes) - Bloom Themes and custom visuals
 - [bloom-react-sdk](./packages/bloom-react-sdk) - Bloom SDK
 - [bloom-utilities](./packages/bloom-utilities) - Bloom Utils to be used freely
-- [bloom-erp-connector](./packages/bloom-erp-connector) - Bloom connector with erps
+- [bloom-erp](./packages/bloom-erp) - Bloom connector with erps
 - [bloom-positions-connector](./packages/bloom-positions-connector) - Bloom connector that allows you to get your balances in different providers
 
 ## Husky 🐕 and Lerna 🐉

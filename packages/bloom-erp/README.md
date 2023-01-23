@@ -4,10 +4,10 @@ An internal library aimed to workalong bloom merchant and feed its interface.
 
 ## Get Started
 
-    npm install @bloom-trade/erp-connector
+    npm install @bloom-trade/erp
 
 ```javascript
-import Connector from '@bloom-trade/erp-connector';
+import Connector from '@bloom-trade/erp';
 
 const credentials = {
   credentials: {

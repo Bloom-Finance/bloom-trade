@@ -5,7 +5,7 @@ Is a package entended to be used with multiple web3 and web2 providers to intera
 ## Get Started
 
 ```javascript
-import Connector from '@bloom-trade/positions-connector';
+import Connector from '@bloom-trade/finance-connector';
 
 const credentials = [
   //etherscan example

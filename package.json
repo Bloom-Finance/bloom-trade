@@ -10,6 +10,8 @@
     "graph": "npx nx graph",
     "build:all": "npx lerna run build",
     "dev:merchant-standard": "npx lerna run dev --scope=merchant-standard",
+    "upgrade:packages": "npx lerna version --no-private",
+    "publish:packages": "lerna publish --no-private",
     "prepare": "husky install"
   },
   "license": "MIT",

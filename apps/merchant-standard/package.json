@@ -12,7 +12,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@bloom-trade/positions-connector": "*",
+    "@bloom-trade/finance-connector": "*",
     "@bloom-trade/react-sdk": "*",
     "@bloom-trade/types": "*",
     "@bloom-trade/utilities": "*",
