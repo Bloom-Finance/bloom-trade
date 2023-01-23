@@ -7,7 +7,7 @@ import {
   polygon,
   avalanche,
 } from 'wagmi/chains';
-import Tokens from '../data/tokens.json';
+import Tokens from '../data/tokens.json' assert { type: "json" };;
 function isWeb3WalletByAddress(address: string) {
   if (address.startsWith('0x')) {
     return true;
