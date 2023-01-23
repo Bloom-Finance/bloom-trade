@@ -11,7 +11,7 @@
     "build:all": "npx lerna run build",
     "dev:merchant-standard": "npx lerna run dev --scope=merchant-standard",
     "upgrade:packages": "npx lerna version --no-private",
-    "publish:packages": "HUSKY=0 lerna publish --no-private --conventional-commits -m \"chore(release): publish %s\"",
+    "release": "cross-env HUSKY_BYPASS=true HUSKY=0 lerna publish --no-private",
     "prepare": "husky install"
   },
   "license": "MIT",
@@ -21,7 +21,20 @@
     "packages/*",
     "docs/*"
   ],
+  "husky": {
+    "hooks": {
+      "commit-msg": "[[ -n $HUSKY_BYPASS ]] || commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
   "devDependencies": {
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "cross-env": "^7.0.3",
     "husky": "^8.0.3",
     "lerna": "^6.4.1"
   }
