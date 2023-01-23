@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/utilities",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "dist/main.js",
   "type": "module",
   "module": "dist/main.js",
@@ -28,7 +28,7 @@
     "wagmi": "^0.10.11"
   },
   "devDependencies": {
-    "@bloom-trade/types": "^0.0.16"
+    "@bloom-trade/types": "^0.0.17"
   },
   "publishConfig": {
     "access": "public"
