@@ -11,7 +11,7 @@
     "build:all": "npx lerna run build",
     "dev:merchant-standard": "npx lerna run dev --scope=merchant-standard",
     "upgrade:packages": "npx lerna version --no-private",
-    "publish:packages": "cross-env HUSKY=0 lerna publish --no-private --conventional-commits -m \"chore(release): publish %s\"",
+    "publish:packages": "HUSKY=0 lerna publish --no-private --conventional-commits -m \"chore(release): publish %s\"",
     "prepare": "husky install"
   },
   "license": "MIT",
