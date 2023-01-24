@@ -5,7 +5,7 @@ import WaitingForBlockchain from '../index'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecule/Waiting For Approval',
+  title: 'Molecule/Waiting For Blockchain',
   component: WaitingForBlockchain,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 } as ComponentMeta<typeof WaitingForBlockchain>
