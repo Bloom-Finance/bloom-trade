@@ -1,4 +1,4 @@
-import { StableCoin, Testnet, Chain } from '@bloom-trade/types';
+import { StableCoin, Testnet, Chain, Asset } from '@bloom-trade/types';
 import {
   goerli,
   polygonMumbai,
@@ -68,9 +68,40 @@ const getTokenContractAddressBySymbolAndChain = (
   };
 };
 
+const getTokenIconBySymbol = (symbol: Asset) => {
+  switch (symbol) {
+    case 'dai':
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/4943.png';
+    case 'usdt':
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/825.png';
+    case 'usdc':
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/3408.png';
+    case 'btc':
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/1.png';
+    case 'eth':
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png';
+    case 'matic':
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/3890.png';
+    case 'avax':
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/5805.png';
+    default:
+      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/1.png';
+  }
+};
+
+const getTokenDescriptionBySymbol = (symbol: Asset) => {
+  const token = Tokens.tokens.find(
+    (token) => token.token === symbol.toUpperCase()
+  );
+  if (!token) return;
+  return token.description;
+};
+
 export {
   isWeb3WalletByAddress,
   formatWalletAddress,
   getWagmiInstanceByChainName,
   getTokenContractAddressBySymbolAndChain,
+  getTokenIconBySymbol,
+  getTokenDescriptionBySymbol,
 };

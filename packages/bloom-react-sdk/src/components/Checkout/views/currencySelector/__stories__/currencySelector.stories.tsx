@@ -21,6 +21,6 @@ Primary.args = {
     { currency: 'usdt', amount: '1000' },
   ],
   onSelect: (selected) => {
-    console.log('selected')
+    console.log('selected', selected)
   },
 }

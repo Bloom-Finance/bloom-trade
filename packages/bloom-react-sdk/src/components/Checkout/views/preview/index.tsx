@@ -2,8 +2,17 @@
 import { Avatar, Card, CardActions, CardContent, Stack, Typography } from '@mui/material'
 import React from 'react'
 import { fDate } from '@bloom-trade/utilities'
+import { Chain, StableCoin } from '@bloom-trade/types'
 export interface Props {
   walletConnectButton: JSX.Element
+  from?: {
+    chain: Chain
+    address: string
+    token: StableCoin
+    description?: {
+      name: string
+    }
+  }
   orderId: string
   date: number
   destinationDescription?: {
@@ -41,6 +50,12 @@ const PreviewComponent = (props: Props): JSX.Element => {
           <Typography variant='caption'>Order #{props.orderId}</Typography>
           <Typography variant='caption'>{fDate(props.date, 'L')}</Typography>
         </Stack>
+        {props.from && (
+          <Stack direction={'row'} justifyContent={'space-between'}>
+            <Typography variant='body2'>You will pay with</Typography>
+            <Typography variant='body2'>{props.from.token.toUpperCase()}</Typography>
+          </Stack>
+        )}
         {props.total.details && (
           <Stack direction={'column'} justifyContent={'space-between'}>
             {props.total.details.items &&

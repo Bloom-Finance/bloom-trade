@@ -32,4 +32,9 @@ Primary.args = {
     amount: 250,
   },
   walletConnectButton: <Button variant='contained'>Connect</Button>,
+  from: {
+    chain: 'avax',
+    address: '0x123445',
+    token: 'usdt',
+  },
 }
