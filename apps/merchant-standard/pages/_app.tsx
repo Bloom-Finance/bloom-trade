@@ -81,7 +81,6 @@ export default function MyApp(props: MyAppProps) {
           <Web3Modal
             projectId={process.env.WALLETCONNECT_PROJECTID as string}
             ethereumClient={ethereumClient}
-            themeColor='magenta'
             privacyPolicyUrl='https://www.bloom.trade/legal/terms'
             termsOfServiceUrl='https://example.com/terms-and-conditions'
           />

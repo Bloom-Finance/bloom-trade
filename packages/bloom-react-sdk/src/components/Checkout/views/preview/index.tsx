@@ -4,7 +4,7 @@ import React from 'react'
 import { fDate } from '@bloom-trade/utilities'
 import { Chain, StableCoin } from '@bloom-trade/types'
 export interface Props {
-  walletConnectButton: JSX.Element
+  button?: JSX.Element
   from?: {
     chain: Chain
     address: string
@@ -83,7 +83,7 @@ const PreviewComponent = (props: Props): JSX.Element => {
           <Typography variant='body2'>${props.total.amount}</Typography>
         </Stack>
       </CardContent>
-      <CardActions>{props.walletConnectButton}</CardActions>
+      <CardActions>{props.button}</CardActions>
     </Card>
   )
 }
