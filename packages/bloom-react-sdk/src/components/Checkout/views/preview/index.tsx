@@ -25,7 +25,7 @@ export interface Props {
   }
 }
 
-const CheckoutPreview = (props: Props): JSX.Element => {
+const PreviewComponent = (props: Props): JSX.Element => {
   return (
     <Card>
       <CardContent>
@@ -73,4 +73,4 @@ const CheckoutPreview = (props: Props): JSX.Element => {
   )
 }
 
-export default CheckoutPreview
+export default PreviewComponent
