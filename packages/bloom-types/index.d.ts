@@ -32,7 +32,41 @@ declare namespace Bloom {
       postalCode: string;
     };
   };
-
+  type BloomOrder = {
+    id: string;
+    orderId: string;
+    date: number;
+    from: {
+      chain: Chain;
+      address: string;
+      token: StableCoin;
+      description?: {
+        name: string;
+      };
+    };
+    total: {
+      details?: {
+        items?: {
+          description: string;
+          amount: number;
+        }[];
+        taxes?: {
+          description: string;
+          amount: number;
+        }[];
+      };
+      amount: number;
+    };
+    destination: {
+      chain: Chain;
+      address: string;
+      token: StableCoin;
+      description?: {
+        name?: string;
+        image?: string;
+      };
+    };
+  };
   type Asset = 'usdt' | 'usdc' | 'dai' | 'eth' | 'btc' | 'matic' | 'avax';
   type StableCoin = 'usdt' | 'usdc' | 'dai';
   type STABLECOINS = ['usdt', 'usdc', 'dai'];

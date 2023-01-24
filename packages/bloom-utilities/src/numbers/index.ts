@@ -24,6 +24,6 @@ export function fData(number: string | number) {
 export function fUnixDate(date: number) {
   return moment.unix(date).format();
 }
-export function fDate(date: number) {
-  return moment(date).format();
+export function fDate(date: number, format?: string) {
+  return moment(date).format(format);
 }
