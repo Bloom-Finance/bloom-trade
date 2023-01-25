@@ -53,7 +53,7 @@ export default function useWallets(userId: string) {
       };
       const {
         data: { balance: balances },
-      } = await axios.post<{ balance: Balance }>('/api/wallets/getBalances', {
+      } = await axios.post<{ balance: Balance }>('/api/wallets/balances', {
         providers: [provider],
       });
       const circleBalance = balances.filter((balance) =>
@@ -171,7 +171,7 @@ export default function useWallets(userId: string) {
     });
     const {
       data: { balance: balances },
-    } = await axios.post<{ balance: Balance }>('/api/wallets/getBalances', {
+    } = await axios.post<{ balance: Balance }>('/api/wallets/balances', {
       addresses,
       providers,
     });

@@ -22,7 +22,10 @@ interface IAuthService {
 class AuthService implements IAuthService {
   constructor() {}
   getToken(): string | null {
-    return localStorage.getItem('bloom:token');
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('bloom:token');
+    }
+    return null;
   }
   saveToken(token: string, key: string): void {
     localStorage.setItem(key, token);

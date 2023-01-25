@@ -1,13 +1,7 @@
 import type { NextPage } from 'next';
 import { Checkout, useBloom } from '@bloom-trade/react-sdk';
-import SecuredPage from '../src/components/layout/securedPage';
 const SandboxPage: NextPage = () => {
-  const { Connect } = useBloom({
-    useTestnet: {
-      testnet: process.env.MODE === 'DEV' ? true : false,
-      chain: 'goerli',
-    },
-  });
+  const { Connect } = useBloom();
   return (
     <Checkout
       order={{

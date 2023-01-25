@@ -8,7 +8,7 @@ import { DefaultTheme } from '@bloom-trade/themes';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../src/styles/global.css';
-
+import { BloomReact } from '@bloom-trade/react-sdk';
 import createEmotionCache from '../src/createEmotionCache';
 import { SessionProvider } from 'next-auth/react';
 import {
@@ -27,6 +27,7 @@ import {
   avalancheFuji,
   avalanche,
 } from 'wagmi/chains';
+import { authService } from '../src/services/auth.services';
 
 const chains = [
   arbitrum,
@@ -76,7 +77,12 @@ export default function MyApp(props: MyAppProps) {
         <CssBaseline />
         <SessionProvider session={(pageProps as any).session}>
           <WagmiConfig client={wagmiClient}>
-            <Component {...pageProps} />
+            <BloomReact
+              apiKey={authService.getToken() as string}
+              useTestnet={true}
+            >
+              <Component {...pageProps} />
+            </BloomReact>
           </WagmiConfig>
           <Web3Modal
             projectId={process.env.WALLETCONNECT_PROJECTID as string}

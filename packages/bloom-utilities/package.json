@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/utilities",
-  "version": "0.0.2",
+  "version": "0.0.19",
   "main": "dist/main.js",
   "module": "dist/main.js",
   "repository": "https://github.com/Bloom-Finance/bloom-trade.git",
@@ -27,7 +27,7 @@
     "wagmi": "^0.10.11"
   },
   "devDependencies": {
-    "@bloom-trade/types": "^0.0.2"
+    "@bloom-trade/types": "^0.0.19"
   },
   "publishConfig": {
     "access": "public"

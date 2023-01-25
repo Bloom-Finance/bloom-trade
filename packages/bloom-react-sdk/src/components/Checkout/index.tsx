@@ -1,19 +1,38 @@
 /* eslint-disable react/jsx-key */
-import { BloomOrder, Testnet } from '@bloom-trade/types'
-
+import BloomServices from '@bloom-trade/services'
+import { Order } from '@bloom-trade/types'
 import React, { useState } from 'react'
+import { useAccount } from 'wagmi'
+import { BloomStore } from '../../store/BloomReact'
 import PreviewComponent from './views/preview'
-
+// import BloomServices from '@bloom-trade/services'
 export interface CheckoutProps {
-  order: Omit<BloomOrder, 'from'>
+  order: Omit<Order, 'from'>
   walletConnectButton: JSX.Element
-  useTestnet?: {
-    testnet: boolean
-    chain: Testnet
-  }
 }
 
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
+  const store = BloomStore.useState((s) => s)
+  const [steps, setSteps] = useState(0)
+  const bloomServices = new BloomServices(store.apiKey, {
+    test: store.testnet || false,
+  })
+  // const { chain } = useNetwork()
+  // const [balances, setBalances] = useState()
+  useAccount({
+    async onConnect({ address, connector, isReconnected }) {
+      setSteps(1)
+      //Retrieve balance from address
+      const balance = await bloomServices.getBalance({
+        dex: {
+          addresses: [address as string],
+          chains: [props.order.destination.chain],
+        },
+      })
+      console.log(balance)
+      console.log('Connected from wagmi', address, connector, isReconnected)
+    },
+  })
   const getComponentByStep = (step: number) => {
     switch (step) {
       case 0:
@@ -26,6 +45,8 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             destinationDescription={props.order.destination.description}
           />
         )
+      // case 1:
+      //   return <CurrencySelectorComponent />
       default:
         return (
           <PreviewComponent
@@ -39,11 +60,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     }
   }
   const { order } = props
-  // 0 ->Preview of order with wallet connect
-  // 1 -> Choose currency token
-  // 3 -> Preview of order with pay button
-  // 4 -> Approval of token
-  const [steps, setSteps] = useState(0)
+
   console.log(setSteps)
 
   return getComponentByStep(steps)

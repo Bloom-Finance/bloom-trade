@@ -1,13 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import Connector from '../../../../../packages/bloom-finance-connector/dist/main';
+import Connector from '@bloom-trade/finance-connector';
 import {
   ProviderCredentials,
   Chains,
   Providers,
 } from '@bloom-trade/finance-connector/dist/@types';
-
+import jwt from 'jsonwebtoken';
 interface IProvidersRequest {
   type: 'circle' | 'binance' | 'coinbase';
   auth: {
@@ -21,14 +21,17 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    const secret = process.env.JWT_SECRET as string;
     const connector = new Connector();
     const { addresses, providers } = req.body;
     const providersRequest = providers as IProvidersRequest[];
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(400).json({ isValid: false, payload: null });
+    const decoded = jwt.verify(token, secret);
     //For now, we are only supporting Circle
     const circleCreds = providersRequest
       ? providersRequest.find((provider) => provider.type === 'circle')
       : null;
-
     const { testnet } = req.query;
     const mode = process.env.MODE as 'DEV' | 'PROD';
     const chains = [
@@ -66,7 +69,6 @@ export default async function handler(
         });
       });
     }
-
     if (circleCreds) {
       providerCreds.push({
         provider: {

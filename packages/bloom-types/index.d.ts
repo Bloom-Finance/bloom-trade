@@ -1,6 +1,36 @@
 export = Bloom;
 export as namespace Bloom;
 declare namespace Bloom {
+  const enum Environment {
+    production = 'https://api.bloom.com',
+    sandbox = 'https://localhost:3000/api',
+  }
+  type IBloomServices = {
+    getBalance(config: {
+      dex?: {
+        addresses: string[];
+        chains: Chain[];
+      };
+      cex?: {
+        id: CustodialProvider;
+        auth: {
+          apiKey?: string;
+          apiSecret?: string;
+        };
+      }[];
+    }): Promise<Balance>;
+  };
+  type Balance = {
+    asset: string;
+    balance: string;
+    description: string;
+    detail: Array<{
+      address?: string;
+      provider: string;
+      chain?: string;
+      balance: string;
+    }>;
+  }[];
   type BloomError<T> = {
     isError: true;
     code?: number;
@@ -32,7 +62,7 @@ declare namespace Bloom {
       postalCode: string;
     };
   };
-  type BloomOrder = {
+  type Order = {
     id: string;
     orderId: string;
     date: number;
@@ -82,6 +112,7 @@ declare namespace Bloom {
   type CHAINS = ['eth', 'avax', 'polygon'];
   type CustodialProvider = 'binance' | 'coinbase' | 'circle';
   type CUSTODIALPROVIDERS = ['binance', 'coinbase', 'circle'];
+  type BLOOM_URL = 'https://api.bloom.com' | 'https://localhost:3000/api';
   type Transaction = {
     asset: Asset;
     amount: string;
