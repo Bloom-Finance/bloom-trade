@@ -8,12 +8,23 @@ import {
   avalanche,
 } from 'wagmi/chains';
 import Tokens from '../data/tokens.json';
+/**
+ * If the address starts with 0x, then it's a web3 wallet.
+ * @param {string} address - The address of the wallet.
+ * @returns A boolean value.
+ */
 function isWeb3WalletByAddress(address: string) {
   if (address.startsWith('0x')) {
     return true;
   }
   return false;
 }
+/**
+ * It takes a string as an argument and returns a string
+ * @param {string} address - The address to format.
+ * @returns A string that is the first 6 characters of the address, followed by 3 dots, followed by the
+ * last 4 characters of the address.
+ */
 const formatWalletAddress = (address: string): string => {
   if (!address) return '';
   if (address.startsWith('0x')) {
@@ -23,6 +34,11 @@ const formatWalletAddress = (address: string): string => {
   return address.slice(0, 6) + '...' + address.slice(-4);
 };
 
+/**
+ * It returns a wagmi instance based on the chain name
+ * @param {Testnet | Chain} chain - The chain you want to use.
+ * @returns The wagmi instance for the chain
+ */
 const getWagmiInstanceByChainName = (chain: Testnet | Chain) => {
   switch (chain) {
     case 'goerli':
@@ -42,6 +58,12 @@ const getWagmiInstanceByChainName = (chain: Testnet | Chain) => {
   }
 };
 
+/**
+ * It returns the address and decimals of a token given the symbol and chain.
+ * @param {StableCoin} symbol - StableCoin - This is the symbol of the token you want to get the
+ * contract address for.
+ * @param {Chain | Testnet} chain - Chain | Testnet
+ */
 const getTokenContractAddressBySymbolAndChain = (
   symbol: StableCoin,
   chain: Chain | Testnet
@@ -94,6 +116,11 @@ const getTokenIconBySymbol = (symbol: Asset) => {
   }
 };
 
+/**
+ * It takes a symbol as an argument and returns the description of the token if it exists
+ * @param {Asset} symbol - Asset - The symbol of the token you want to get the description for.
+ * @returns The description of the token.
+ */
 const getTokenDescriptionBySymbol = (symbol: Asset) => {
   const token = Tokens.tokens.find(
     (token) => token.token === symbol.toUpperCase()
