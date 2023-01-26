@@ -3,25 +3,30 @@ export as namespace Bloom;
 declare namespace Bloom {
   const enum Environment {
     production = 'https://api.bloom.com',
-    sandbox = 'https://localhost:3000/api',
+    sandbox = '/api',
   }
   type IBloomServices = {
-    getBalance(config: {
-      dex?: {
-        addresses: string[];
-        chains: Chain[];
-      };
-      cex?: {
-        id: CustodialProvider;
-        auth: {
-          apiKey?: string;
-          apiSecret?: string;
+    getBalance(
+      config: {
+        dex?: {
+          addresses: string[];
+          chains: Chain[];
         };
-      }[];
-    }): Promise<Balance>;
+        cex?: {
+          id: CustodialProvider;
+          auth: {
+            apiKey?: string;
+            apiSecret?: string;
+          };
+        }[];
+      },
+      params?: {
+        onlyStableCoins: boolean;
+      }
+    ): Promise<Balance>;
   };
   type Balance = {
-    asset: string;
+    asset: Asset;
     balance: string;
     description: string;
     detail: Array<{

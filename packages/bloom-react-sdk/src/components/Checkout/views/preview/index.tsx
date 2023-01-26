@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-key */
 import { Avatar, Card, CardActions, CardContent, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { fDate } from '@bloom-trade/utilities'
 import { Chain, StableCoin } from '@bloom-trade/types'
 export interface Props {
@@ -35,6 +34,10 @@ export interface Props {
 }
 
 const PreviewComponent = (props: Props): JSX.Element => {
+  const [hasMounted, setHasMounted] = useState(false)
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
   return (
     <Card>
       <CardContent>
@@ -61,7 +64,7 @@ const PreviewComponent = (props: Props): JSX.Element => {
             {props.total.details.items &&
               props.total.details.items.map((item) => {
                 return (
-                  <Stack direction={'row'} justifyContent={'space-between'}>
+                  <Stack key={item.description} direction={'row'} justifyContent={'space-between'}>
                     <Typography variant='body2'>{item.description}</Typography>
                     <Typography variant='body2'>${item.amount}</Typography>
                   </Stack>
@@ -70,7 +73,7 @@ const PreviewComponent = (props: Props): JSX.Element => {
             {props.total.details.taxes &&
               props.total.details.taxes.map((tax) => {
                 return (
-                  <Stack direction={'row'} justifyContent={'space-between'}>
+                  <Stack key={tax.description} direction={'row'} justifyContent={'space-between'}>
                     <Typography variant='body2'>{tax.description}</Typography>
                     <Typography variant='body2'>${tax.amount}</Typography>
                   </Stack>
@@ -83,7 +86,7 @@ const PreviewComponent = (props: Props): JSX.Element => {
           <Typography variant='body2'>${props.total.amount}</Typography>
         </Stack>
       </CardContent>
-      <CardActions>{props.button}</CardActions>
+      {hasMounted ? <CardActions>{props.button}</CardActions> : 'Loading...'}
     </Card>
   )
 }

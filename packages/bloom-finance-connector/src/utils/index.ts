@@ -49,9 +49,9 @@ const setClient = (providerConnection: ProviderCredentials[]): Client => {
             balance.push(e);
           } else {
             if (
-              foundElement.asset === 'ETH' ||
-              foundElement.asset === 'MATIC' ||
-              foundElement.asset === 'AVAX'
+              foundElement.asset === 'eth' ||
+              foundElement.asset === 'matic' ||
+              foundElement.asset === 'avax'
             ) {
               const index = balance.indexOf(foundElement);
               balance[index].balance = sumEthsBalances(

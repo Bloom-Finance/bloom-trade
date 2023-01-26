@@ -28,17 +28,26 @@ class BloomServices implements IBloomServices {
       this.url = Environment.production;
     }
   }
-  async getBalance(config: {
-    dex?: { addresses: string[]; chains?: Chain[] } | undefined;
-    cex?:
-      | {
-          id: CustodialProvider;
-          auth: { apiKey?: string | undefined; apiSecret?: string | undefined };
-        }[]
-      | undefined;
-  }): Promise<Balance> {
+  async getBalance(
+    config: {
+      dex?: { addresses: string[]; chains?: Chain[] } | undefined;
+      cex?:
+        | {
+            id: CustodialProvider;
+            auth: {
+              apiKey?: string | undefined;
+              apiSecret?: string | undefined;
+            };
+          }[]
+        | undefined;
+    },
+    params?: {
+      onlyStableCoins: boolean;
+    }
+  ): Promise<Balance> {
     const { dex, cex } = config;
     const addresses: string[] | undefined = dex?.addresses;
+    const chains: Chain[] | undefined = dex?.chains;
     const providers: IProvidersRequest[] = [];
 
     if (cex) {
@@ -54,11 +63,16 @@ class BloomServices implements IBloomServices {
         });
       });
     }
-    const { data } = await axios.post<Balance>(
-      `${this.url}/wallets/balance?testnet=${this.isTestnet}`,
+    let url = `${this.url}/wallets/balance?testnet=${this.isTestnet}`;
+    if (params?.onlyStableCoins) {
+      url += `&stableCoins=true`;
+    }
+    const { data } = await axios.post<{ balance: Balance }>(
+      url,
       {
         addresses,
         providers,
+        chains,
       },
       {
         headers: {
@@ -66,7 +80,7 @@ class BloomServices implements IBloomServices {
         },
       }
     );
-    return data;
+    return data.balance;
   }
 }
 

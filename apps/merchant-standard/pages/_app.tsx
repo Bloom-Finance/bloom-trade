@@ -10,7 +10,6 @@ import 'aos/dist/aos.css';
 import '../src/styles/global.css';
 import { BloomReact } from '@bloom-trade/react-sdk';
 import createEmotionCache from '../src/createEmotionCache';
-import { SessionProvider } from 'next-auth/react';
 import {
   EthereumClient,
   modalConnectors,
@@ -75,22 +74,20 @@ export default function MyApp(props: MyAppProps) {
       </Head>
       <ThemeProvider theme={DefaultTheme}>
         <CssBaseline />
-        <SessionProvider session={(pageProps as any).session}>
-          <WagmiConfig client={wagmiClient}>
-            <BloomReact
-              apiKey={authService.getToken() as string}
-              useTestnet={true}
-            >
-              <Component {...pageProps} />
-            </BloomReact>
-          </WagmiConfig>
-          <Web3Modal
-            projectId={process.env.WALLETCONNECT_PROJECTID as string}
-            ethereumClient={ethereumClient}
-            privacyPolicyUrl='https://www.bloom.trade/legal/terms'
-            termsOfServiceUrl='https://example.com/terms-and-conditions'
-          />
-        </SessionProvider>
+        <WagmiConfig client={wagmiClient}>
+          <BloomReact
+            apiKey={authService.getToken() as string}
+            useTestnet={true}
+          >
+            <Component {...pageProps} />
+          </BloomReact>
+        </WagmiConfig>
+        <Web3Modal
+          projectId={process.env.WALLETCONNECT_PROJECTID as string}
+          ethereumClient={ethereumClient}
+          privacyPolicyUrl='https://www.bloom.trade/legal/terms'
+          termsOfServiceUrl='https://example.com/terms-and-conditions'
+        />
       </ThemeProvider>
     </CacheProvider>
   );
