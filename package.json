@@ -6,7 +6,7 @@
   "author": "Bloom Trade",
   "scripts": {
     "setup": "yarn && lerna bootstrap",
-    "docs": "npx lerna run dev --scope=bloom-trade-docs",
+    "docs": "npx lerna run dev --scope=@bloom-trade/docs",
     "graph": "npx nx graph",
     "build:all": "npx lerna run build",
     "dev:merchant-standard": "npx lerna run dev --scope=merchant-standard",

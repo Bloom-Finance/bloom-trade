@@ -68,6 +68,11 @@ const getTokenContractAddressBySymbolAndChain = (
   };
 };
 
+/**
+ * It takes a string as an argument and returns a string
+ * @param {Asset} symbol - The symbol of the token you want to get the icon for.
+ * @returns the icon of the token based on the symbol.
+ */
 const getTokenIconBySymbol = (symbol: Asset) => {
   switch (symbol) {
     case 'dai':
