@@ -16,7 +16,7 @@ const SandboxPage: NextPage = () => {
           amount: 250,
         },
         destination: {
-          chain: 'eth',
+          chain: 'polygon',
           address: '0x1145AE4E5bD546A485A0529faB0AC751c7709339',
           token: 'dai',
           description: {

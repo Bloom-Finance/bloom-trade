@@ -35,6 +35,70 @@ const formatWalletAddress = (address: string): string => {
 };
 
 /**
+ * Takes a chain ID as an argument and returns the chain name. (Bloom chain names)
+ * @param {number} id - The chain ID of the network you want to connect to.
+ * @returns Chain | Testnet | undefined
+ */
+const getChainNameById = (id: number): Chain | Testnet | undefined => {
+  switch (id) {
+    case 1:
+      return 'eth';
+    case 137:
+      return 'polygon';
+    case 43114:
+      return 'avax';
+    case 5:
+      return 'goerli';
+    case 43113:
+      return 'fuji';
+    case 80001:
+      return 'mumbai';
+    default:
+      return;
+  }
+};
+
+/**
+ * "Given a mainnet chain, return the corresponding testnet chain, or undefined if there is no
+ * corresponding testnet chain."
+ *
+ * The first line of the function is a type annotation. It tells TypeScript that the function takes a
+ * parameter of type Chain and returns a value of type Testnet or undefined
+ * @param {Chain} chain - The chain you want to use.
+ * @returns A testnet name
+ */
+const getTestnetFromMainnet = (chain: Chain): Testnet | undefined => {
+  switch (chain) {
+    case 'eth':
+      return 'goerli';
+    case 'polygon':
+      return 'mumbai';
+    case 'avax':
+      return 'fuji';
+    default:
+      return;
+  }
+};
+
+const getChainIdByName = (name: Chain | Testnet): number | undefined => {
+  switch (name) {
+    case 'eth':
+      return 1;
+    case 'polygon':
+      return 137;
+    case 'avax':
+      return 43114;
+    case 'goerli':
+      return 5;
+    case 'fuji':
+      return 43113;
+    case 'mumbai':
+      return 80001;
+    default:
+      break;
+  }
+};
+/**
  * It returns a wagmi instance based on the chain name
  * @param {Testnet | Chain} chain - The chain you want to use.
  * @returns The wagmi instance for the chain
@@ -136,4 +200,7 @@ export {
   getTokenContractAddressBySymbolAndChain,
   getTokenIconBySymbol,
   getTokenDescriptionBySymbol,
+  getChainNameById,
+  getChainIdByName,
+  getTestnetFromMainnet,
 };

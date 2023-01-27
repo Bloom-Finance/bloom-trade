@@ -18,7 +18,6 @@ import {
 import { Web3Modal } from '@web3modal/react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import {
-  arbitrum,
   mainnet,
   goerli,
   polygon,
@@ -29,7 +28,6 @@ import {
 import { authService } from '../src/services/auth.services';
 
 const chains = [
-  arbitrum,
   mainnet,
   polygon,
   goerli,
@@ -46,7 +44,11 @@ const { provider } = configureChains(chains, [
 ]);
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: modalConnectors({ appName: 'Bloom', chains }),
+  connectors: modalConnectors({
+    appName: 'Bloom',
+    chains,
+    projectId: process.env.WALLETCONNECT_PROJECTID as string,
+  }),
   provider,
 });
 

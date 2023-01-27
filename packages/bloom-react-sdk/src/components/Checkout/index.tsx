@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-key */
 import { Order } from '@bloom-trade/types'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PreviewComponent from './views/preview'
 import { BloomStore } from '../../store/BloomReact'
-import { useAccount } from 'wagmi'
+import { useAccount, useSwitchNetwork } from 'wagmi'
 import BloomServices from '@bloom-trade/services'
 import CurrencySelector from './views/currencySelector'
 import { useWeb3ModalNetwork } from '@web3modal/react'
+import { getChainIdByName, getChainNameById, getWagmiInstanceByChainName } from '@bloom-trade/utilities'
 export interface CheckoutProps {
   order: Omit<Order, 'from'>
   walletConnectButton: JSX.Element
@@ -15,12 +16,16 @@ export interface CheckoutProps {
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
   const store = BloomStore.useState((s) => s)
   const [steps, setSteps] = useState(0)
+  const { switchNetwork } = useSwitchNetwork()
   const [loading, setLoading] = useState(false)
   const [balances, setBalances] = useState<any[]>([])
   const bloomServices = new BloomServices(store.apiKey, {
     test: store.testnet || false,
   })
-  const { selectedChain } = useWeb3ModalNetwork()
+  const { selectedChain, setSelectedChain } = useWeb3ModalNetwork()
+  useEffect(() => {
+    setSelectedChain(getWagmiInstanceByChainName(props.order.destination.chain))
+  }, [])
   useAccount({
     async onConnect({ address, isReconnected }) {
       if (isReconnected) return
@@ -29,7 +34,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
         {
           dex: {
             addresses: [address as string],
-            chains: ['eth'],
+            chains: [props.order.destination.chain],
           },
         },
         {
@@ -62,7 +67,22 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
           />
         )
       case 1:
-        return <CurrencySelector balances={balances} onSelect={() => console.log('chosen one')} />
+        return (
+          <CurrencySelector
+            balances={balances}
+            onSelect={() => {
+              if (!selectedChain) throw new Error('Chain not supported')
+              const chainName = getChainNameById(selectedChain.id)
+              const chainId = getChainIdByName(props.order.destination.chain)
+              if (!chainName || !chainId || !switchNetwork) {
+                throw new Error('Chain not supported')
+              }
+              if (chainName !== props.order.destination.chain) {
+                switchNetwork(chainId)
+              }
+            }}
+          />
+        )
       default:
         return (
           <PreviewComponent
