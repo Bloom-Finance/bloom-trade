@@ -86,30 +86,36 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
           <Typography>{steps[activeStep].label}</Typography>
         </Paper>
 
-        <MobileStepper variant='dots' steps={steps.length} position='static' activeStep={activeStep}>
-          <Stack pt={3}>
-            {activeStep === 0 && <PreviewComponent {...previewInfo} />}
-            {activeStep === 1 && !currencySelected && (
-              <Stack
-                spacing={3}
-                direction='row'
-                justifyContent={'center'}
-                p={mdUp ? 4 : 0}
-                sx={{
-                  boxShadow: mdUp
-                    ? '0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24);'
-                    : 'none',
-                  borderRadius: mdUp ? '8px' : 'none',
-                }}
-              >
-                <CurrencySelectorComponent {..._currencySelectorData} />{' '}
-              </Stack>
-            )}
-            {activeStep === 1 && currencySelected && <WaitingForApproval status='pending' type='tokenApproval' />}
-            {activeStep === 2 && <WaitingForBlockchain status='pending' />}
-            {activeStep === 3 && <div>Success --- TODO</div>}
-          </Stack>
-        </MobileStepper>
+        <MobileStepper
+          variant='dots'
+          steps={steps.length}
+          position='static'
+          activeStep={activeStep}
+          backButton={undefined}
+          nextButton={undefined}
+        />
+        <Stack pt={3}>
+          {activeStep === 0 && <PreviewComponent {...previewInfo} />}
+          {activeStep === 1 && !currencySelected && (
+            <Stack
+              spacing={3}
+              direction='row'
+              justifyContent={'center'}
+              p={mdUp ? 4 : 0}
+              sx={{
+                boxShadow: mdUp
+                  ? '0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24);'
+                  : 'none',
+                borderRadius: mdUp ? '8px' : 'none',
+              }}
+            >
+              <CurrencySelectorComponent {..._currencySelectorData} />{' '}
+            </Stack>
+          )}
+          {activeStep === 1 && currencySelected && <WaitingForApproval status='pending' type='tokenApproval' />}
+          {activeStep === 2 && <WaitingForBlockchain status='pending' />}
+          {activeStep === 3 && <div>Success --- TODO</div>}
+        </Stack>
       </Box>
     )
 
