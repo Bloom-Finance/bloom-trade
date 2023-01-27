@@ -10,6 +10,9 @@ export default {
   title: 'Molecule/Checkout/Preview',
   component: CheckoutPreview,
   args: {
+    token: 'dai',
+    chain: 'eth',
+    address: '0x123445',
     isConnected: true,
     orderId: '4f90d13a42',
     date: 1674568125845,

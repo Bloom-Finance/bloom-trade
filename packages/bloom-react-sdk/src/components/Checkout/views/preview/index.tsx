@@ -1,10 +1,9 @@
 import {
   Avatar,
   Button,
-  Card,
-  CardActions,
-  CardContent,
   Grid,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   ToggleButton,
@@ -13,44 +12,20 @@ import {
   useTheme,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { fDate, getTokenIconBySymbol } from '@bloom-trade/utilities'
+import { getTokenIconBySymbol, isWeb3WalletByAddress } from '@bloom-trade/utilities'
 import { Chain, StableCoin } from '@bloom-trade/types'
 import useResponsive from '../../../../hooks/useResponsive'
+import { OrderStore } from '../../../../store/Order'
 export interface PreviewProps {
+  onContinue?: () => void
   button?: JSX.Element
   isConnected?: boolean
-  from?: {
-    chain: Chain
-    address: string
-    token: StableCoin
-    description?: {
-      name: string
-    }
-  }
-  orderId: string
-  date: number
-  destinationDescription?: {
-    name?: string
-    image?: string
-  }
-  total: {
-    details?: {
-      items?: {
-        description: string
-        amount: number
-      }[]
-      taxes?: {
-        description: string
-        amount: number
-      }[]
-    }
-    amount: number
-  }
 }
 
 const PreviewComponent = (props: PreviewProps): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
-  const [tokenSelected, setTokenSelectd] = useState('usdt')
+  const order = OrderStore.useState((s) => s.order)
+  const [tokenSelected, setTokenSelectd] = useState(order.destination.token)
   const theme = useTheme()
   const { isConnected } = props
   const mdUp = useResponsive('up', 'md')
@@ -106,17 +81,86 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
       <Stack pt={mdUp ? 2 : 0}>
         <Grid container rowSpacing={3} columnSpacing={2}>
           <Grid item xs={12} sm={3}>
-            <TextField id='displayName' label='Name or Display Name' variant='outlined' fullWidth />
+            <TextField
+              id='displayName'
+              label='Name or Display Name'
+              value={order.destination.description?.name}
+              onChange={(e) => {
+                OrderStore.update((s) => {
+                  s.order = {
+                    ...s.order,
+                    destination: {
+                      ...s.order.destination,
+                      description: {
+                        ...s.order.destination.description,
+                        name: e.target.value,
+                      },
+                    },
+                  }
+                })
+              }}
+              variant='outlined'
+              fullWidth
+            />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField id='wallet-address' label='Address' variant='outlined' fullWidth />
+            <TextField
+              id='wallet-address'
+              onChange={(e) => {
+                OrderStore.update((s) => {
+                  s.order = {
+                    ...s.order,
+                    destination: {
+                      ...s.order.destination,
+                      address: e.target.value,
+                    },
+                  }
+                })
+              }}
+              label='Address'
+              variant='outlined'
+              fullWidth
+              value={order.destination.address}
+            />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField id='chain' label='Chain' variant='outlined' fullWidth />
+            <Select
+              value={order.destination.chain}
+              onChange={(e) => {
+                OrderStore.update((s) => {
+                  s.order = {
+                    ...s.order,
+                    destination: {
+                      ...s.order.destination,
+                      chain: e.target.value as Chain,
+                    },
+                  }
+                })
+              }}
+            >
+              <MenuItem value='eth'>Ethereum</MenuItem>
+              <MenuItem value='polygon'>Polygon</MenuItem>
+              <MenuItem value='avax'>Avalanche</MenuItem>
+            </Select>
           </Grid>
           <Grid item xs={12} sm={3}>
             <Stack spacing={2} direction='row' justifyContent={'space-around'}>
-              <ToggleButtonGroup value={tokenSelected} exclusive onChange={(_, value) => setTokenSelectd(value)}>
+              <ToggleButtonGroup
+                value={tokenSelected}
+                exclusive
+                onChange={(_, value) => {
+                  OrderStore.update((s) => {
+                    s.order = {
+                      ...s.order,
+                      destination: {
+                        ...s.order.destination,
+                        token: value as StableCoin,
+                      },
+                    }
+                  })
+                  setTokenSelectd(value)
+                }}
+              >
                 <ToggleButton value='usdt'>
                   <Avatar src={getTokenIconBySymbol('usdt')} alt={'usdt'} />
                 </ToggleButton>
@@ -133,7 +177,14 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
             {hasMounted && !isConnected ? (
               <Stack>{props.button}</Stack>
             ) : (
-              <Button variant='contained' fullWidth>
+              <Button
+                disabled={order.destination.address === '' || !isWeb3WalletByAddress(order.destination.address)}
+                onClick={() => {
+                  if (props.onContinue) props.onContinue()
+                }}
+                variant='contained'
+                fullWidth
+              >
                 Continue
               </Button>
             )}
@@ -143,7 +194,6 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
     </Stack>
   )
 }
-
 export default PreviewComponent
 
 const ImageAvatar = () => {

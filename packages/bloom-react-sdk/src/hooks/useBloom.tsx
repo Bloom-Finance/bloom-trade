@@ -18,9 +18,10 @@ export default function useBloom(params?: {
       params?.onWalletConnect?.(address, connector, isReconnected)
     },
   })
-  const walletConnectButton = (params: { icon?: 'show' | 'hide'; label?: string }) => {
+  const walletConnectButton = (params: { icon?: 'show' | 'hide'; label?: string; disabled?: boolean }) => {
     return (
       <Button
+        disabled={params.disabled}
         onClick={() => {
           if (isConnected) {
             disconnect()

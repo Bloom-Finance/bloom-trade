@@ -1,5 +1,5 @@
 import { StableCoin } from '@bloom-trade/types'
-import { List, ListItem, ListItemIcon, Avatar, ListItemText, Stack } from '@mui/material'
+import { List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Typography } from '@mui/material'
 import React from 'react'
 import { getTokenDescriptionBySymbol, getTokenIconBySymbol } from '@bloom-trade/utilities'
 import useResponsive from '../../../../hooks/useResponsive'
@@ -23,27 +23,33 @@ const CurrencySelectorComponent = (props: CurrencySelectorProps): JSX.Element =>
         maxWidth: mdUp ? '600px' : '340px',
       }}
     >
-      {props.balances.map((balance) => {
-        return (
-          <ListItem
-            secondaryAction={`$ ${balance.amount}`}
-            key={balance.currency}
-            onClick={() => props.onSelect(balance.currency)}
-            sx={{
-              background:
-                amountLimit && Number(amountLimit) > Number(balance.amount) ? 'rgba(162, 0, 29, 0.2)' : 'none',
-            }}
-          >
-            <ListItemIcon>
-              <Avatar src={getTokenIconBySymbol(balance.currency)} alt={balance.currency} />
-            </ListItemIcon>
-            <ListItemText
-              primary={balance.currency.toUpperCase()}
-              secondary={getTokenDescriptionBySymbol(balance.currency)}
-            />
-          </ListItem>
-        )
-      })}
+      {props.balances.length > 0 ? (
+        props.balances.map((balance) => {
+          return (
+            <ListItem
+              secondaryAction={`$ ${balance.amount}`}
+              key={balance.currency}
+              onClick={() => props.onSelect(balance.currency)}
+              sx={{
+                background:
+                  amountLimit && Number(amountLimit) > Number(balance.amount) ? 'rgba(162, 0, 29, 0.2)' : 'none',
+              }}
+            >
+              <ListItemIcon>
+                <Avatar src={getTokenIconBySymbol(balance.currency)} alt={balance.currency} />
+              </ListItemIcon>
+              <ListItemText
+                primary={balance.currency.toUpperCase()}
+                secondary={getTokenDescriptionBySymbol(balance.currency)}
+              />
+            </ListItem>
+          )
+        })
+      ) : (
+        <Stack sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant='h6'>No balances</Typography>
+        </Stack>
+      )}
     </List>
   )
 }

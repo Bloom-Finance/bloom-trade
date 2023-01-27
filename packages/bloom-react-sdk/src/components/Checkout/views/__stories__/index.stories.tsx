@@ -8,6 +8,7 @@ import WaitingForApproval from '../waitingForApproval'
 import { currencyBalancesData } from './currencySelector.stories'
 import CurrencySelectorComponent from '../currencySelector'
 import WaitingForBlockchain from '../waitingForBlockchain'
+import { Chain, StableCoin } from '@bloom-trade/types'
 
 interface MyTemplatePageProps {
   title: string
@@ -22,6 +23,9 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
   const [currencySelected, setCurrencySelected] = React.useState(null)
 
   const previewInfo = {
+    token: 'dai' as StableCoin,
+    chain: 'eth' as Chain,
+    address: '0x123445',
     isConnected,
     orderId: '4f90d13a42',
     date: 1674568125845,
