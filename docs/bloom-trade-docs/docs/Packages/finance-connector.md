@@ -1,6 +1,12 @@
-## Finance connector
+# Finance Connector
 
 Is a package entended to be used with multiple web3 and web2 providers to interact with blockchains.
+
+## Installation 🧵
+
+```bash
+npm install @bloom-trade/utilities
+```
 
 ## Get Started
 
