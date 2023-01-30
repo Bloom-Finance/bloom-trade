@@ -18,8 +18,6 @@ const CurrencySelectorComponent = (props: CurrencySelectorProps): JSX.Element =>
   const { amountLimit } = props
   const mdUp = useResponsive('up', 'md')
   const theme = useTheme()
-
-  console.log(theme.palette.text)
   if (props.balances.length === 0)
     return (
       <Stack direction={'column'} justifyContent='center' alignItems={'center'} spacing={3}>

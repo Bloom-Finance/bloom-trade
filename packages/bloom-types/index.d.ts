@@ -71,7 +71,7 @@ declare namespace Bloom {
     id: string;
     orderId: string;
     date: number;
-    from: {
+    from?: {
       chain: Chain;
       address: string;
       token: StableCoin;

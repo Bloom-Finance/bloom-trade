@@ -102,7 +102,7 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
               </StepLabel>
               <StepContent>
                 {activeStep === 0 && <PreviewComponent {...previewInfo} />}
-                {activeStep === 1 && currencySelected && <WaitingForApproval status='pending' type='tokenApproval' />}
+                {activeStep === 1 && currencySelected && <WaitingForApproval type='tokenApproval' />}
                 {activeStep === 1 && !currencySelected && (
                   <Stack
                     spacing={3}
@@ -163,7 +163,7 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
             <CurrencySelectorComponent {..._currencySelectorData} />{' '}
           </Stack>
         )}
-        {activeStep === 1 && currencySelected && <WaitingForApproval status='pending' type='tokenApproval' />}
+        {activeStep === 1 && currencySelected && <WaitingForApproval type='tokenApproval' />}
         {activeStep === 2 && <WaitingForBlockchain status='pending' />}
         {activeStep === 3 && <div>Success --- TODO</div>}
       </Stack>

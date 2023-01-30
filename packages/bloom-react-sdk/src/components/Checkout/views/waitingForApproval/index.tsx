@@ -3,13 +3,12 @@ import { Grid, Stack, Typography } from '@mui/material'
 import React from 'react'
 import useResponsive from '../../../../hooks/useResponsive'
 export interface Props {
-  status: 'approved' | 'pending' | 'rejected'
   type: 'tokenApproval' | 'tx'
+  amount?: number
 }
 
 const WaitingForApproval = (props: Props): JSX.Element => {
   const mdUp = useResponsive('up', 'md')
-
   return (
     <Stack
       spacing={3}
@@ -30,7 +29,11 @@ const WaitingForApproval = (props: Props): JSX.Element => {
         <Grid item xs={12} md={10}>
           <Stack direction={'column'} justifyContent='center'>
             <Typography variant='body1' sx={{ fontWeight: 600 }} align={mdUp ? 'left' : 'center'} gutterBottom>
-              Now, we need grant access to your tokens. We sent to your wallet a request permission by USD 1,500.
+              Now, we need grant access to your tokens.{' '}
+              {props.amount
+                ? `We sent to your wallet a request permission by USD
+              ${props.amount}`
+                : ''}
             </Typography>
             <Typography variant='body1' sx={{ fontWeight: 600 }} align={mdUp ? 'left' : 'center'} gutterBottom>
               Please, go to your wallet, approve the transaction and came back here to continue with the process

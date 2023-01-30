@@ -1,12 +1,12 @@
 {
-  "ETH": {
+  "eth": {
     "testnet": {
       "swapper": "0x63676f1Aaad4C5a9443Fb3bd1FEF6611F6A5E84E",
       "treasure": "0x0CDc2A86A61935E4AB920054Fd204a6bB713BDC4",
       "transfers": "0xAc45bA539d2f01995A266475D6526395353d4357"
     }
   },
-  "POLYGON": {
+  "polygon": {
     "testnet": {
       "swapper": "0x282f2593c1C7425C6bd582fb2AFEeA056f78f75B",
       "treasure": "0x130612D9359b9A51adf9bC4289c610782904BAD1",

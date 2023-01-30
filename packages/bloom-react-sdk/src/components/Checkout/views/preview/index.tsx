@@ -126,6 +126,27 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
+            <TextField
+              id='amount-address'
+              onChange={(e) => {
+                OrderStore.update((s) => {
+                  s.order = {
+                    ...s.order,
+                    total: {
+                      ...s.order.total,
+                      amount: parseInt(e.target.value),
+                    },
+                  }
+                })
+              }}
+              label='Amount'
+              variant='outlined'
+              type={'number'}
+              fullWidth
+              value={order.total.amount}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
             <Select
               value={order.destination.chain}
               onChange={(e) => {
@@ -180,7 +201,11 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
               <Stack>{props.button}</Stack>
             ) : (
               <Button
-                disabled={order.destination.address === '' || !isWeb3WalletByAddress(order.destination.address)}
+                disabled={
+                  order.destination.address === '' ||
+                  !isWeb3WalletByAddress(order.destination.address) ||
+                  order.total.amount <= 0
+                }
                 onClick={() => {
                   if (props.onContinue) props.onContinue()
                 }}

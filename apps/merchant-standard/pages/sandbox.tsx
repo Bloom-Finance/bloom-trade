@@ -13,7 +13,7 @@ const SandboxPage: NextPage = () => {
             items: [{ description: 'Flight for 1 person', amount: 150 }],
             taxes: [{ description: 'Tax', amount: 100 }],
           },
-          amount: 250,
+          amount: 2,
         },
         destination: {
           chain: 'polygon',

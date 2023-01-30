@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { StableCoin, Testnet, Chain, Asset } from '@bloom-trade/types';
 import {
   goerli,
@@ -8,6 +9,9 @@ import {
   avalanche,
 } from 'wagmi/chains';
 import Tokens from '../data/tokens.json';
+import Contracts from '../data/bloomContracts.json';
+import Web3 from 'web3';
+
 /**
  * If the address starts with 0x, then it's a web3 wallet.
  * @param {string} address - The address of the wallet.
@@ -128,16 +132,19 @@ const getWagmiInstanceByChainName = (chain: Testnet | Chain) => {
  * contract address for.
  * @param {Chain | Testnet} chain - Chain | Testnet
  */
-const getTokenContractAddressBySymbolAndChain = (
+const getTokenContractMetadataBySymbolAndChain = (
   symbol: StableCoin,
   chain: Chain | Testnet
 ):
   | {
       address: string;
       decimals: number;
+      abi: any;
     }
   | undefined => {
-  const foundSymbol = Tokens.tokens.find((aset) => aset.token === symbol);
+  const foundSymbol = Tokens.tokens.find(
+    (asset) => asset.token === symbol.toUpperCase()
+  );
   if (!foundSymbol) return;
   const network = foundSymbol.networks.find((network) => {
     if (
@@ -151,6 +158,7 @@ const getTokenContractAddressBySymbolAndChain = (
   return {
     address: network.address,
     decimals: network.decimalPosition,
+    abi: network.abi,
   };
 };
 
@@ -192,15 +200,74 @@ const getTokenDescriptionBySymbol = (symbol: Asset) => {
   if (!token) return;
   return token.description;
 };
+/**
+ * It returns the contract address for a given chain and type
+ * @param {Chain} chain - Chain - The chain you want to get the contract address for.
+ * @param {'transfers' | 'swapper'} type - 'transfers' | 'swapper'
+ * @param [params] - {
+ * @returns The contract address for the chain and type specified.
+ */
+
+const getBloomContractsByChain = (
+  chain: Chain | Testnet,
+  type: 'transfers' | 'swapper'
+): string | `0x${string}` => {
+  let isTestnet = false;
+  if (chain === 'fuji' || chain === 'mumbai' || chain === 'goerli') {
+    isTestnet = true;
+  }
+  const chainContracts =
+    Contracts[
+      chain === 'fuji'
+        ? 'avax'
+        : chain === 'mumbai'
+        ? 'polygon'
+        : chain === 'goerli'
+        ? 'eth'
+        : chain
+    ];
+  return chainContracts[isTestnet ? 'testnet' : 'mainnet'][type];
+};
+
+/**
+ * It takes a token value and the number of decimals and returns the token value in its smallest unit
+ * @param {string} value - The amount of tokens you want to convert.
+ * @param {number} decimals - The number of decimals the token uses.
+ * @returns The converted token value.
+ */
+const convertTokenToDecimalsUnit = (value: string, decimals: number) => {
+  const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
+  return web3.utils
+    .toBN(value)
+    .div(web3.utils.toBN(10 ** decimals))
+    .toString();
+};
+
+/**
+ * It converts a decimal value to a token value
+ * @param {string} value - The value to convert.
+ * @param {number} decimals - The number of decimals the token uses.
+ * @returns The value of the token in wei.
+ */
+const convertDecimalsUnitToToken = (value: string, decimals: number) => {
+  const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
+  return web3.utils
+    .toBN(value)
+    .mul(web3.utils.toBN(10 ** decimals))
+    .toString();
+};
 
 export {
   isWeb3WalletByAddress,
   formatWalletAddress,
   getWagmiInstanceByChainName,
-  getTokenContractAddressBySymbolAndChain,
+  getTokenContractMetadataBySymbolAndChain,
   getTokenIconBySymbol,
   getTokenDescriptionBySymbol,
   getChainNameById,
   getChainIdByName,
   getTestnetFromMainnet,
+  getBloomContractsByChain,
+  convertDecimalsUnitToToken,
+  convertTokenToDecimalsUnit,
 };

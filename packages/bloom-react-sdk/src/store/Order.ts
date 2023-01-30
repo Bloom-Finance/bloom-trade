@@ -2,7 +2,7 @@ import { Order } from '@bloom-trade/types'
 import { Store } from 'pullstate'
 
 interface IOrderStore {
-  order: Omit<Order, 'from'>
+  order: Order
 }
 
 export const OrderStore = new Store<IOrderStore>({
