@@ -57,12 +57,13 @@
     "prettier": "^2.8.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "storybook-css-modules": "^1.0.8",
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@bloom-trade/services": "0.0.19",
     "@bloom-trade/themes": "^0.0.19",
     "@bloom-trade/utilities": "^0.0.19",
-    "@bloom-trade/services":"0.0.19",
     "ethers": "^5.7.2",
     "pullstate": "^1.25.0"
   },

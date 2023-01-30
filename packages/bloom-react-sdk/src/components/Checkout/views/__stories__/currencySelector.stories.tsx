@@ -1,5 +1,5 @@
 import React from 'react'
-import { StoryFn, ComponentStory, ComponentMeta } from '@storybook/react'
+import { StoryFn, ComponentMeta } from '@storybook/react'
 import CurrencySelector, { CurrencySelectorProps } from '../currencySelector'
 
 export const currencyBalancesData = {
@@ -27,4 +27,8 @@ export default {
 
 export const CurrencySelectorWithDataVariation: StoryFn<CurrencySelectorProps> = (args) => {
   return <CurrencySelector {...args} />
+}
+
+export const CurrencySelectorWithNoDataVariation: StoryFn<CurrencySelectorProps> = (args) => {
+  return <CurrencySelector balances={[]} amountLimit={'100'} onSelect={() => console.log('empty')} />
 }

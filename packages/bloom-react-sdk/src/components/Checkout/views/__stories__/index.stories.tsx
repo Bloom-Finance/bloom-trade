@@ -1,7 +1,7 @@
 import React from 'react'
-import { StoryFn, ComponentStory, ComponentMeta } from '@storybook/react'
+import { StoryFn, ComponentMeta } from '@storybook/react'
 import { Stack } from '@mui/system'
-import { Box, Button, MobileStepper, Paper, Step, StepContent, StepLabel, Stepper, Typography } from '@mui/material'
+import { Box, Button, Paper, Step, StepContent, StepLabel, Stepper, Typography, useTheme } from '@mui/material'
 import useResponsive from '../../../../hooks/useResponsive'
 import PreviewComponent from '../preview'
 import WaitingForApproval from '../waitingForApproval'
@@ -21,7 +21,7 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
   const mdUp = useResponsive('up', 'md')
   const { activeStep, isConnected, amountLimit } = props
   const [currencySelected, setCurrencySelected] = React.useState(null)
-
+  const theme = useTheme()
   const previewInfo = {
     token: 'dai' as StableCoin,
     chain: 'eth' as Chain,
@@ -44,6 +44,24 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
     },
   }
 
+  const cssStepsProperties = {
+    '& .MuiStepLabel-root .Mui-completed': {
+      color: theme.palette.primary.light,
+      fontWeight: 700, // circle color (COMPLETED)
+    },
+    '& .MuiStepLabel-label.Mui-completed.MuiStepLabel-alternativeLabel': {
+      color: theme.palette.primary.light, // Just text label (COMPLETED)
+    },
+    '& .MuiStepLabel-root .Mui-active': {
+      color: theme.palette.primary.main, // circle color (ACTIVE)
+    },
+    '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel': {
+      color: theme.palette.primary.main, // Just text label (ACTIVE)
+    },
+    '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
+      fill: 'white', // circle's number (ACTIVE)
+    },
+  }
   const steps = [
     {
       label: 'Please, Confirm send USD 1,500',
@@ -75,51 +93,44 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
 
   if (!mdUp)
     return (
-      <Box sx={{ maxWidth: 400, flexGrow: 1 }}>
-        <Paper
-          square
-          elevation={0}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            height: 50,
-            pl: 2,
-            bgcolor: 'background.default',
-          }}
-        >
-          <Typography>{steps[activeStep].label}</Typography>
-        </Paper>
-
-        <MobileStepper
-          variant='dots'
-          steps={steps.length}
-          position='static'
-          activeStep={activeStep}
-          backButton={undefined}
-          nextButton={undefined}
-        />
-        <Stack pt={3}>
-          {activeStep === 0 && <PreviewComponent {...previewInfo} />}
-          {activeStep === 1 && !currencySelected && (
-            <Stack
-              spacing={3}
-              direction='row'
-              justifyContent={'center'}
-              p={mdUp ? 4 : 0}
-              sx={{
-                boxShadow: mdUp
-                  ? '0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24);'
-                  : 'none',
-                borderRadius: mdUp ? '8px' : 'none',
-              }}
-            >
-              <CurrencySelectorComponent {..._currencySelectorData} />{' '}
-            </Stack>
-          )}
-          {activeStep === 1 && currencySelected && <WaitingForApproval status='pending' type='tokenApproval' />}
-          {activeStep === 2 && <WaitingForBlockchain status='pending' />}
-          {activeStep === 3 && <div>Success --- TODO</div>}
-        </Stack>
+      <Box sx={{ maxWidth: 400 }}>
+        <Stepper activeStep={activeStep} orientation='vertical'>
+          {steps.map((step, index) => (
+            <Step key={step.label} sx={cssStepsProperties}>
+              <StepLabel optional={index === 3 ? <Typography variant='caption'>Last step</Typography> : null}>
+                {step.label}
+              </StepLabel>
+              <StepContent>
+                {activeStep === 0 && <PreviewComponent {...previewInfo} />}
+                {activeStep === 1 && currencySelected && <WaitingForApproval status='pending' type='tokenApproval' />}
+                {activeStep === 1 && !currencySelected && (
+                  <Stack
+                    spacing={3}
+                    direction='row'
+                    justifyContent={'center'}
+                    p={mdUp ? 4 : 0}
+                    sx={{
+                      boxShadow: mdUp
+                        ? '0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24);'
+                        : 'none',
+                      borderRadius: mdUp ? '8px' : 'none',
+                    }}
+                  >
+                    <CurrencySelectorComponent {..._currencySelectorData} />{' '}
+                  </Stack>
+                )}
+                {activeStep === 2 && <WaitingForBlockchain status='pending' />}
+                {activeStep === 3 && <div>Success --- TODO</div>}
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
+        {activeStep + 1 === steps.length && (
+          <Paper square elevation={0} sx={{ p: 3 }}>
+            <Typography>All steps completed - you&apos;re finished</Typography>
+            <Button sx={{ mt: 1, mr: 1 }}>Reset</Button>
+          </Paper>
+        )}
       </Box>
     )
 
@@ -127,8 +138,10 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
     <Box sx={{ maxWidth: '100%' }}>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((step, index) => (
-          <Step key={step.label}>
-            <StepLabel>{index >= activeStep ? step.label : step.labelCompleted}</StepLabel>
+          <Step key={step.label} sx={cssStepsProperties}>
+            <StepLabel optional={index === 3 ? <Typography variant='caption'>Last step</Typography> : null}>
+              {index >= activeStep ? step.label : step.labelCompleted}
+            </StepLabel>
           </Step>
         ))}
       </Stepper>

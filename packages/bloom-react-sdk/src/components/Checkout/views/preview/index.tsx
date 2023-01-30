@@ -46,14 +46,16 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
     >
       <Stack>
         <Grid container>
-          <Grid item xs={12} sm={3}>
-            <Stack direction='row' alignItems={'center'} justifyContent={!mdUp ? 'center' : 'left'}>
-              <ImageAvatar />
-            </Stack>
-          </Grid>
+          {mdUp && (
+            <Grid item xs={12} sm={3}>
+              <Stack direction='row' alignItems={'center'} justifyContent={!mdUp ? 'center' : 'left'}>
+                <ImageAvatar />
+              </Stack>
+            </Grid>
+          )}
           <Grid item xs={12} sm={8}>
             <Stack
-              py={4}
+              py={mdUp ? 4 : 0}
               direction={'row'}
               alignItems={'center'}
               sx={{
