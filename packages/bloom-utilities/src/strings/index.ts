@@ -36,4 +36,25 @@ const sumTwoFloatingStrings = (a: string, b: string, decimals: number) => {
   return sum(parseFloat(a), parseFloat(b), decimals);
 };
 
-export { isBase64, stringToMilisecondsDate, sumTwoFloatingStrings };
+/**
+ * It takes a string, splits it into an array of words, capitalizes the first letter of each word, and
+ * then joins the array back into a string
+ * @param {string} word - string - the word to be capitalized
+ * @returns The capitalized word is being returned.
+ */
+const capitalize = (word: string) => {
+  const arr = word.split(' ');
+
+  //loop through each element of the array and capitalize the first letter.
+
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
+  }
+
+  //Join all the elements of the array back into a string
+  //using a blankspace as a separator
+  const str2 = arr.join(' ');
+  return str2;
+};
+
+export { isBase64, stringToMilisecondsDate, sumTwoFloatingStrings, capitalize };

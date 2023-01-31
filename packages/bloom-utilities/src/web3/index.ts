@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { StableCoin, Testnet, Chain, Asset } from '@bloom-trade/types';
+import {
+  StableCoin,
+  Testnet,
+  Chain,
+  Asset,
+  Scanners,
+} from '@bloom-trade/types';
 import {
   goerli,
   polygonMumbai,
@@ -10,6 +16,7 @@ import {
 } from 'wagmi/chains';
 import Tokens from '../data/tokens.json';
 import Contracts from '../data/bloomContracts.json';
+import Abis from '../data/abis.json';
 import Web3 from 'web3';
 
 /**
@@ -257,6 +264,90 @@ const convertDecimalsUnitToToken = (value: string, decimals: number) => {
     .toString();
 };
 
+/**
+ * It returns a URL to a blockchain explorer for a given address and chain
+ * @param {string} address - The address of the wallet you want to scan.
+ * @param {Chain | Testnet} chain - The chain you want to use.
+ * @returns A string
+ */
+const getWalletBlockchainExplorer = (
+  address: string,
+  chain: Chain | Testnet
+) => {
+  switch (chain) {
+    case 'avax':
+      return `${Scanners.avax}/address/${address}`;
+    case 'eth':
+      return `${Scanners.eth}/address/${address}`;
+    case 'polygon':
+      return `${Scanners.polygon}/address/${address}`;
+    case 'goerli':
+      return `${Scanners.goerli}/address/${address}`;
+    case 'mumbai':
+      return `${Scanners.mumbai}/address/${address}`;
+    case 'fuji':
+      return `${Scanners.fuji}/address/${address}`;
+    default:
+      return `${Scanners.eth}/address/${address}`;
+  }
+};
+const getBlockchainExplorerName = (chain: Chain | Testnet) => {
+  switch (chain) {
+    case 'avax':
+      return 'Snowtrace';
+    case 'eth':
+      return 'Etherscan';
+    case 'polygon':
+      return 'Polygonscan';
+    case 'goerli':
+      return 'Etherscan (Goerli)';
+    case 'mumbai':
+      return 'Polygonscan (Mumbai)';
+    case 'fuji':
+      return 'Snowtrace (Fuji)';
+    default:
+      return 'Etherscan';
+  }
+};
+/**
+ * It returns the ABI for the `Transfers` contract
+ * @returns The Abis.transfers object.
+ */
+
+const getTransfersAbi = () => {
+  return Abis.transfers;
+};
+
+/**
+ * It returns the ABI for the Swapper contract
+ * @returns the swapper abi.
+ */
+const getSwapperAbi = () => {
+  return Abis.swapper;
+};
+
+const getTxDetailsBlockchainExplorer = (
+  txHash: string,
+  chain: Chain | Testnet
+) => {
+  switch (chain) {
+    case 'avax':
+      return `${Scanners.avax}/tx/${txHash}`;
+    case 'eth':
+      return `${Scanners.eth}/tx/${txHash}`;
+    case 'polygon':
+      return `${Scanners.polygon}/tx/${txHash}`;
+    case 'goerli':
+      return `${Scanners.goerli}/tx/${txHash}`;
+    case 'mumbai':
+      return `${Scanners.mumbai}/tx/${txHash}`;
+    case 'fuji':
+      return `${Scanners.fuji}/tx/${txHash}`;
+    default:
+      return `${Scanners.eth}/tx/${txHash}`;
+  }
+};
+
 export {
   isWeb3WalletByAddress,
   formatWalletAddress,
@@ -270,4 +361,9 @@ export {
   getBloomContractsByChain,
   convertDecimalsUnitToToken,
   convertTokenToDecimalsUnit,
+  getWalletBlockchainExplorer,
+  getTransfersAbi,
+  getSwapperAbi,
+  getBlockchainExplorerName,
+  getTxDetailsBlockchainExplorer,
 };

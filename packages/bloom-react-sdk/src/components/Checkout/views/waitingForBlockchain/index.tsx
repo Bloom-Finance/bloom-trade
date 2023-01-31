@@ -1,14 +1,13 @@
 /* eslint-disable react/jsx-key */
-import { Chain } from '@bloom-trade/types'
-import { Grid, Stack, Typography } from '@mui/material'
+import { Chain, Testnet } from '@bloom-trade/types'
+import { getBlockchainExplorerName, getTxDetailsBlockchainExplorer } from '@bloom-trade/utilities'
+import { Grid, Link, Stack, Typography } from '@mui/material'
 import React from 'react'
 import useResponsive from '../../../../hooks/useResponsive'
 export interface Props {
-  status: 'pending' | 'failed' | 'completed'
-  txHash?: string
-  chain?: Chain
+  txHash: string
+  chain: Chain | Testnet
 }
-
 const WaitingForBlockchain = (props: Props): JSX.Element => {
   const mdUp = useResponsive('up', 'md')
 
@@ -32,10 +31,14 @@ const WaitingForBlockchain = (props: Props): JSX.Element => {
         <Grid item xs={12} md={10}>
           <Stack direction={'column'} justifyContent='center'>
             <Typography variant='body1' sx={{ fontWeight: 600 }} align={mdUp ? 'left' : 'center'} gutterBottom>
-              We sent a transaction to your wallet, please sign it to complete the payment
+              Your transaction is being processed in blockchain
             </Typography>
             <Typography variant='body1' sx={{ fontWeight: 600 }} align={mdUp ? 'left' : 'center'} gutterBottom>
-              After that, please came back here con finish the process
+              View your transaction in{' '}
+              <Link target='_blank' href={getTxDetailsBlockchainExplorer(props.txHash, props.chain)}>
+                {getBlockchainExplorerName(props.chain)}
+              </Link>{' '}
+              explorer
             </Typography>
           </Stack>
         </Grid>

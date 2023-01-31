@@ -119,7 +119,12 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
                     <CurrencySelectorComponent {..._currencySelectorData} />{' '}
                   </Stack>
                 )}
-                {activeStep === 2 && <WaitingForBlockchain status='pending' />}
+                {activeStep === 2 && (
+                  <WaitingForBlockchain
+                    txHash='0x6e9286dd5957142b0deb0ae1cabcc15d07384c7dd4a57e2d56369a865b347453'
+                    chain='goerli'
+                  />
+                )}
                 {activeStep === 3 && <div>Success --- TODO</div>}
               </StepContent>
             </Step>
@@ -164,7 +169,12 @@ const MyTemplatePage = (props: MyTemplatePageProps) => {
           </Stack>
         )}
         {activeStep === 1 && currencySelected && <WaitingForApproval type='tokenApproval' />}
-        {activeStep === 2 && <WaitingForBlockchain status='pending' />}
+        {activeStep === 2 && (
+          <WaitingForBlockchain
+            txHash='0x6e9286dd5957142b0deb0ae1cabcc15d07384c7dd4a57e2d56369a865b347453'
+            chain='goerli'
+          />
+        )}
         {activeStep === 3 && <div>Success --- TODO</div>}
       </Stack>
     </Box>

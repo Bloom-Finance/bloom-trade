@@ -16,9 +16,9 @@ const SandboxPage: NextPage = () => {
           amount: 2,
         },
         destination: {
-          chain: 'polygon',
-          address: '0x1145AE4E5bD546A485A0529faB0AC751c7709339',
-          token: 'dai',
+          chain: 'eth',
+          address: '0xF274800E82717D38d2e2ffe18A4C6489a50C5Add',
+          token: 'usdc',
           description: {
             name: 'Alex Fiorenza',
             image: 'https://avatars.githubusercontent.com/u/1378165?v=4',

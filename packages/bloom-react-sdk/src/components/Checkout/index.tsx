@@ -1,31 +1,34 @@
 /* eslint-disable react/jsx-key */
-import { Chain, Order, Testnet } from '@bloom-trade/types'
+import { Order, StableCoin, Testnet } from '@bloom-trade/types'
 import React, { useEffect, useState } from 'react'
 import PreviewComponent from './views/preview'
 import { BloomStore } from '../../store/BloomReact'
-import { useAccount, useSwitchNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import BloomServices from '@bloom-trade/services'
 import CurrencySelector from './views/currencySelector'
-import { useWeb3ModalNetwork } from '@web3modal/react'
-import { getChainIdByName, formatWalletAddress, getTestnetFromMainnet, getChainNameById } from '@bloom-trade/utilities'
+import { formatWalletAddress, getTestnetFromMainnet } from '@bloom-trade/utilities'
 import { OrderStore } from '../../store/Order'
-import { Box, Stack, Step, StepLabel, Stepper, Typography, useTheme } from '@mui/material'
+import { Box, Button, Stack, Step, StepLabel, Stepper, Typography, useTheme } from '@mui/material'
 import Sonar from '../Loaders/sonar/one-circle'
 import useResponsive from '../../hooks/useResponsive'
 import useBloom from '../../hooks/useBloom'
 import WaitingForApproval from './views/waitingForApproval'
+import WaitingForBlockchain from './views/waitingForBlockchain'
+import SummaryComponent from './views/summary'
+import ErrorComponent from '../Loaders/error'
 export interface CheckoutProps {
   order?: Omit<Order, 'from'>
   walletConnectButton: JSX.Element
 }
 
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
-  const { RequestTokenAccess, waitingForUserResponse, waitingForBlockchain } = useBloom()
+  const { RequestTokenAccess, waitingForUserResponse, waitingForBlockchain, checkChain, error, Transfer, data } =
+    useBloom()
+  const [hasRetried, setHasRetried] = useState(false)
   const mdUp = useResponsive('up', 'md')
   const store = BloomStore.useState((s) => s)
   const { isConnected, address } = useAccount()
   const [activeStep, setActiveStep] = useState(0)
-  const { switchNetwork } = useSwitchNetwork()
   const [loading, setLoading] = useState(false)
   const [balances, setBalances] = useState<any[]>([])
   const theme = useTheme()
@@ -33,7 +36,6 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     test: store.testnet || false,
   })
   const order = OrderStore.useState((s) => s.order)
-  const { selectedChain } = useWeb3ModalNetwork()
   const cssStepsProperties = {
     '& .MuiStepLabel-root .Mui-completed': {
       color: theme.palette.primary.light,
@@ -77,10 +79,11 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     }
   }, [])
   useEffect(() => {
-    if (activeStep === 1 && !waitingForUserResponse) {
+    if (activeStep === 1 && !waitingForUserResponse && !waitingForBlockchain && !error) {
       setActiveStep(2)
     }
-  }, [waitingForUserResponse])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [waitingForUserResponse, waitingForBlockchain])
   const steps = [
     {
       label: !order.total.amount ? 'You are going to send USD' : `Please, Confirm send $${order.total.amount}`,
@@ -121,9 +124,22 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     },
     {
       label: 'Please, select the token you want to use',
-      labelCompleted: `You chose ${order.from?.token}`,
+      labelCompleted: `You choose ${order.from?.token}`,
       component: waitingForUserResponse ? (
         <WaitingForApproval type='tokenApproval' amount={order.total.amount} />
+      ) : waitingForBlockchain && data?.txHash ? (
+        <WaitingForBlockchain
+          txHash={data.txHash}
+          chain={store.testnet ? (getTestnetFromMainnet(order.destination.chain) as Testnet) : order.destination.chain}
+        />
+      ) : error && !hasRetried ? (
+        <ErrorComponent
+          text='Error while approving token'
+          onRetry={() => {
+            setHasRetried(true)
+            setActiveStep(0)
+          }}
+        />
       ) : (
         <Stack
           spacing={3}
@@ -141,44 +157,83 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             amountLimit={order.total.amount.toString()}
             balances={balances}
             onSelect={async (selectedToken) => {
-              if (!selectedChain) throw new Error('Chain not supported')
-              const sourceChainId = selectedChain.id
-              const destinationChainName = store.testnet
-                ? (getTestnetFromMainnet(order.destination.chain) as Chain | Testnet)
-                : order.destination.chain
-              const destinationChainId = getChainIdByName(destinationChainName)
-              if (!sourceChainId || !destinationChainId || !switchNetwork) {
-                throw new Error('Chain not supported')
-              }
-              if (sourceChainId !== destinationChainId) {
-                switchNetwork(destinationChainId)
-              }
-              OrderStore.update((s) => {
-                s.order = {
-                  ...s.order,
-                  from: {
-                    token: selectedToken,
-                    chain: getChainNameById(sourceChainId) as Chain,
-                    address: address as string,
-                  },
+              try {
+                const { isChainCorrect, change, chains } = checkChain(order.destination.chain)
+                if (!isChainCorrect) {
+                  change()
                 }
-              })
-              //Request access to token
-              await RequestTokenAccess(
-                selectedToken,
-                destinationChainName,
-                order.total.amount.toString(),
-                selectedToken === order.destination.token ? 'transfers' : 'swapper',
-              )
+                OrderStore.update((s) => {
+                  s.order = {
+                    ...s.order,
+                    from: {
+                      token: selectedToken,
+                      chain: chains.from.name,
+                      address: address as string,
+                    },
+                  }
+                })
+                //Request access to token
+
+                await RequestTokenAccess(
+                  selectedToken,
+                  chains.to.name,
+                  order.total.amount.toString(),
+                  selectedToken === order.destination.token ? 'transfers' : 'swapper',
+                )
+              } catch (error) {
+                setHasRetried(false)
+              }
             }}
           />
         </Stack>
       ),
     },
     {
-      label: 'Approve transaction',
+      label: 'Summary and confirmation',
       labelCompleted: 'Transaction approved',
-      component: <div>To complete</div>,
+      component: waitingForUserResponse ? (
+        <WaitingForApproval type='tx' />
+      ) : waitingForBlockchain && data?.txHash ? (
+        <WaitingForBlockchain
+          txHash={data.txHash}
+          chain={store.testnet ? (getTestnetFromMainnet(order.destination.chain) as Testnet) : order.destination.chain}
+        />
+      ) : error && !hasRetried ? (
+        <ErrorComponent
+          text='Error while processing tx'
+          onRetry={() => {
+            setActiveStep(0)
+          }}
+        />
+      ) : (
+        <SummaryComponent
+          order={order}
+          actions={{
+            button: (
+              <Button
+                variant='contained'
+                onClick={() => {
+                  try {
+                    Transfer(
+                      { token: order.from?.token as StableCoin },
+                      {
+                        chain: order.destination.chain,
+                        address: order.destination.address,
+                        token: order.destination.token,
+                      },
+                      order.total.amount.toString(),
+                    )
+                  } catch (error) {
+                    setHasRetried(false)
+                  }
+                }}
+              >
+                Pay
+              </Button>
+            ),
+          }}
+        />
+      ),
     },
   ]
   const getStepper = () => {

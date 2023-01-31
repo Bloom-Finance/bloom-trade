@@ -5,6 +5,14 @@ declare namespace Bloom {
     production = 'https://api.bloom.com',
     sandbox = '/api',
   }
+  const enum Scanners {
+    goerli = 'https://goerli.etherscan.io',
+    mumbai = 'https://mumbai.polygonscan.com',
+    fuji = 'https://testnet.snowtrace.io',
+    eth = 'https://etherscan.io',
+    polygon = 'https://polygonscan.com',
+    avax = 'https://snowtrace.io',
+  }
   type IBloomServices = {
     getBalance(
       config: {
@@ -112,6 +120,7 @@ declare namespace Bloom {
     | 'snowtrace'
     | 'circle'
     | 'polygonscan';
+
   type Chain = 'eth' | 'avax' | 'polygon';
   type Testnet = 'goerli' | 'mumbai' | 'fuji';
   type CHAINS = ['eth', 'avax', 'polygon'];

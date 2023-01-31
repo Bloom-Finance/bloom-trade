@@ -1,16 +1,16 @@
 {
   "eth": {
     "testnet": {
-      "swapper": "0x63676f1Aaad4C5a9443Fb3bd1FEF6611F6A5E84E",
-      "treasure": "0x0CDc2A86A61935E4AB920054Fd204a6bB713BDC4",
-      "transfers": "0xAc45bA539d2f01995A266475D6526395353d4357"
+      "swapper": "0x760ec0C1213261d9518e18AB48639D97C9A03646",
+      "treasure": "0xC1843CE3fE074F3c4427Ee9054a3e3810123AC1A",
+      "transfers": "0xA52266a2f0c31C50899298DC41c9fFa5752f938a"
     }
   },
   "polygon": {
     "testnet": {
-      "swapper": "0x282f2593c1C7425C6bd582fb2AFEeA056f78f75B",
-      "treasure": "0x130612D9359b9A51adf9bC4289c610782904BAD1",
-      "transfers": "0xAfDa87fb56C155be167eD088cD54A3e70A5dEC73"
+      "swapper": "0xf2Bc02967231C666e0956E8F2A205efe52406EC0",
+      "treasure": "0x78A27aeFaac1F7A7F1530E095F03CA773B233325",
+      "transfers": "0xF1748e94300D8139A715Dc7804c26b2a6bF152D3"
     }
   }
 }
