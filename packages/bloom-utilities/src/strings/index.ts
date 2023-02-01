@@ -1,8 +1,6 @@
 const sum = (a: any, b: any, positions: number) => {
   const factor = Math.pow(10, positions);
-  return (
-    (a.toFixed(positions) * factor + b.toFixed(positions) * factor) / factor
-  );
+  return (a.toFixed(positions) * factor + b.toFixed(positions) * factor) / factor;
 };
 /**
  * It checks if a string is a valid base64 string
@@ -10,8 +8,7 @@ const sum = (a: any, b: any, positions: number) => {
  * @returns A boolean value.
  */
 const isBase64 = (string: string) => {
-  const base64regex =
-    /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+  const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   return base64regex.test(string);
 };
 
@@ -43,7 +40,7 @@ const sumTwoFloatingStrings = (a: string, b: string, decimals: number) => {
  * @returns The capitalized word is being returned.
  */
 const capitalize = (word: string) => {
-  const arr = word.split(' ');
+  const arr = word.split(" ");
 
   //loop through each element of the array and capitalize the first letter.
 
@@ -53,8 +50,19 @@ const capitalize = (word: string) => {
 
   //Join all the elements of the array back into a string
   //using a blankspace as a separator
-  const str2 = arr.join(' ');
+  const str2 = arr.join(" ");
   return str2;
 };
 
-export { isBase64, stringToMilisecondsDate, sumTwoFloatingStrings, capitalize };
+/**
+ * It takes a hex color code and an alpha value, and returns an rgba color code
+ * @param {any} hex - The hexadecimal color value.
+ * @param [alpha=1] - The opacity of the color.
+ * @returns A string with the rgba value of the hex color.
+ */
+const hex2rgba = (hex: any, alpha = 1) => {
+  const [r, g, b] = hex.match(/\w\w/g).map((x: string) => parseInt(x, 16));
+  return `rgba(${r},${g},${b},${alpha})`;
+};
+
+export { isBase64, stringToMilisecondsDate, sumTwoFloatingStrings, capitalize, hex2rgba };
