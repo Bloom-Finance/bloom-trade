@@ -18,6 +18,7 @@ import useResponsive from '../../../../hooks/useResponsive'
 import { OrderStore } from '../../../../store/Order'
 export interface PreviewProps {
   onContinue?: () => void
+  type: 'payout' | 'paymentRequest'
   button?: JSX.Element
   isConnected?: boolean
 }
@@ -71,10 +72,21 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
                   fontWeight: mdUp ? 'bold' : 'normal',
                 }}
               >
-                Please, fill the information below to send your payment or choose from your
-                <Typography variant='body1' component='span' px={1} fontWeight='bold'>
-                  Address Book
-                </Typography>
+                {props.type === 'payout' ? (
+                  <>
+                    Please, fill the information below to send your payment or choose from your
+                    <Typography variant='body1' component='span' px={1} fontWeight='bold'>
+                      Address Book
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    This is the information provided by the merchant in the payment request
+                    <Typography variant='body1' component='span' px={1} fontWeight='bold'>
+                      be sure to check it
+                    </Typography>
+                  </>
+                )}
               </Typography>
             </Stack>
           </Grid>
@@ -84,6 +96,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
         <Grid container rowSpacing={3} columnSpacing={2}>
           <Grid item xs={12} sm={3}>
             <TextField
+              disabled={props.type === 'paymentRequest'}
               id='displayName'
               label='Name or Display Name'
               value={order.destination.description?.name}
@@ -108,6 +121,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
           <Grid item xs={12} sm={3}>
             <TextField
               id='wallet-address'
+              disabled={props.type === 'paymentRequest'}
               onChange={(e) => {
                 OrderStore.update((s) => {
                   s.order = {
@@ -128,6 +142,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
           <Grid item xs={12} sm={3}>
             <TextField
               id='amount-address'
+              disabled={props.type === 'paymentRequest'}
               onChange={(e) => {
                 OrderStore.update((s) => {
                   s.order = {
@@ -148,6 +163,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
           </Grid>
           <Grid item xs={12} sm={3}>
             <Select
+              disabled={props.type === 'paymentRequest'}
               value={order.destination.chain}
               onChange={(e) => {
                 OrderStore.update((s) => {
@@ -169,6 +185,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
           <Grid item xs={12} sm={3}>
             <Stack spacing={2} direction='row' justifyContent={'space-around'}>
               <ToggleButtonGroup
+                disabled={props.type === 'paymentRequest'}
                 value={tokenSelected}
                 exclusive
                 onChange={(_, value) => {
@@ -184,13 +201,13 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
                   setTokenSelectd(value)
                 }}
               >
-                <ToggleButton value='usdt'>
+                <ToggleButton value='usdt' disabled={props.type === 'paymentRequest'}>
                   <Avatar src={getTokenIconBySymbol('usdt')} alt={'usdt'} />
                 </ToggleButton>
-                <ToggleButton value='usdc'>
+                <ToggleButton value='usdc' disabled={props.type === 'paymentRequest'}>
                   <Avatar src={getTokenIconBySymbol('usdc')} alt={'usdc'} />
                 </ToggleButton>
-                <ToggleButton value='dai'>
+                <ToggleButton value='dai' disabled={props.type === 'paymentRequest'}>
                   <Avatar src={getTokenIconBySymbol('dai')} alt={'dai'} />
                 </ToggleButton>
               </ToggleButtonGroup>

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@bloom-trade/finance-connector": "*",
+    "@bloom-trade/services": "*",
     "@bloom-trade/react-sdk": "*",
     "@bloom-trade/types": "*",
     "@bloom-trade/utilities": "*",

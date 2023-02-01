@@ -4,4 +4,7 @@ import CardSurfaces from './components/Surfaces/Card'
 import useBloom from './hooks/useBloom'
 import Checkout from './components/Checkout'
 import BloomReact from './components/BloomReact'
-export { Table, Scrollbar, CardSurfaces, useBloom, Checkout, BloomReact }
+import FindLoader from './components/Loaders/find/index'
+import GearsLoader from './components/Loaders/gears/index'
+import SpinCircleSimple from './components/Loaders/spin-circles/simple'
+export { Table, Scrollbar, CardSurfaces, useBloom, Checkout, FindLoader, GearsLoader, SpinCircleSimple, BloomReact }
