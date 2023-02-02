@@ -1,11 +1,10 @@
 import { Button } from '@mui/material'
 import { useWeb3Modal, useWeb3ModalNetwork } from '@web3modal/react'
-import React, { useEffect, useState } from 'react'
-import { useAccount, useNetwork, usePrepareContractWrite, useSwitchNetwork, useWaitForTransaction } from 'wagmi'
+import React, { useState } from 'react'
+import { useAccount, useSigner, useSwitchNetwork } from 'wagmi'
 import { Connector, disconnect } from '@wagmi/core'
 import { Stack } from '@mui/system'
 import { Chain, StableCoin, Testnet } from '@bloom-trade/types'
-import { useContractWrite } from 'wagmi'
 import {
   convertDecimalsUnitToToken,
   getBloomContractsByChain,
@@ -16,8 +15,8 @@ import {
   getTokenContractMetadataBySymbolAndChain,
   getTransfersAbi,
 } from '@bloom-trade/utilities'
-import { BigNumber } from 'ethers'
 import { BloomStore } from '../store/BloomReact'
+import { ethers } from 'ethers'
 export default function useBloom(params?: {
   onWalletConnect?: (
     address: `0x${string}` | undefined,
@@ -26,121 +25,28 @@ export default function useBloom(params?: {
   ) => void
 }) {
   const [waitingForUserResponse, setWaitingForUserResponse] = useState(false)
+  const { data: signer } = useSigner()
   const [lastTxData, setLastTxData] = useState<{
     txHash: string
+    transactionReceipt?: ethers.providers.TransactionReceipt
   }>()
   const [error, setError] = useState<{
-    type: 'UserRejectedRequestError' | 'common'
+    type: 'UserRejectedError' | 'common'
     message: string
   }>()
   const store = BloomStore.useState((s) => s)
   const { switchNetwork } = useSwitchNetwork()
   const { selectedChain } = useWeb3ModalNetwork()
   const [waitingForBlockchain, setWaitingForBlockchain] = useState(false)
-  const [tokenAddress, setTokenAddress] = useState<`0x${string}`>('0x')
-  const [bloomContractAddress, setBloomContractAddress] = useState<`0x${string}`>('0x')
-  const [transferContract, setTransferContract] = useState<{
-    address: `0x${string}`
-    abi: Array<any>
-    functionName: string
-    args: { to: string; amount: string }
-  }>({
-    address: '0x',
-    abi: [],
-    functionName: '',
-    args: {
-      to: '0x',
-      amount: '0',
-    },
-  })
 
-  const [fee, setFee] = useState<{
-    amount: string
-    decimals: number
-  }>({ amount: '0', decimals: 18 })
-  const { config } = usePrepareContractWrite({
-    address: tokenAddress,
-    abi: [
-      {
-        constant: false,
-        inputs: [
-          { internalType: 'address', name: 'usr', type: 'address' },
-          { internalType: 'uint256', name: 'wad', type: 'uint256' },
-        ],
-        name: 'approve',
-        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function',
-      },
-    ],
-    functionName: 'approve' as any,
-    args: [bloomContractAddress, convertDecimalsUnitToToken(fee.amount, fee.decimals) as unknown as BigNumber],
-  })
-  const { config: BloomContractConfig } = usePrepareContractWrite({
-    address: transferContract.address as `0x${string}`,
-    abi: transferContract.abi,
-    functionName: transferContract.functionName as any,
-    args: [transferContract.args.to, transferContract.args.amount],
-  })
-  const {
-    writeAsync: TransferTokens,
-    data: transferTokenData,
-    isError: isTransferError,
-    error: transferError,
-    isLoading: loadingTransfer,
-  } = useContractWrite(BloomContractConfig)
-  const {
-    writeAsync: requestToken,
-    isLoading: loadingApprove,
-    data: requestTokenData,
-    isError,
-    error: approveError,
-  } = useContractWrite(config)
   const { open, isOpen } = useWeb3Modal()
   const { isConnected } = useAccount({
     onConnect({ address, connector, isReconnected }) {
       params?.onWalletConnect?.(address, connector, isReconnected)
     },
   })
-  const { isLoading: loadingApproveTxHash } = useWaitForTransaction({
-    hash: requestTokenData?.hash,
-  })
-  const { isLoading: loadingTransferTxHash } = useWaitForTransaction({
-    hash: transferTokenData?.hash,
-  })
-  useEffect(() => {
-    setLastTxData({
-      txHash: requestTokenData?.hash as string,
-    })
-    setWaitingForUserResponse(loadingApprove)
-    setWaitingForBlockchain(loadingApproveTxHash)
-    if (isError && approveError) {
-      setError({
-        type: approveError.name as any,
-        message: approveError.message,
-      })
-    } else {
-      setError(undefined)
-    }
-  }, [loadingApprove, loadingApproveTxHash, approveError, isError])
-  useEffect(() => {
-    setLastTxData({
-      txHash: transferTokenData?.hash as string,
-    })
-    setWaitingForUserResponse(loadingTransfer)
-    setWaitingForBlockchain(loadingTransferTxHash)
 
-    if (transferError && isTransferError) {
-      setError({
-        type: transferError.name as any,
-        message: transferError.message,
-      })
-    } else {
-      setError(undefined)
-    }
-  }, [transferTokenData, isTransferError, transferError, loadingTransferTxHash, loadingTransfer])
-
+  /* A function that returns a button that connects to a wallet. */
   const walletConnectButton = (params: { icon?: 'show' | 'hide'; label?: string; disabled?: boolean }) => {
     return (
       <Button
@@ -170,58 +76,146 @@ export default function useBloom(params?: {
     )
   }
   //In order to correctly request token access, you must first be signed in to a wallet
-  const RequestTokenAccess = async (
+  /**
+   * Request token access by passing in the token, chain, amount, and type of request
+   * @param {StableCoin} token - StableCoin - The token you want to request access to.
+   * @param {Chain | Testnet} chain - Chain | Testnet
+   * @param {string} amount - The amount of the token you want to request access to.
+   * @param {'transfers' | 'swapper'} type - 'transfers' | 'swapper'
+   * @returns The txReceipt
+   */
+  const requestTokenAccess = async (
     token: StableCoin,
     chain: Chain | Testnet,
     amount: string,
     type: 'transfers' | 'swapper',
   ) => {
-    if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
-    const retrievedToken = getTokenContractMetadataBySymbolAndChain(token, chain)
-    if (!retrievedToken) throw new Error('No token found')
-    setBloomContractAddress(getBloomContractsByChain(chain, type) as `0x${string}`)
-    setFee({ amount, decimals: retrievedToken.decimals })
-    setTokenAddress(retrievedToken.address as `0x${string}`)
-    if (!requestToken) return
-    await requestToken()
+    try {
+      const ABI = [
+        {
+          constant: false,
+          inputs: [
+            { internalType: 'address', name: 'usr', type: 'address' },
+            { internalType: 'uint256', name: 'wad', type: 'uint256' },
+          ],
+          name: 'approve',
+          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+          payable: false,
+          stateMutability: 'nonpayable',
+          type: 'function',
+        },
+      ]
+      const retrievedToken = getTokenContractMetadataBySymbolAndChain(token, chain)
+      if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
+      if (!retrievedToken) throw new Error('No token found')
+      if (!signer) throw new Error('No detected signer')
+      const requestContract = new ethers.Contract(retrievedToken.address as `0x${string}`, ABI, signer)
+      setWaitingForUserResponse(true)
+      const tx = await requestContract.approve(
+        getBloomContractsByChain(chain, type) as `0x${string}`,
+        convertDecimalsUnitToToken(amount, retrievedToken.decimals),
+      )
+      setLastTxData({
+        txHash: tx.hash,
+      })
+      setWaitingForUserResponse(false)
+      setWaitingForBlockchain(true)
+      const transactionReceipt = (await tx.wait()) as ethers.providers.TransactionReceipt
+      setWaitingForBlockchain(false)
+      setLastTxData({
+        txHash: tx.hash,
+        transactionReceipt,
+      })
+      return transactionReceipt
+    } catch (error: any) {
+      setWaitingForUserResponse(false)
+      setError({
+        type: error.code === 'ACTION_REJECTED' ? 'UserRejectedError' : 'common',
+        message: error.message,
+      })
+      throw new Error('Error requesting token access')
+    }
   }
-  //Transfer tokens to the Bloom contract and then to target user
-  const Transfer = async (
+  /**
+   * It takes in a from object, a to object, and an amount, and then it checks if the chain is correct,
+   * and if it is, it sets the transfer contract, and then it transfers the tokens
+   * @param from - { token: StableCoin }
+   * @param to - { chain: Chain; token: StableCoin; address: string }
+   * @param {string} amount - The amount of tokens to transfer.
+   * @returns A transaction receipt
+   */
+  const transfer = async (
     from: { token: StableCoin },
     to: { chain: Chain; token: StableCoin; address: string },
     amount: string,
   ) => {
-    const { isChainCorrect, change } = checkChain(to.chain)
-    if (!isChainCorrect) {
-      change()
-    }
-    const type = from.token === to.token ? 'transfers' : 'swapper'
-    const bloomContract = getBloomContractsByChain(
-      store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
-      type,
-    )
-    const abi = type === 'transfers' ? getTransfersAbi() : getSwapperAbi()
-    const args = {
-      to: to.address,
-      amount: convertDecimalsUnitToToken(
-        amount,
-        getTokenContractMetadataBySymbolAndChain(from.token, to.chain)?.decimals as number,
-      ),
-    }
-
-    setTransferContract({
-      address: bloomContract as `0x${string}`,
-      abi,
-      functionName:
+    try {
+      const { isChainCorrect, change } = checkChain(to.chain)
+      if (!isChainCorrect) {
+        change()
+        return
+      }
+      if (!signer) throw new Error('No detected signer')
+      const type = from.token === to.token ? 'transfers' : 'swapper'
+      const bloomContractAddress = getBloomContractsByChain(
+        store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+        type,
+      )
+      const abi = type === 'transfers' ? getTransfersAbi() : getSwapperAbi()
+      const args = {
+        to: to.address,
+        amount: convertDecimalsUnitToToken(
+          amount,
+          getTokenContractMetadataBySymbolAndChain(from.token, to.chain)?.decimals as number,
+        ),
+      }
+      const functionName =
         type === 'transfers'
           ? `send${from.token.toUpperCase()}ToAddress`
-          : `send${from.token.toUpperCase()}To${to.token.toUpperCase()}Address`,
-      args,
-    })
-    if (!TransferTokens) return
-    TransferTokens()
+          : `send${from.token.toUpperCase()}To${to.token.toUpperCase()}Address`
+      const bloomContract = new ethers.Contract(bloomContractAddress as `0x${string}`, abi, signer)
+      setWaitingForUserResponse(true)
+      const tx = await bloomContract[functionName](args.to, args.amount)
+      setLastTxData({
+        txHash: tx.hash,
+      })
+      setWaitingForUserResponse(false)
+      setWaitingForBlockchain(true)
+      const transactionReceipt = (await tx.wait()) as ethers.providers.TransactionReceipt
+      setWaitingForBlockchain(false)
+      setLastTxData({
+        txHash: tx.hash,
+        transactionReceipt,
+      })
+      return transactionReceipt
+    } catch (error: any) {
+      setWaitingForUserResponse(false)
+      setError({
+        type: error.code === 'ACTION_REJECTED' ? 'UserRejectedError' : 'common',
+        message: error.message,
+      })
+      throw new Error('Error requesting token access')
+    }
   }
 
+  /**
+   * It checks if the current chain is the same as the desired chain, and if not, it returns an object
+   * with a function to change the chain
+   * @param {Chain} desiredChain - Chain - the chain you want to check if you're on
+   * @returns An object with three properties:
+   *   isChainCorrect: boolean
+   *   change: () => void
+   *   chains: {
+   *     from: {
+   *       name: Chain
+   *       id: number
+   *     }
+   *     to: {
+   *       name: Chain | Testnet
+   *       id: number
+   *     }
+   *   }
+   */
   const checkChain = (
     desiredChain: Chain,
   ): {
@@ -283,12 +277,12 @@ export default function useBloom(params?: {
   }
   return {
     Connect: walletConnectButton,
-    RequestTokenAccess,
+    requestTokenAccess,
+    checkChain,
+    transfer,
     waitingForUserResponse,
     waitingForBlockchain,
-    checkChain,
     error,
-    Transfer,
     data: lastTxData,
   }
 }

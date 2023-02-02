@@ -16,15 +16,19 @@ import WaitingForApproval from './views/waitingForApproval'
 import WaitingForBlockchain from './views/waitingForBlockchain'
 import SummaryComponent from './views/summary'
 import ErrorComponent from '../Loaders/error'
+import SuccessCard from './views/success'
 export interface CheckoutProps {
   order?: Omit<Order, 'from'>
+  type: 'payout' | 'paymentRequest'
   walletConnectButton: JSX.Element
+  onFinish: () => void
 }
 
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
-  const { RequestTokenAccess, waitingForUserResponse, waitingForBlockchain, checkChain, error, Transfer, data } =
+  const { requestTokenAccess, transfer, checkChain, waitingForUserResponse, waitingForBlockchain, error, data } =
     useBloom()
   const [hasRetried, setHasRetried] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
   const mdUp = useResponsive('up', 'md')
   const store = BloomStore.useState((s) => s)
   const { isConnected, address } = useAccount()
@@ -90,6 +94,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
       labelCompleted: `You will send to ${formatWalletAddress(order.destination.address)} $${order.total.amount}`,
       component: (
         <PreviewComponent
+          type={props.type}
           onContinue={async () => {
             //set connection
             setLoading(true)
@@ -161,6 +166,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                 const { isChainCorrect, change, chains } = checkChain(order.destination.chain)
                 if (!isChainCorrect) {
                   change()
+                  return
                 }
                 OrderStore.update((s) => {
                   s.order = {
@@ -173,8 +179,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                   }
                 })
                 //Request access to token
-
-                await RequestTokenAccess(
+                await requestTokenAccess(
                   selectedToken,
                   chains.to.name,
                   order.total.amount.toString(),
@@ -205,6 +210,13 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             setActiveStep(0)
           }}
         />
+      ) : showSuccess ? (
+        <SuccessCard
+          onContinue={() => {
+            setShowSuccess(false)
+          }}
+          txHash={data?.txHash}
+        />
       ) : (
         <SummaryComponent
           order={order}
@@ -212,9 +224,9 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             button: (
               <Button
                 variant='contained'
-                onClick={() => {
+                onClick={async () => {
                   try {
-                    Transfer(
+                    const txReceipt = await transfer(
                       { token: order.from?.token as StableCoin },
                       {
                         chain: order.destination.chain,
@@ -223,6 +235,9 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                       },
                       order.total.amount.toString(),
                     )
+                    if (txReceipt) {
+                      setShowSuccess(true)
+                    }
                   } catch (error) {
                     setHasRetried(false)
                   }

@@ -4,6 +4,10 @@ const SandboxPage: NextPage = () => {
   const { Connect } = useBloom();
   return (
     <Checkout
+      type='payout'
+      onFinish={() => {
+        console.log('finished');
+      }}
       order={{
         id: '4f90d13a42',
         orderId: '4f90d13a42',

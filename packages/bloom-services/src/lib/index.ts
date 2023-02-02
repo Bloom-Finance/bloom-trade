@@ -28,6 +28,22 @@ class BloomServices implements IBloomServices {
       this.url = Environment.production;
     }
   }
+  async isTokenValid<T>(
+    token: string
+  ): Promise<{ isValid: boolean; payload: T | any }> {
+    const { data } = await axios.get<{ isValid: boolean; payload: T }>(
+      `${this.url}/verifyToken?bloom=true`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return {
+      isValid: data.isValid,
+      payload: data.payload,
+    };
+  }
   async getBalance(
     config: {
       dex?: { addresses: string[]; chains?: Chain[] } | undefined;

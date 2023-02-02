@@ -1,9 +1,11 @@
-import { Stack, Typography, useTheme } from '@mui/material'
+import { Button, Stack, Typography, useTheme } from '@mui/material'
 import React from 'react'
 import Success from '../../../Loaders/success'
 
 export interface SuccessCardProps {
   size?: 'small' | 'medium' | 'large'
+  txHash?: string
+  onContinue?: () => void
 }
 
 const SuccessCard = (props: SuccessCardProps): JSX.Element => {
@@ -29,11 +31,21 @@ const SuccessCard = (props: SuccessCardProps): JSX.Element => {
           }}
         >
           <Typography variant='h5' sx={{ fontWeight: 600 }}>
-            Payment successfully
+            Payment successfull
           </Typography>
-          <Typography variant='body1' sx={{ fontWeight: 400, color: theme.palette.text.disabled }}>
-            transaction id: 0x...
-          </Typography>
+          {props.txHash && (
+            <Typography variant='body1' sx={{ fontWeight: 400, color: theme.palette.text.disabled }}>
+              transaction id: {props.txHash}
+            </Typography>
+          )}
+          <Button
+            onClick={() => {
+              props.onContinue
+            }}
+            variant='contained'
+          >
+            Continue
+          </Button>
         </Stack>
       </Stack>
     </Stack>

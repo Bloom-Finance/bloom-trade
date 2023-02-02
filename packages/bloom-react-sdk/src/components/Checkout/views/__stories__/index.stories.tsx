@@ -66,7 +66,7 @@ export const MyTemplatePage = (props: MyTemplatePageProps) => {
     {
       label: 'Please, Confirm send USD 1,500',
       labelCompleted: 'You will send to 0x123445 USD 1,500',
-      component: <PreviewComponent {...previewInfo} />,
+      component: <PreviewComponent type='payout' {...previewInfo} />,
     },
     {
       label: 'Please, select token do you want to use',
@@ -101,7 +101,7 @@ export const MyTemplatePage = (props: MyTemplatePageProps) => {
                 {step.label}
               </StepLabel>
               <StepContent>
-                {activeStep === 0 && <PreviewComponent {...previewInfo} />}
+                {activeStep === 0 && <PreviewComponent type='payout' {...previewInfo} />}
                 {activeStep === 1 && currencySelected && <WaitingForApproval type='tokenApproval' />}
                 {activeStep === 1 && !currencySelected && (
                   <Stack
@@ -151,7 +151,7 @@ export const MyTemplatePage = (props: MyTemplatePageProps) => {
         ))}
       </Stepper>
       <Stack pt={3}>
-        {activeStep === 0 && <PreviewComponent {...previewInfo} />}
+        {activeStep === 0 && <PreviewComponent type='payout' {...previewInfo} />}
         {activeStep === 1 && !currencySelected && (
           <Stack
             spacing={3}

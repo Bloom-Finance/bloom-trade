@@ -2,16 +2,16 @@ export = Bloom;
 export as namespace Bloom;
 declare namespace Bloom {
   const enum Environment {
-    production = "https://api.bloom.com",
-    sandbox = "/api",
+    production = 'https://api.bloom.com',
+    sandbox = '/api',
   }
   const enum Scanners {
-    goerli = "https://goerli.etherscan.io",
-    mumbai = "https://mumbai.polygonscan.com",
-    fuji = "https://testnet.snowtrace.io",
-    eth = "https://etherscan.io",
-    polygon = "https://polygonscan.com",
-    avax = "https://snowtrace.io",
+    goerli = 'https://goerli.etherscan.io',
+    mumbai = 'https://mumbai.polygonscan.com',
+    fuji = 'https://testnet.snowtrace.io',
+    eth = 'https://etherscan.io',
+    polygon = 'https://polygonscan.com',
+    avax = 'https://snowtrace.io',
   }
   type User = {
     userid: string;
@@ -37,6 +37,9 @@ declare namespace Bloom {
         onlyStableCoins: boolean;
       }
     ): Promise<Balance>;
+    isTokenValid<T>(
+      token: string
+    ): Promise<{ isValid: boolean; payload: any | T }>;
   };
   type Balance = {
     asset: Asset;
@@ -59,7 +62,7 @@ declare namespace Bloom {
   type BloomBankAccount = {
     id: string;
     owner: string;
-    type: "wire" | "ach" | "sepa";
+    type: 'wire' | 'ach' | 'sepa';
     country: string;
     circle: {
       isLinked: boolean;
@@ -115,24 +118,30 @@ declare namespace Bloom {
       };
     };
   };
-  type Asset = "usdt" | "usdc" | "dai" | "eth" | "btc" | "matic" | "avax";
-  type StableCoin = "usdt" | "usdc" | "dai";
-  type STABLECOINS = ["usdt", "usdc", "dai"];
-  type Provider = "binance" | "etherscan" | "coinbase" | "snowtrace" | "circle" | "polygonscan";
+  type Asset = 'usdt' | 'usdc' | 'dai' | 'eth' | 'btc' | 'matic' | 'avax';
+  type StableCoin = 'usdt' | 'usdc' | 'dai';
+  type STABLECOINS = ['usdt', 'usdc', 'dai'];
+  type Provider =
+    | 'binance'
+    | 'etherscan'
+    | 'coinbase'
+    | 'snowtrace'
+    | 'circle'
+    | 'polygonscan';
 
-  type Chain = "eth" | "avax" | "polygon";
-  type Testnet = "goerli" | "mumbai" | "fuji";
-  type CHAINS = ["eth", "avax", "polygon"];
-  type CustodialProvider = "binance" | "coinbase" | "circle";
-  type CUSTODIALPROVIDERS = ["binance", "coinbase", "circle"];
-  type BLOOM_URL = "https://api.bloom.com" | "https://localhost:3000/api";
+  type Chain = 'eth' | 'avax' | 'polygon';
+  type Testnet = 'goerli' | 'mumbai' | 'fuji';
+  type CHAINS = ['eth', 'avax', 'polygon'];
+  type CustodialProvider = 'binance' | 'coinbase' | 'circle';
+  type CUSTODIALPROVIDERS = ['binance', 'coinbase', 'circle'];
+  type BLOOM_URL = 'https://api.bloom.com' | 'https://localhost:3000/api';
   type Transaction = {
     asset: Asset;
     amount: string;
     from: string;
     to: string;
-    type: "in" | "out";
-    status: "pending" | "completed" | "failed";
+    type: 'in' | 'out';
+    status: 'pending' | 'completed' | 'failed';
     timestamp: number;
     chain?: Chain;
     provider: Provider;

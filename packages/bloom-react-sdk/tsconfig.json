@@ -1,7 +1,9 @@
 {
-  "include": ["src", "declaration.d.ts"],
+  "include": ["src", "src/styles.d.ts"],
   "exclude": ["dist", "node_modules"],
+  "files": ["src/styles.d.ts"],
   "compilerOptions": {
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
