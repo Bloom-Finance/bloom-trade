@@ -5,9 +5,11 @@ import Statistics from '../../src/sections/payouts/statistics';
 import PayOutTransactions from '../../src/sections/payouts/transactions';
 import { Button } from '@mui/material';
 import useTransactions from '../../src/hooks/useTransactions';
+import { TransactionsStore } from '../../src/store/transactions.store';
 
 const Page: NextPage = () => {
   const { refresh, fetching, weeklyIncome, weeklyOutcome } = useTransactions();
+  const store = TransactionsStore.useState((s) => s.transactions);
   return (
     <SecuredPage>
       <InternalContainer
@@ -23,7 +25,7 @@ const Page: NextPage = () => {
           </Button>
         }
       >
-        {weeklyIncome && weeklyOutcome ? (
+        {weeklyIncome !== undefined && weeklyOutcome !== undefined ? (
           <Statistics income={weeklyIncome} outcome={weeklyOutcome} />
         ) : (
           'Loading'

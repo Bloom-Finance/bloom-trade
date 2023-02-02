@@ -5,6 +5,7 @@ import { cryptoWalletServices } from '../services/cryptoWallet.services';
 import { CryptoWallet } from '../type';
 import { UserStore } from '../store/user.store';
 import { showAlert } from '../components/alert/handler';
+import { authService } from '../services/auth.services';
 
 interface Wallet extends CryptoWallet {
   balance: {
@@ -53,11 +54,11 @@ export default function useWallets(userId: string) {
       };
       const {
         data: { balance: balances },
-      } = await axios.post<{ balance: Balance }>('/api/wallets/balances', {
+      } = await axios.post<{ balance: Balance }>('/api/wallets/balance', {
         providers: [provider],
       });
       const circleBalance = balances.filter((balance) =>
-        STABLES.includes(balance.asset)
+        STABLES.includes(balance.asset.toUpperCase())
       )[0];
       if (circleBalance.balance !== wallet.balance.amount) {
         //Balance is different => update wallet
@@ -90,7 +91,7 @@ export default function useWallets(userId: string) {
         addresses: [address],
       });
       const stableCoinsBalances = balances.filter((balance) =>
-        STABLES.includes(balance.asset)
+        STABLES.includes(balance.asset.toUpperCase())
       );
       //Proceso si y solo si los balances son distintos =>
       let totalBalance = '0';
@@ -171,13 +172,20 @@ export default function useWallets(userId: string) {
     });
     const {
       data: { balance: balances },
-    } = await axios.post<{ balance: Balance }>('/api/wallets/balances', {
-      addresses,
-      providers,
-    });
-
+    } = await axios.post<{ balance: Balance }>(
+      '/api/wallets/balance',
+      {
+        addresses,
+        providers,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authService.getToken()}`,
+        },
+      }
+    );
     const stableCoinsBalances = balances.filter((balance) =>
-      STABLES.includes(balance.asset)
+      STABLES.includes(balance.asset.toUpperCase())
     );
     stableCoinsBalances.forEach((balance) => {
       balance.detail.forEach((detail) => {
