@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 import useResponsive from '../../hooks/useResponsive'
 import { Header } from '../Header'
 import { Logo } from '../Logo'
-import { NavigatorMenu } from '../Navigator'
+import { ItemNavigatorSpec, NavigationOptions, NavigatorMenu } from '../Navigator'
 
 export interface PageProps {
   children?: React.ReactNode
@@ -14,10 +14,12 @@ export interface PageProps {
     title: string
     actions?: React.ReactNode
   }
+  currentLink: string
+  navigationItems: ItemNavigatorSpec[]
 }
 
 export const Page: FC<PageProps> = (props) => {
-  const { user, logo } = props
+  const { user, logo, navigationItems } = props
   const [showMenu, setShowMenu] = React.useState(false)
   const mdUp = useResponsive('up', 'md')
   return (
@@ -42,7 +44,8 @@ export const Page: FC<PageProps> = (props) => {
       >
         <NavigatorMenu
           user={user}
-          selected='overview'
+          items={navigationItems}
+          selected={props.currentLink as NavigationOptions}
           logo={logo}
           sx={{
             width: mdUp ? '30%' : '100%',
@@ -52,8 +55,9 @@ export const Page: FC<PageProps> = (props) => {
       </Drawer>
       {mdUp && (
         <NavigatorMenu
+          items={navigationItems}
           user={user}
-          selected='overview'
+          selected={props.currentLink as NavigationOptions}
           logo={logo}
           sx={{
             width: '30%',

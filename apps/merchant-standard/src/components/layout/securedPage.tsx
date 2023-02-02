@@ -9,10 +9,12 @@ import { BloomReact, Logo, Page } from "@bloom-trade/react-sdk";
 import { authService } from "../../services/auth.services";
 import { User } from "@bloom-trade/types";
 import useAuth from "../../hooks/useAuth";
+import { useRouter } from "next/router";
 
 interface Props {
   children: React.ReactNode;
   title?: string;
+  currentLink?: string;
 }
 
 const LogoLarge = () => {
@@ -80,6 +82,39 @@ const LogoSmall = () => {
 const Component = (props: Props): JSX.Element => {
   const mdUp = useResponsive("up", "md");
   const { getUserLoggedIn } = useAuth();
+  const router = useRouter();
+  const itemsNavigatorMenu = [
+    {
+      id: "overview",
+      icon: "iconoir:stats-down-square",
+      text: "Overview",
+      navigate: () => router.push("/dashboard"),
+    },
+    {
+      id: "my-wallets",
+      icon: "uiw:pay",
+      text: "My Wallets",
+      navigate: () => router.push("/wallets"),
+    },
+    {
+      id: "payment-request",
+      icon: "ph:rocket",
+      text: "Payment Request",
+      navigate: () => router.push("/payments/paymentRequest"),
+    },
+    {
+      id: "payouts",
+      icon: "icon-park-outline:bitcoin",
+      text: "Payout",
+      navigate: () => router.push("/payments/payout"),
+    },
+    {
+      id: "plugins-integrations",
+      icon: "clarity:plugin-outline-badged",
+      text: "Plugins",
+      navigate: () => router.push("/integrations"),
+    },
+  ];
 
   return (
     <BloomReact apiKey={authService.getToken() as string} useTestnet={true}>
@@ -89,6 +124,7 @@ const Component = (props: Props): JSX.Element => {
         </Stack>
 
         <Page
+          currentLink={props.currentLink as string}
           logo={
             <Logo
               image={{
@@ -101,6 +137,7 @@ const Component = (props: Props): JSX.Element => {
           header={{
             title: props.title as string,
           }}
+          navigationItems={itemsNavigatorMenu}
         >
           {props.children}
         </Page>

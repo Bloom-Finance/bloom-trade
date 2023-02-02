@@ -1,11 +1,10 @@
 import React from 'react'
 import { StoryFn, ComponentMeta, Meta } from '@storybook/react'
-
-import { Button, Stack } from '@mui/material'
 import { Logo } from '../../../Logo'
 import { MyTemplatePage } from '../../../Checkout/views/__stories__/index.stories'
 import { User } from '@bloom-trade/types'
 import { Page } from '../../../Containers/page'
+import { itemsNavigatorMenu } from '../../../Navigator/__stories__/nav.stories'
 
 const LogoLarge = () => {
   return (
@@ -78,6 +77,7 @@ const user: User = {
 interface MyPageProps {
   children?: React.ReactNode
   title: string
+  currentLink: string
 }
 
 const MyPage = (props: MyPageProps) => {
@@ -95,6 +95,8 @@ const MyPage = (props: MyPageProps) => {
       header={{
         title: props.title,
       }}
+      currentLink={props.currentLink}
+      navigationItems={itemsNavigatorMenu}
     >
       {props.children}
     </Page>
@@ -121,7 +123,7 @@ export default {
 
 export const EmptyPageVariaton: StoryFn = (args) => {
   return (
-    <MyPage {...args} title='Example Page'>
+    <MyPage {...args} title='Example Page' currentLink='overview'>
       Empty Page
     </MyPage>
   )
@@ -129,7 +131,7 @@ export const EmptyPageVariaton: StoryFn = (args) => {
 
 export const CheckoutPageVariaton: StoryFn = (args) => {
   return (
-    <MyPage {...args} title='Payout'>
+    <MyPage {...args} title='Payout' currentLink='payouts'>
       <MyTemplatePage title='Payout' isConnected={false} activeStep={0} amountLimit={'100'} />
     </MyPage>
   )

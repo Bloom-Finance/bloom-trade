@@ -14,8 +14,15 @@ import {
 import React, { FC } from 'react'
 import useResponsive from '../../hooks/useResponsive'
 import Iconify from '../Iconify'
-import { Logo } from '../Logo'
+
 import { UserComponent } from '../User'
+
+export type ItemNavigatorSpec = {
+  id: string
+  icon: string
+  text: string
+  navigate: () => void
+}
 
 export interface NavigatorMenuProps {
   children?: React.ReactNode
@@ -23,40 +30,16 @@ export interface NavigatorMenuProps {
   user: User
   logo?: React.ReactNode
   sx?: any
+  items: ItemNavigatorSpec[]
 }
+
 export type NavigationOptions = 'overview' | 'payment-request' | 'plugins-integrations' | 'payouts' | 'my-wallets'
-const items = [
-  {
-    id: 'overview',
-    icon: 'iconoir:stats-down-square',
-    text: 'Overview',
-  },
-  {
-    id: 'my-wallets',
-    icon: 'uiw:pay',
-    text: 'My Wallets',
-  },
-  {
-    id: 'payment-request',
-    icon: 'ph:rocket',
-    text: 'Payment Request',
-  },
-  {
-    id: 'payouts',
-    icon: 'icon-park-outline:bitcoin',
-    text: 'Payout',
-  },
-  {
-    id: 'plugins-integrations',
-    icon: 'clarity:plugin-outline-badged',
-    text: 'Plugins',
-  },
-]
 
 export const NavigatorMenu: FC<NavigatorMenuProps> = (props) => {
-  const { selected, sx } = props
+  const { selected, sx, items } = props
   const mdUp = useResponsive('up', 'md')
   const theme = useTheme()
+
   return (
     <Stack
       height={'100%'}
@@ -83,6 +66,7 @@ export const NavigatorMenu: FC<NavigatorMenuProps> = (props) => {
         >
           {items.map((item) => (
             <ListItem
+              onClick={() => item.navigate()}
               key={item.text}
               sx={{
                 backgroundColor: selected === item.id ? hex2rgba(theme.palette.primary.light, 0.12) : 'transparent',
