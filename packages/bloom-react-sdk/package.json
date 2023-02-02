@@ -2,6 +2,7 @@
   "name": "@bloom-trade/react-sdk",
   "version": "0.0.19",
   "author": "Bloom Trade",
+  "private": "true",
   "main": "./dist/esm/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
