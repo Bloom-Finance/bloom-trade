@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
@@ -14,8 +13,8 @@ import React from 'react';
 import useResponsive from '../../hooks/useResponsive';
 import Iconify from '../Iconify';
 import NoItemsCard from '../noItemsCard';
-import WalletCard from '../walletCard';
 import WalletInfo from '../walletCard/walletInfoForm';
+import { WalletCard } from '@bloom-trade/react-sdk';
 import _ from 'lodash';
 import { UserStore } from '../../store/user.store';
 import useWallets from '../../hooks/useWallets';
@@ -99,8 +98,7 @@ const Component = (props: Props): JSX.Element => {
               loadingBalance={loading.balances}
               key={wallet.address}
               wallet={wallet}
-              brand={wallet.brand}
-              onRefreshWallet={async (w) => await refreshOneWallet(w)}
+              onRefreshWallet={async (w: any) => await refreshOneWallet(w)}
             />
           ))}
           <Box>

@@ -5,6 +5,7 @@ import {
   Chain,
   Asset,
   Scanners,
+  Brand,
 } from '@bloom-trade/types';
 import {
   goerli,

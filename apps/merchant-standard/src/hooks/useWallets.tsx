@@ -6,19 +6,7 @@ import { CryptoWallet } from '../type';
 import { UserStore } from '../store/user.store';
 import { showAlert } from '../components/alert/handler';
 import { authService } from '../services/auth.services';
-
-interface Wallet extends CryptoWallet {
-  balance: {
-    amount: string;
-    detail: {
-      address?: string;
-      balance?: string;
-      chain?: string;
-      provider: string;
-      currency: string;
-    }[];
-  };
-}
+import { Wallet } from '@bloom-trade/types';
 
 export default function useWallets(userId: string) {
   const STABLES = ['USDC', 'USDT', 'DAI'];

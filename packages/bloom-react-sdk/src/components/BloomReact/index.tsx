@@ -1,7 +1,7 @@
 import withPreCheckStore from '../../controls/preCheckApiKey'
 
 export interface IBloomReactProps {
-  apiKey: string
+  credentials: string
   useTestnet?: boolean
   children: JSX.Element
 }
