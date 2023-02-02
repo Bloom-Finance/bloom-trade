@@ -7,4 +7,19 @@ import BloomReact from './components/BloomReact'
 import FindLoader from './components/Loaders/find/index'
 import GearsLoader from './components/Loaders/gears/index'
 import SpinCircleSimple from './components/Loaders/spin-circles/simple'
-export { Table, Scrollbar, CardSurfaces, useBloom, Checkout, FindLoader, GearsLoader, SpinCircleSimple, BloomReact }
+import { Page } from './components/Containers/page'
+import { Logo } from './components/Logo'
+
+export {
+  Table,
+  Scrollbar,
+  CardSurfaces,
+  useBloom,
+  Checkout,
+  FindLoader,
+  GearsLoader,
+  SpinCircleSimple,
+  BloomReact,
+  Page,
+  Logo,
+}

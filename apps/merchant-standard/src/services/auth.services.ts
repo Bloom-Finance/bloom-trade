@@ -1,16 +1,12 @@
-import axios from 'axios';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import {
-  SessionUser,
-  Web3AuthSessionPayloadSocialMedia,
-  Web3AuthSessionPayloadWeb3,
-} from '../type';
+import axios from "axios";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { SessionUser, Web3AuthSessionPayloadSocialMedia, Web3AuthSessionPayloadWeb3 } from "../type";
 interface IAuthService {
   getUserSession(): Promise<SessionUser | undefined>;
   decodeToken(token: string): Promise<jwt.JwtPayload>;
   verifyWeb3AuthToken(
     token: string,
-    type: 'social' | 'web3'
+    type: "social" | "web3"
   ): Promise<{
     payload: Web3AuthSessionPayloadSocialMedia | Web3AuthSessionPayloadWeb3;
     isValid: boolean;
@@ -22,8 +18,8 @@ interface IAuthService {
 class AuthService implements IAuthService {
   constructor() {}
   getToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('bloom:token');
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("bloom:token");
     }
     return null;
   }
@@ -31,13 +27,13 @@ class AuthService implements IAuthService {
     localStorage.setItem(key, token);
   }
   async createToken(payload: SessionUser): Promise<string> {
-    const { data } = await axios.post('/api/createToken', { payload });
-    this.saveToken(data.token, 'bloom:token');
+    const { data } = await axios.post("/api/createToken", { payload });
+    this.saveToken(data.token, "bloom:token");
     return data.token as string;
   }
   async verifyWeb3AuthToken(
     token: string,
-    type: 'social' | 'web3'
+    type: "social" | "web3"
   ): Promise<{
     payload: Web3AuthSessionPayloadSocialMedia | Web3AuthSessionPayloadWeb3;
     isValid: boolean;
@@ -51,7 +47,7 @@ class AuthService implements IAuthService {
     return data;
   }
   async getUserSession(): Promise<SessionUser | undefined> {
-    const token = localStorage.getItem('bloom:token') as string;
+    const token = localStorage.getItem("bloom:token") as string;
     if (!token) return;
     const user = (await this.decodeToken(token)) as SessionUser;
     return user;
@@ -62,14 +58,14 @@ class AuthService implements IAuthService {
       const { data } = await axios.get<{
         isValid: boolean;
         payload: JwtPayload;
-      }>('/api/verifyToken?bloom=true', {
+      }>("/api/verifyToken?bloom=true", {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
       return data.payload;
     } catch (error) {
-      throw new Error('Invalid token');
+      throw new Error("Invalid token");
     }
   }
 }
