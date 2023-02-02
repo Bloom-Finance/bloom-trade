@@ -11,10 +11,20 @@ export interface UserComponentProps {
 export const UserComponent: FC<UserComponentProps> = (props) => {
   const { user, size, sx } = props
 
+  const getSize = () => {
+    switch (size) {
+      case 'sm':
+        return 'small'
+      case 'md':
+        return 'medium'
+      case 'lg':
+        return 'large'
+    }
+  }
   return (
     <Stack direction='row' spacing={2} alignItems={'center'} sx={sx} py={1}>
       <Avatar
-        sizes='large'
+        sizes={getSize()}
         sx={{
           bgcolor: 'primary.light',
         }}

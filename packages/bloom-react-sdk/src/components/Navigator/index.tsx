@@ -14,12 +14,15 @@ import {
 import React, { FC } from 'react'
 import useResponsive from '../../hooks/useResponsive'
 import Iconify from '../Iconify'
+import { Logo } from '../Logo'
 import { UserComponent } from '../User'
 
 export interface NavigatorMenuProps {
   children?: React.ReactNode
   selected: NavigationOptions
   user: User
+  logo?: React.ReactNode
+  sx?: any
 }
 export type NavigationOptions = 'overview' | 'payment-request' | 'plugins-integrations' | 'payouts' | 'my-wallets'
 const items = [
@@ -51,7 +54,7 @@ const items = [
 ]
 
 export const NavigatorMenu: FC<NavigatorMenuProps> = (props) => {
-  const { selected } = props
+  const { selected, sx } = props
   const mdUp = useResponsive('up', 'md')
   const theme = useTheme()
   return (
@@ -61,72 +64,81 @@ export const NavigatorMenu: FC<NavigatorMenuProps> = (props) => {
       justifyContent={'space-between'}
       spacing={2}
       sx={{
+        ...sx,
         maxWidth: mdUp ? 300 : '100%',
         borderRight: mdUp ? `1px solid ${hex2rgba(theme.palette.text.secondary, 0.2)}` : 'none',
       }}
     >
-      <List
-        sx={{
-          px: 2,
-        }}
-      >
-        {items.map((item) => (
-          <ListItem
-            key={item.text}
-            sx={{
-              backgroundColor: selected === item.id ? hex2rgba(theme.palette.primary.light, 0.12) : 'transparent',
-              // border: selected === item.id ? `1px solid ${hex2rgba(theme.palette.primary.light, 0.2)}` : 'none',
-              borderRadius: '8px',
-              height: 48,
-            }}
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <Iconify
-                  icon={item.icon}
-                  fontSize={24}
-                  sx={{
-                    color: selected === item.id ? theme.palette.primary.light : theme.palette.text.secondary,
-                  }}
-                />
-              </ListItemIcon>
-              <ListItemText
-                primaryTypographyProps={{
-                  color: selected === item.id ? theme.palette.primary.light : theme.palette.text.secondary,
-                  fontWeight: selected === item.id ? 'semi-bold' : 'regular',
-                  variant: 'body2',
-                }}
-                primary={item.text}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-
-      <Stack direction='column'>
-        <Divider />
+      {mdUp && (
+        <Stack px={4} pt={4} pb={mdUp ? 2 : 2}>
+          {props.logo}
+        </Stack>
+      )}
+      <Stack direction='column' justifyContent={'space-between'} spacing={2} height='100%'>
         <List
           sx={{
             px: 2,
+            pt: !mdUp ? 4 : 0,
           }}
         >
-          <ListItem
-            secondaryAction={
-              <IconButton edge='end' aria-label='comments'>
-                <Iconify icon='bx:bx-log-out' fontSize={24} />
-              </IconButton>
-            }
-            disablePadding
-          >
-            <UserComponent
-              user={props.user}
-              size={'md'}
+          {items.map((item) => (
+            <ListItem
+              key={item.text}
               sx={{
-                px: 2,
+                backgroundColor: selected === item.id ? hex2rgba(theme.palette.primary.light, 0.12) : 'transparent',
+                // border: selected === item.id ? `1px solid ${hex2rgba(theme.palette.primary.light, 0.2)}` : 'none',
+                borderRadius: '8px',
+                height: 48,
               }}
-            />
-          </ListItem>
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <Iconify
+                    icon={item.icon}
+                    fontSize={24}
+                    sx={{
+                      color: selected === item.id ? theme.palette.primary.light : theme.palette.text.secondary,
+                    }}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primaryTypographyProps={{
+                    color: selected === item.id ? theme.palette.primary.light : theme.palette.text.secondary,
+                    fontWeight: selected === item.id ? 'semi-bold' : 'regular',
+                    variant: 'body2',
+                  }}
+                  primary={item.text}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
+
+        <Stack direction='column'>
+          <Divider />
+          <List
+            sx={{
+              px: 2,
+            }}
+          >
+            <ListItem
+              secondaryAction={
+                <IconButton edge='end' aria-label='comments'>
+                  <Iconify icon='bx:bx-log-out' fontSize={24} />
+                </IconButton>
+              }
+              disablePadding
+            >
+              <UserComponent
+                user={props.user}
+                size={'md'}
+                sx={{
+                  px: 2,
+                }}
+              />
+            </ListItem>
+          </List>
+        </Stack>
       </Stack>
     </Stack>
   )

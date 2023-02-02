@@ -10,14 +10,14 @@ import CurrencySelectorComponent from '../currencySelector'
 import WaitingForBlockchain from '../waitingForBlockchain'
 import { Chain, StableCoin } from '@bloom-trade/types'
 
-interface MyTemplatePageProps {
+export interface MyTemplatePageProps {
   title: string
   activeStep: number
   isConnected: boolean
   amountLimit: string
 }
 
-const MyTemplatePage = (props: MyTemplatePageProps) => {
+export const MyTemplatePage = (props: MyTemplatePageProps) => {
   const mdUp = useResponsive('up', 'md')
   const { activeStep, isConnected, amountLimit } = props
   const [currencySelected, setCurrencySelected] = React.useState(null)
