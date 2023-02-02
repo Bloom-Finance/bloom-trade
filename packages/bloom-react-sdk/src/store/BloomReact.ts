@@ -1,13 +1,13 @@
 import { Store } from 'pullstate'
 
 interface IBloomStore {
-  apiKey: string
+  credentials: string
   url: string
   testnet: boolean
 }
 
 export const BloomStore = new Store<IBloomStore>({
-  apiKey: '',
+  credentials: '',
   url: '',
   testnet: false,
 })

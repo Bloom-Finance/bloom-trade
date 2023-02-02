@@ -117,7 +117,7 @@ const Component = (props: Props): JSX.Element => {
   ];
 
   return (
-    <BloomReact apiKey={authService.getToken() as string} useTestnet={true}>
+    <BloomReact credentials={authService.getToken() as string} useTestnet={true}>
       <Stack>
         <Stack direction="row" position={"absolute"} width="100%" justifyContent={"center"} top={10}>
           <Alert />

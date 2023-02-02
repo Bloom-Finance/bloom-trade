@@ -1,79 +1,60 @@
-import { Button, Stack, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import Iconify from '../Iconify';
-import Image from 'next/image';
-import { height } from '@mui/system';
-import useResponsive from '../../hooks/useResponsive';
-import { formatWalletAddress } from '../../utils/wallets';
-import Loader from '../loader';
-import { Brands, CryptoWallet } from '../../type';
-import { showAlert } from '../alert/handler';
-interface Wallet extends CryptoWallet {
-  balance: {
-    amount: string;
-    detail: {
-      address?: string;
-      balance?: string;
-      chain?: string;
-      provider: string;
-      currency: string;
-    }[];
-  };
-}
-interface Props {
-  brand: Brands;
-  wallet: Wallet;
-  loadingBalance: boolean;
-  onRefreshWallet?: (wallet: Wallet) => Promise<void>;
-  isRefreshingWallet?: { id: string } | undefined;
+import React, { useState } from 'react'
+import { Brand, Wallet } from '@bloom-trade/types'
+import { Button, Stack, Typography } from '@mui/material'
+import Iconify from '../Iconify'
+import { formatWalletAddress } from '@bloom-trade/utilities'
+import useResponsive from '../../hooks/useResponsive'
+import Trust from '../../assets/trust'
+import Circle from '../../assets/circle'
+import MetaMask from '../../assets/mm'
+
+export interface WalletProps {
+  wallet: Wallet
+  loadingBalance: boolean
+  onRefreshWallet?: (wallet: Wallet) => Promise<void>
+  isRefreshingWallet?: { id: string } | undefined
 }
 
-const Component = (props: Props): JSX.Element => {
-  const mdUp = useResponsive('up', 'md');
-  const [showingFront, setShowingFront] = useState(true);
+const Component = (props: WalletProps): JSX.Element => {
+  const mdUp = useResponsive('up', 'md')
+  const [showingFront, setShowingFront] = useState(true)
   const getName = () => {
-    switch (props.brand) {
+    switch (props.wallet.brand) {
       case 'mm':
-        return 'MetaMask';
+        return 'MetaMask'
       case 'walletConnect':
-        return 'WalletConnect';
+        return 'WalletConnect'
       case 'circle':
-        return 'Circle';
+        return 'Circle'
       default:
-        return 'Not Defined';
+        return 'Not Defined'
     }
-  };
+  }
   const getColor = () => {
-    if (props.brand === 'mm')
+    if (props.wallet.brand === 'mm')
       return {
         r: 246,
         g: 133,
         b: 26,
-      };
+      }
 
-    if (props.brand === 'circle')
+    if (props.wallet.brand === 'circle')
       return {
         r: 10,
         g: 10,
         b: 183,
-      };
+      }
 
     return {
       r: 0, //247,
       g: 0, //42,
       b: 0, //145,
-    };
-  };
+    }
+  }
 
   const Waves = () => {
     return (
-      <svg
-        width='103'
-        height='373'
-        viewBox='0 0 103 373'
-        fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-      >
+      <svg width='103' height='373' viewBox='0 0 103 373' fill='none' xmlns='http://www.w3.org/2000/svg'>
         <path
           fillRule='evenodd'
           clipRule='evenodd'
@@ -81,8 +62,8 @@ const Component = (props: Props): JSX.Element => {
           fill={`rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 1)`}
         />
       </svg>
-    );
-  };
+    )
+  }
 
   const LogoWallet = () => {
     return (
@@ -97,38 +78,38 @@ const Component = (props: Props): JSX.Element => {
           borderRadius: '8px',
         }}
       >
-        {props.brand !== 'notDefined' && (
-          <Image
-            src={`/wallets/${props.brand}.svg`}
-            height={40}
-            width={40}
-            alt='wallet'
-          />
-        )}
+        {getIconByBrand(props.wallet.brand)}
       </Stack>
-    );
-  };
+    )
+  }
+  const getIconByBrand = (brand: Brand) => {
+    switch (brand) {
+      case 'mm':
+        return <MetaMask />
+      case 'walletConnect':
+        return <Iconify icon='mdi:wallet-connect' />
+      case 'circle':
+        return <Circle />
+      case 'trust':
+        return <Trust />
+      default:
+        return <Iconify icon='mdi:wallet' />
+    }
+  }
+
   const WalletData = (wallet: Wallet) => {
     return (
       <Stack>
         <Button
-          disabled={
-            props.loadingBalance || props.isRefreshingWallet !== undefined
-          }
+          disabled={props.loadingBalance || props.isRefreshingWallet !== undefined}
           variant='contained'
           onClick={() =>
-            props.onRefreshWallet
-              ? props.onRefreshWallet(wallet)
-              : showAlert('No refresh function defined', 'error')
+            props.onRefreshWallet ? props.onRefreshWallet(wallet) : new Error('No refresh function defined')
           }
         >
           Refresh
         </Button>
-        <Typography
-          variant='h4'
-          pt={mdUp ? 2 : 0}
-          sx={{ color: showingFront ? '#fff' : '#212B36' }}
-        >
+        <Typography variant='h4' pt={mdUp ? 2 : 0} sx={{ color: showingFront ? '#fff' : '#212B36' }}>
           {getName()}
         </Typography>
         <Typography
@@ -140,8 +121,8 @@ const Component = (props: Props): JSX.Element => {
           {formatWalletAddress(props.wallet.address)}
         </Typography>
       </Stack>
-    );
-  };
+    )
+  }
 
   const WalletBalance = () => {
     return (
@@ -154,22 +135,16 @@ const Component = (props: Props): JSX.Element => {
         >
           Your Balance
         </Typography>
-        <Typography
-          variant='h4'
-          sx={{ color: showingFront ? '#fff' : '#212B36' }}
-        >
+        <Typography variant='h4' sx={{ color: showingFront ? '#fff' : '#212B36' }}>
           {props.loadingBalance ||
-          (props.isRefreshingWallet !== undefined &&
-            props.isRefreshingWallet.id === props.wallet.id) ||
-          props.wallet.balance.amount === '-1' ? (
-            <Loader />
-          ) : (
-            `$ ${props.wallet.balance.amount}`
-          )}
+          (props.isRefreshingWallet !== undefined && props.isRefreshingWallet.id === props.wallet.id) ||
+          props.wallet.balance.amount === '-1'
+            ? 'Loading ...'
+            : `$ ${props.wallet.balance.amount}`}
         </Typography>
       </Stack>
-    );
-  };
+    )
+  }
 
   if (!mdUp)
     return (
@@ -195,28 +170,17 @@ const Component = (props: Props): JSX.Element => {
           sx={{
             width: '325px',
             height: '200px',
-            background: showingFront
-              ? `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) `
-              : '#fff',
+            background: showingFront ? `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) ` : '#fff',
             border: showingFront
               ? 'none'
-              : `  1px solid rgba(${getColor().r}, ${getColor().g}, ${
-                  getColor().b
-                }, 0.24) `,
+              : `  1px solid rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.24) `,
             borderRadius: '16px',
             p: 3,
 
-            boxShadow: ` 4px 4px 4px rgba(${getColor().r}, ${getColor().g}, ${
-              getColor().b
-            }, 0.2)`,
+            boxShadow: ` 4px 4px 4px rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.2)`,
           }}
         >
-          <Stack
-            direction='row'
-            spacing={2}
-            alignItems='center'
-            justifyContent={'space-between'}
-          >
+          <Stack direction='row' spacing={2} alignItems='center' justifyContent={'space-between'}>
             <Stack direction='row' spacing={2} alignItems='center'>
               <LogoWallet />
               {WalletData(props.wallet)}
@@ -248,7 +212,7 @@ const Component = (props: Props): JSX.Element => {
           </Stack>
         </Stack>
       </Stack>
-    );
+    )
 
   return (
     <Stack position='relative'>
@@ -263,14 +227,8 @@ const Component = (props: Props): JSX.Element => {
         sx={{
           width: '231px',
           height: '373px',
-          background: showingFront
-            ? `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) `
-            : '#fff',
-          border: showingFront
-            ? 'none'
-            : `  1px solid rgba(${getColor().r}, ${getColor().g}, ${
-                getColor().b
-              }, 0.24) `,
+          background: showingFront ? `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) ` : '#fff',
+          border: showingFront ? 'none' : `  1px solid rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.24) `,
           borderRadius: '16px',
           p: 3,
 
@@ -278,11 +236,7 @@ const Component = (props: Props): JSX.Element => {
         }}
       >
         <Stack spacing={1} zIndex={8}>
-          <Stack
-            direction='row'
-            justifyContent={'space-between'}
-            alignItems='center'
-          >
+          <Stack direction='row' justifyContent={'space-between'} alignItems='center'>
             <LogoWallet />
             {showingFront && (
               <Iconify
@@ -312,7 +266,7 @@ const Component = (props: Props): JSX.Element => {
         <WalletBalance />
       </Stack>
     </Stack>
-  );
-};
+  )
+}
 
-export default Component;
+export default Component

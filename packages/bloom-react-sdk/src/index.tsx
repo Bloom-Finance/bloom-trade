@@ -9,6 +9,7 @@ import GearsLoader from './components/Loaders/gears/index'
 import SpinCircleSimple from './components/Loaders/spin-circles/simple'
 import { Page } from './components/Containers/page'
 import { Logo } from './components/Logo'
+import WalletCard from './components/Wallets'
 
 export {
   Table,
@@ -22,4 +23,5 @@ export {
   BloomReact,
   Page,
   Logo,
+  WalletCard,
 }
