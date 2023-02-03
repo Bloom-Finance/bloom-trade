@@ -100,7 +100,7 @@ const Component = (props: Props): JSX.Element => {
       id: "payment-request",
       icon: "ph:rocket",
       text: "Payment Request",
-      navigate: () => router.push("/payments/paymentRequest"),
+      navigate: () => router.push("/paymentRequest"),
     },
     {
       id: "payouts",

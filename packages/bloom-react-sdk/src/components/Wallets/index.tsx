@@ -7,6 +7,7 @@ import useResponsive from '../../hooks/useResponsive'
 import Trust from '../../assets/trust'
 import Circle from '../../assets/circle'
 import MetaMask from '../../assets/mm'
+import styled from '@emotion/styled'
 
 export interface WalletProps {
   wallet: Wallet
@@ -18,6 +19,11 @@ export interface WalletProps {
 const Component = (props: WalletProps): JSX.Element => {
   const mdUp = useResponsive('up', 'md')
   const [showingFront, setShowingFront] = useState(true)
+
+  const _isLoading =
+    (props.isRefreshingWallet !== undefined && props.isRefreshingWallet.id === props.wallet.id) ||
+    props.wallet.balance.amount === '-1'
+
   const getName = () => {
     switch (props.wallet.brand) {
       case 'mm':
@@ -125,6 +131,12 @@ const Component = (props: WalletProps): JSX.Element => {
   }
 
   const WalletBalance = () => {
+    const StackSkeleton = styled(Stack)`
+      background-color: 'red';
+      color: 'red';
+      width: 200px;
+      height: 20px;
+    `
     return (
       <Stack spacing={1} pb={1} zIndex={8}>
         <Typography
@@ -135,13 +147,14 @@ const Component = (props: WalletProps): JSX.Element => {
         >
           Your Balance
         </Typography>
-        <Typography variant='h4' sx={{ color: showingFront ? '#fff' : '#212B36' }}>
-          {props.loadingBalance ||
-          (props.isRefreshingWallet !== undefined && props.isRefreshingWallet.id === props.wallet.id) ||
-          props.wallet.balance.amount === '-1'
-            ? 'Loading ...'
-            : `$ ${props.wallet.balance.amount}`}
-        </Typography>
+        {props.loadingBalance ||
+          (((props.isRefreshingWallet !== undefined && props.isRefreshingWallet.id === props.wallet.id) ||
+            props.wallet.balance.amount === '-1') && <StackSkeleton>dhhhhhhhhbh</StackSkeleton>)}
+        {!_isLoading && (
+          <Typography variant='h4' sx={{ color: showingFront ? '#fff' : '#212B36' }}>
+            {props.wallet.balance.amount}
+          </Typography>
+        )}
       </Stack>
     )
   }
