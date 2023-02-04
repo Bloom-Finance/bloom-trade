@@ -5,7 +5,10 @@ import { LoaderBalanceSkeletonProps, LoaderBalanceSkeleton } from '../balance'
 export default {
   title: 'Atoms/Loaders/Skeleton',
   component: LoaderBalanceSkeleton,
-  args: {},
+  args: {
+    height: '40px',
+    background: '#ddbbdd',
+  },
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 } as ComponentMeta<typeof LoaderBalanceSkeleton>
 

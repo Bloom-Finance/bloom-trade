@@ -1,27 +1,25 @@
 import { styled, useTheme } from '@mui/material'
 import React from 'react'
+import { getSize, SizeOptions } from '../utils'
 
 export interface SpinCircleSimpleProps {
   color: string
+  animate?: boolean
+  size?: SizeOptions
 }
 const SpinCircleSimple = (props: SpinCircleSimpleProps): JSX.Element => {
-  const { color } = props
+  const { color, animate = true, size = 'sm' } = props
   const theme = useTheme()
 
-  const hex2rgba = (hex: any, alpha = 1) => {
-    const [r, g, b] = hex.match(/\w\w/g).map((x: any) => parseInt(x, 16))
-    return `rgba(${r},${g},${b},${alpha})`
-  }
-
   const Span = styled('span')`
-    width: 48px;
-    height: 48px;
+    width: ${getSize(size).width};
+    height: ${getSize(size).height};
     border: 5px dotted ${color};
     border-radius: 50%;
     display: inline-block;
     position: relative;
     box-sizing: border-box;
-    animation: rotation 2s linear infinite;
+    animation: ${animate ? 'rotation 2.5s infinite linear' : 'none'}};
     @keyframes rotation {
       0% {
         transform: rotate(0deg);
