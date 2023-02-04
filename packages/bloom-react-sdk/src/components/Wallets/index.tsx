@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Brand, Wallet } from '@bloom-trade/types'
 import { Button, IconButton, Stack, Typography } from '@mui/material'
 import Iconify from '../Iconify'
-import { formatWalletAddress } from '@bloom-trade/utilities'
+import { fCurrency, formatWalletAddress } from '@bloom-trade/utilities'
 import useResponsive from '../../hooks/useResponsive'
 import Trust from '../../assets/trust'
 import Circle from '../../assets/circle'
@@ -67,7 +67,17 @@ const Component = (props: WalletProps): JSX.Element => {
         <path
           fillRule='evenodd'
           clipRule='evenodd'
-          d='M0.135528 373L17.2796 360.567C34.4237 348.133 68.7118 323.267 77.2839 298.4C85.8559 273.533 68.7118 248.667 54.4251 223.8C40.1384 198.933 28.709 174.067 17.2796 149.2C5.85022 124.333 -5.57916 99.4667 2.99287 74.6C11.5649 49.7333 40.1384 24.8667 54.4251 12.4333L68.7118 -1.90735e-06H103V12.4333C103 24.8667 103 49.7333 103 74.6C103 99.4667 103 124.333 103 149.2C103 174.067 103 198.933 103 223.8C103 248.667 103 273.533 103 298.4C103 323.267 103 348.133 103 360.567V373H0.135528Z'
+          d='M0.135528 
+            373L17.2796 
+            360.567C34.4237 
+            348.133 
+            68.7118 
+            323.267 
+            77.2839 
+            298.4C85.8559 
+            273.533 68.7118 248.667 54.4251 223.8C40.1384 198.933 28.709 174.067 17.2796 149.2C5.85022 124.333 
+            -5.57916 99.4667 2.99287 
+            74.6C11.5649 49.7333 40.1384 24.8667 54.4251 12.4333L68.7118 -1.90735e-06H103V12.4333C103 24.8667 103 49.7333 103 74.6C103 99.4667 103 124.333 103 149.2C103 174.067 103 198.933 103 223.8C103 248.667 103 273.533 103 298.4C103 323.267 103 348.133 103 360.567V373H0.135528Z'
           fill={`rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 1)`}
         />
       </svg>
@@ -144,7 +154,7 @@ const Component = (props: WalletProps): JSX.Element => {
         )}
         {!_isLoading && (
           <Typography variant='h4' sx={{ color: showingFront ? '#fff' : '#212B36' }}>
-            {props.wallet.balance.amount}
+            {fCurrency(props.wallet.balance.amount)}
           </Typography>
         )}
       </Stack>
@@ -154,20 +164,6 @@ const Component = (props: WalletProps): JSX.Element => {
   if (!mdUp)
     return (
       <Stack position='relative'>
-        {showingFront && (
-          <Stack
-            position='absolute'
-            left={111}
-            top={-119}
-            zIndex={6}
-            sx={{
-              transform: 'rotate(-90deg)',
-              height: '325px',
-            }}
-          >
-            <Waves />
-          </Stack>
-        )}
         <Stack
           zIndex={8}
           direction={'column'}
@@ -217,8 +213,19 @@ const Component = (props: WalletProps): JSX.Element => {
   return (
     <Stack position='relative'>
       {showingFront && (
-        <Stack position='absolute' left={130} zIndex={6}>
+        <Stack position='absolute' direction='row' left={130} zIndex={6}>
           <Waves />
+          <Stack
+            sx={{
+              width: '16px',
+              height: '373px',
+
+              background: `rgba(${getColor().r}, ${getColor().g}, ${getColor().b},1) `,
+
+              borderStartEndRadius: '16px',
+              borderEndEndRadius: '16px',
+            }}
+          />
         </Stack>
       )}
       <Stack
@@ -227,7 +234,7 @@ const Component = (props: WalletProps): JSX.Element => {
         sx={{
           width: '231px',
           height: '373px',
-          background: showingFront ? `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) ` : '#fff',
+          background: `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) `,
           border: showingFront ? 'none' : `  1px solid rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.24) `,
           borderRadius: '16px',
           p: 3,
