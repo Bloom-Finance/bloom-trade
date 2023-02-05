@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@bloom-trade/finance-connector": "*",
-    "@bloom-trade/services": "*",
     "@bloom-trade/react-sdk": "*",
+    "@bloom-trade/services": "*",
+    "@bloom-trade/themes": "*",
     "@bloom-trade/types": "*",
     "@bloom-trade/utilities": "*",
-    "@bloom-trade/themes": "*",
     "@certusone/wormhole-sdk": "^0.9.3",
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
