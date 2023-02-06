@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { Brand, Wallet } from '@bloom-trade/types'
-import { Button, Stack, Typography } from '@mui/material'
+import { Button, IconButton, Stack, Typography } from '@mui/material'
 import Iconify from '../Iconify'
-import { formatWalletAddress } from '@bloom-trade/utilities'
+import { fCurrency, formatWalletAddress } from '@bloom-trade/utilities'
 import useResponsive from '../../hooks/useResponsive'
 import Trust from '../../assets/trust'
 import Circle from '../../assets/circle'
 import MetaMask from '../../assets/mm'
 import styled from '@emotion/styled'
+import { LoaderBalanceSkeleton } from '../Loaders/skeleton/balance'
+import Reload from '../Loaders/reload'
 
 export interface WalletProps {
   wallet: Wallet
@@ -22,7 +24,8 @@ const Component = (props: WalletProps): JSX.Element => {
 
   const _isLoading =
     (props.isRefreshingWallet !== undefined && props.isRefreshingWallet.id === props.wallet.id) ||
-    props.wallet.balance.amount === '-1'
+    props.wallet.balance.amount === '-1' ||
+    props.loadingBalance
 
   const getName = () => {
     switch (props.wallet.brand) {
@@ -64,7 +67,17 @@ const Component = (props: WalletProps): JSX.Element => {
         <path
           fillRule='evenodd'
           clipRule='evenodd'
-          d='M0.135528 373L17.2796 360.567C34.4237 348.133 68.7118 323.267 77.2839 298.4C85.8559 273.533 68.7118 248.667 54.4251 223.8C40.1384 198.933 28.709 174.067 17.2796 149.2C5.85022 124.333 -5.57916 99.4667 2.99287 74.6C11.5649 49.7333 40.1384 24.8667 54.4251 12.4333L68.7118 -1.90735e-06H103V12.4333C103 24.8667 103 49.7333 103 74.6C103 99.4667 103 124.333 103 149.2C103 174.067 103 198.933 103 223.8C103 248.667 103 273.533 103 298.4C103 323.267 103 348.133 103 360.567V373H0.135528Z'
+          d='M0.135528 
+            373L17.2796 
+            360.567C34.4237 
+            348.133 
+            68.7118 
+            323.267 
+            77.2839 
+            298.4C85.8559 
+            273.533 68.7118 248.667 54.4251 223.8C40.1384 198.933 28.709 174.067 17.2796 149.2C5.85022 124.333 
+            -5.57916 99.4667 2.99287 
+            74.6C11.5649 49.7333 40.1384 24.8667 54.4251 12.4333L68.7118 -1.90735e-06H103V12.4333C103 24.8667 103 49.7333 103 74.6C103 99.4667 103 124.333 103 149.2C103 174.067 103 198.933 103 223.8C103 248.667 103 273.533 103 298.4C103 323.267 103 348.133 103 360.567V373H0.135528Z'
           fill={`rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 1)`}
         />
       </svg>
@@ -106,15 +119,6 @@ const Component = (props: WalletProps): JSX.Element => {
   const WalletData = (wallet: Wallet) => {
     return (
       <Stack>
-        <Button
-          disabled={props.loadingBalance || props.isRefreshingWallet !== undefined}
-          variant='contained'
-          onClick={() =>
-            props.onRefreshWallet ? props.onRefreshWallet(wallet) : new Error('No refresh function defined')
-          }
-        >
-          Refresh
-        </Button>
         <Typography variant='h4' pt={mdUp ? 2 : 0} sx={{ color: showingFront ? '#fff' : '#212B36' }}>
           {getName()}
         </Typography>
@@ -131,12 +135,6 @@ const Component = (props: WalletProps): JSX.Element => {
   }
 
   const WalletBalance = () => {
-    const StackSkeleton = styled(Stack)`
-      background-color: 'red';
-      color: 'red';
-      width: 200px;
-      height: 20px;
-    `
     return (
       <Stack spacing={1} pb={1} zIndex={8}>
         <Typography
@@ -147,12 +145,16 @@ const Component = (props: WalletProps): JSX.Element => {
         >
           Your Balance
         </Typography>
-        {props.loadingBalance ||
-          (((props.isRefreshingWallet !== undefined && props.isRefreshingWallet.id === props.wallet.id) ||
-            props.wallet.balance.amount === '-1') && <StackSkeleton>dhhhhhhhhbh</StackSkeleton>)}
+        {_isLoading && (
+          <LoaderBalanceSkeleton
+            background={`rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.1) `}
+            height='25px'
+            width='80%'
+          />
+        )}
         {!_isLoading && (
           <Typography variant='h4' sx={{ color: showingFront ? '#fff' : '#212B36' }}>
-            {props.wallet.balance.amount}
+            {fCurrency(props.wallet.balance.amount)}
           </Typography>
         )}
       </Stack>
@@ -162,20 +164,6 @@ const Component = (props: WalletProps): JSX.Element => {
   if (!mdUp)
     return (
       <Stack position='relative'>
-        {showingFront && (
-          <Stack
-            position='absolute'
-            left={111}
-            top={-119}
-            zIndex={6}
-            sx={{
-              transform: 'rotate(-90deg)',
-              height: '325px',
-            }}
-          >
-            <Waves />
-          </Stack>
-        )}
         <Stack
           zIndex={8}
           direction={'column'}
@@ -198,25 +186,20 @@ const Component = (props: WalletProps): JSX.Element => {
               <LogoWallet />
               {WalletData(props.wallet)}
             </Stack>
-            {showingFront && (
-              <Iconify
-                onClick={() => setShowingFront(!showingFront)}
-                icon='tabler:info-circle'
-                color='#fff'
-                sx={{
-                  fontSize: '24px',
-                }}
-              />
-            )}
-            {!showingFront && (
-              <Iconify
-                onClick={() => setShowingFront(!showingFront)}
-                icon='lucide:reply'
-                color='#637381'
-                sx={{
-                  fontSize: '24px',
-                }}
-              />
+            {!_isLoading && (
+              <IconButton
+                onClick={() =>
+                  props.onRefreshWallet ? props.onRefreshWallet(props.wallet) : new Error('No refresh function defined')
+                }
+              >
+                <Iconify
+                  icon='uiw:reload'
+                  color='#fff'
+                  sx={{
+                    fontSize: '24px',
+                  }}
+                />
+              </IconButton>
             )}
           </Stack>
 
@@ -230,8 +213,19 @@ const Component = (props: WalletProps): JSX.Element => {
   return (
     <Stack position='relative'>
       {showingFront && (
-        <Stack position='absolute' left={130} zIndex={6}>
+        <Stack position='absolute' direction='row' left={130} zIndex={6}>
           <Waves />
+          <Stack
+            sx={{
+              width: '16px',
+              height: '373px',
+
+              background: `rgba(${getColor().r}, ${getColor().g}, ${getColor().b},1) `,
+
+              borderStartEndRadius: '16px',
+              borderEndEndRadius: '16px',
+            }}
+          />
         </Stack>
       )}
       <Stack
@@ -240,7 +234,7 @@ const Component = (props: WalletProps): JSX.Element => {
         sx={{
           width: '231px',
           height: '373px',
-          background: showingFront ? `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) ` : '#fff',
+          background: `rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.8) `,
           border: showingFront ? 'none' : `  1px solid rgba(${getColor().r}, ${getColor().g}, ${getColor().b}, 0.24) `,
           borderRadius: '16px',
           p: 3,
@@ -251,25 +245,22 @@ const Component = (props: WalletProps): JSX.Element => {
         <Stack spacing={1} zIndex={8}>
           <Stack direction='row' justifyContent={'space-between'} alignItems='center'>
             <LogoWallet />
-            {showingFront && (
-              <Iconify
-                onClick={() => setShowingFront(!showingFront)}
-                icon='tabler:info-circle'
-                color='#fff'
-                sx={{
-                  fontSize: '24px',
-                }}
-              />
-            )}
-            {!showingFront && (
-              <Iconify
-                onClick={() => setShowingFront(!showingFront)}
-                icon='lucide:reply'
-                color='#637381'
-                sx={{
-                  fontSize: '24px',
-                }}
-              />
+            {!_isLoading ? (
+              <IconButton
+                onClick={() =>
+                  props.onRefreshWallet ? props.onRefreshWallet(props.wallet) : new Error('No refresh function defined')
+                }
+              >
+                <Iconify
+                  icon='uiw:reload'
+                  color='#fff'
+                  sx={{
+                    fontSize: '24px',
+                  }}
+                />
+              </IconButton>
+            ) : (
+              <Reload color='white' />
             )}
           </Stack>
 

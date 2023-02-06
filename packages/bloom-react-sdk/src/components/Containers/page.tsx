@@ -30,7 +30,6 @@ export const Page: FC<PageProps> = (props) => {
         backgroundColor: 'white',
       }}
       direction={mdUp ? 'row' : 'column'}
-      spacing={2}
     >
       {!mdUp && <Header logo={logo} user={user} sx={{ m: 2 }} onCloseMenu={() => setShowMenu(true)} />}
       <Drawer
@@ -65,7 +64,15 @@ export const Page: FC<PageProps> = (props) => {
         />
       )}
 
-      <Stack p={2} pt={mdUp ? 4 : 0} width={'100%'} pr={4}>
+      <Stack
+        p={2}
+        pt={mdUp ? 4 : 0}
+        width={'100%'}
+        pr={4}
+        sx={{
+          backgroundColor: '#FCFCFD',
+        }}
+      >
         <Stack direction='row' justifyContent={'space-between'} alignItems='center'>
           <Typography variant='h4' sx={{ fontWeight: 600, color: 'text.primary' }}>
             {props.header.title}

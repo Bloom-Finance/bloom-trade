@@ -10,6 +10,7 @@ import SpinCircleSimple from './components/Loaders/spin-circles/simple'
 import { Page } from './components/Containers/page'
 import { Logo } from './components/Logo'
 import WalletCard from './components/Wallets'
+import ScreenLoader from './components/Loaders/screen'
 
 export {
   Table,
@@ -24,4 +25,5 @@ export {
   Page,
   Logo,
   WalletCard,
+  ScreenLoader,
 }
