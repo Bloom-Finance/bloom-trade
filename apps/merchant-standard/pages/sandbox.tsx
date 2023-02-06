@@ -1,36 +1,98 @@
+import { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
-import { Checkout, useBloom } from '@bloom-trade/react-sdk';
+import { useBloom } from '@bloom-trade/react-sdk';
+import { Button, Input, Typography } from '@mui/material';
+import { Stack } from '@mui/system';
+import { aes256Encrypt, getKeyAndIV } from '@bloom-trade/utilities';
+import { useSigner } from 'wagmi';
 const SandboxPage: NextPage = () => {
+  const [dataToEncrypt, setDataToEncrypt] = useState<string>('');
+  const [encryptedData, setEncryptedData] = useState<string>('');
+  const [hasMounted, setHasMounted] = useState<boolean>(false);
+  const { data: signer } = useSigner();
   const { Connect } = useBloom();
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
   return (
-    <Checkout
-      type='payout'
-      onFinish={() => {
-        console.log('finished');
-      }}
-      order={{
-        id: '4f90d13a42',
-        orderId: '4f90d13a42',
-        date: 1674568125845,
-        total: {
-          details: {
-            items: [{ description: 'Flight for 1 person', amount: 150 }],
-            taxes: [{ description: 'Tax', amount: 100 }],
-          },
-          amount: 2,
-        },
-        destination: {
-          chain: 'eth',
-          address: '0xF274800E82717D38d2e2ffe18A4C6489a50C5Add',
-          token: 'usdc',
-          description: {
-            name: 'Alex Fiorenza',
-            image: 'https://avatars.githubusercontent.com/u/1378165?v=4',
-          },
-        },
-      }}
-      walletConnectButton={<Connect />}
-    />
+    <>
+      <Stack width={500}>
+        <Typography variant='h4' p={5}>
+          Connect your wallet
+        </Typography>
+        {hasMounted && <Connect />}
+      </Stack>
+
+      <Stack direction='row' p={5} width={500}>
+        <Stack m={2}>
+          <Typography variant='h4' p={5}>
+            Encrypt
+          </Typography>
+          <Stack m={2}>
+            <Input
+              onChange={(e) => {
+                setDataToEncrypt(e.target.value);
+              }}
+            />
+          </Stack>
+
+          <Button
+            disabled={!signer}
+            onClick={async () => {
+              const encryptedData = aes256Encrypt(
+                dataToEncrypt,
+                getKeyAndIV().key,
+                getKeyAndIV().ivLength
+              );
+              if (!signer) throw new Error('Signer not found');
+              const string = await signer.signMessage(encryptedData);
+              console.log(string);
+            }}
+            variant='contained'
+          >
+            Encrypt
+          </Button>
+          {encryptedData && (
+            <Typography variant='body1' p={5}>
+              {encryptedData}
+            </Typography>
+          )}
+        </Stack>
+
+        <Stack m={2}>
+          <Typography variant='h4' p={5}>
+            Decrypt
+          </Typography>
+          <Stack m={2}>
+            <Input
+              onChange={(e) => {
+                setDataToEncrypt(e.target.value);
+              }}
+            />
+          </Stack>
+
+          <Button
+            onClick={() => {
+              setEncryptedData(
+                aes256Encrypt(
+                  dataToEncrypt,
+                  getKeyAndIV().key,
+                  getKeyAndIV().ivLength
+                )
+              );
+            }}
+            variant='contained'
+          >
+            Decrypt
+          </Button>
+          {encryptedData && (
+            <Typography variant='body1' p={5}>
+              {encryptedData}
+            </Typography>
+          )}
+        </Stack>
+      </Stack>
+    </>
   );
 };
 
