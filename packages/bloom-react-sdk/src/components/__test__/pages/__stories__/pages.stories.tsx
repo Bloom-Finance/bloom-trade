@@ -5,6 +5,7 @@ import { MyTemplatePage } from '../../../Checkout/views/__stories__/index.storie
 import { User } from '@bloom-trade/types'
 import { Page } from '../../../Containers/page'
 import { itemsNavigatorMenu } from '../../../Navigator/__stories__/nav.stories'
+import { Button } from '@mui/material'
 
 const LogoLarge = () => {
   return (
@@ -78,6 +79,7 @@ interface MyPageProps {
   children?: React.ReactNode
   title: string
   currentLink: string
+  subTitle?: string
 }
 
 const MyPage = (props: MyPageProps) => {
@@ -94,6 +96,12 @@ const MyPage = (props: MyPageProps) => {
       user={user}
       header={{
         title: props.title,
+        subTitle: props.subTitle,
+        actions: (
+          <Button variant='outlined' color='secondary' size='small'>
+            Click me
+          </Button>
+        ),
       }}
       currentLink={props.currentLink}
       navigationItems={itemsNavigatorMenu}
@@ -123,7 +131,7 @@ export default {
 
 export const EmptyPageVariaton: StoryFn = (args) => {
   return (
-    <MyPage {...args} title='Example Page' currentLink='overview'>
+    <MyPage {...args} title='Example Page' subTitle='Welcome Back, Leonardo' currentLink='overview'>
       Empty Page
     </MyPage>
   )
@@ -131,7 +139,7 @@ export const EmptyPageVariaton: StoryFn = (args) => {
 
 export const CheckoutPageVariaton: StoryFn = (args) => {
   return (
-    <MyPage {...args} title='Payout' currentLink='payouts'>
+    <MyPage {...args} title='Payout' subTitle='Welcome Back, Leonardo' currentLink='payouts'>
       <MyTemplatePage title='Payout' isConnected={false} activeStep={0} amountLimit={'100'} />
     </MyPage>
   )

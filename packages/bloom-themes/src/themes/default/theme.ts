@@ -160,7 +160,7 @@ const defaultTheme = createTheme({
       light: "#F82A91",
     },
     secondary: {
-      main: "#EE9975",
+      main: "#F82A91",
       contrastText: "#fff",
     },
     text: {
@@ -170,13 +170,7 @@ const defaultTheme = createTheme({
   },
 });
 
-export type ColorSchema =
-  | "primary"
-  | "secondary"
-  | "info"
-  | "success"
-  | "warning"
-  | "error";
+export type ColorSchema = "primary" | "secondary" | "info" | "success" | "warning" | "error";
 
 const { breakpoints, typography } = defaultTheme;
 
@@ -203,6 +197,14 @@ const theme = {
       styleOverrides: {
         root: {
           fontSize: pxToRem(16),
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "16px",
+          boxShadow: "0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24)",
         },
       },
     },

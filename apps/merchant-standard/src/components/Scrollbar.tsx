@@ -40,19 +40,10 @@ interface Props extends ScrollbarProps {
   maxHeight?: number;
 }
 
-export default function Scrollbar({
-  children,
-  sx,
-  maxHeight,
-  ...other
-}: Props) {
-  const userAgent =
-    typeof navigator === "undefined" ? "SSR" : navigator.userAgent;
+export default function Scrollbar({ children, sx, maxHeight, ...other }: Props) {
+  const userAgent = typeof navigator === "undefined" ? "SSR" : navigator.userAgent;
 
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      userAgent
-    );
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
 
   if (isMobile) {
     return (
@@ -64,12 +55,7 @@ export default function Scrollbar({
 
   return (
     <RootStyle>
-      <SimpleBarStyle
-        style={{ maxHeight: maxHeight || 300 }}
-        clickOnTrack={false}
-        sx={sx}
-        {...other}
-      >
+      <SimpleBarStyle style={{ maxHeight: maxHeight || 300 }} clickOnTrack={false} sx={sx} {...other}>
         {children}
       </SimpleBarStyle>
     </RootStyle>

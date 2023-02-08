@@ -11,7 +11,7 @@ import { Page } from './components/Containers/page'
 import { Logo } from './components/Logo'
 import WalletCard from './components/Wallets'
 import ScreenLoader from './components/Loaders/screen'
-
+import Card from './components/Surfaces/Card'
 export {
   Table,
   Scrollbar,
@@ -26,4 +26,5 @@ export {
   Logo,
   WalletCard,
   ScreenLoader,
+  Card,
 }

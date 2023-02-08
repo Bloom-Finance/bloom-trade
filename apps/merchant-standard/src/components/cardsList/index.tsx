@@ -1,10 +1,11 @@
-import { Box, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Drawer, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, Dialog, DialogContent, DialogContentText, DialogTitle, Drawer, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import React from "react";
 import useResponsive from "../../hooks/useResponsive";
 import Iconify from "../Iconify";
 import NoItemsCard from "../noItemsCard";
 import WalletInfo from "../walletCard/walletInfoForm";
 import { WalletCard } from "@bloom-trade/react-sdk";
+
 import _ from "lodash";
 import { UserStore } from "../../store/user.store";
 import useWallets from "../../hooks/useWallets";
@@ -18,6 +19,7 @@ const Component = (props: Props): JSX.Element => {
   const [showWalletInfo, setShowWalletInfo] = React.useState(false);
   const { wallets, loading, loadWallets, refreshOneWallet, isRefreshingWallet, createNewCryptoWallet } = useWallets(user.id);
 
+  const theme = useTheme();
   const ModalForm = () => {
     if (!mdUp)
       return (
@@ -63,24 +65,39 @@ const Component = (props: Props): JSX.Element => {
     );
   };
 
-  console.log("loading", loading);
-  console.log("wallets", wallets);
   if (loading.wallets) return <Loader />;
 
   return (
     <Stack>
       <ModalForm />
       {!_.isEmpty(wallets) && (
-        <Stack direction={mdUp ? "row" : "column"} spacing={4} alignItems="center">
-          {wallets?.map((wallet) => (
-            <WalletCard isRefreshingWallet={isRefreshingWallet} loadingBalance={loading.balances} key={wallet.address} wallet={wallet} onRefreshWallet={async (w: any) => await refreshOneWallet(w)} />
-          ))}
-          <Box>
-            <Button variant="contained" color="primary" onClick={() => setShowWalletInfo(true)} startIcon={<Iconify icon={"mdi:wallet-add-outline"} />}>
-              Add
-            </Button>
-          </Box>
-        </Stack>
+        <Card
+          sx={{
+            direction: "row",
+            boxShadow: !mdUp ? "none" : "0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24)",
+          }}
+        >
+          <Stack direction="row" justifyContent={"space-between"} px={mdUp ? 2 : 0} py={4} alignItems="center">
+            <Typography variant="h6">Your wallets declared</Typography>
+            {mdUp && (
+              <Box>
+                <Button variant="outlined" color="primary" size="small" onClick={() => setShowWalletInfo(true)} startIcon={<Iconify icon={"mdi:wallet-add-outline"} />}>
+                  New Wallet
+                </Button>
+              </Box>
+            )}
+            {!mdUp && (
+              <IconButton>
+                <Iconify icon={"material-symbols:add-circle-outline-rounded"} color={theme.palette.secondary.main} />
+              </IconButton>
+            )}
+          </Stack>
+          <Stack direction={mdUp ? "row" : "column"} spacing={4} alignItems="center" px={2} pb={4}>
+            {wallets?.map((wallet) => (
+              <WalletCard isRefreshingWallet={isRefreshingWallet} loadingBalance={loading.balances} key={wallet.address} wallet={wallet} onRefreshWallet={async (w: any) => await refreshOneWallet(w)} />
+            ))}
+          </Stack>
+        </Card>
       )}
 
       {_.isEmpty(wallets) && (
