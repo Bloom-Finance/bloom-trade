@@ -30,6 +30,8 @@ This is a monorepo, so you need to install all the dependencies in the root fold
 yarn setup
 ```
 
+For a detailed and step by step guide, you can check the [Get Started Guide](./docs/GetStarted.md).
+
 ## Packages
 
 - [bloom-themes](./packages/bloom-themes) - Bloom Themes and custom visuals
@@ -41,10 +43,6 @@ yarn setup
 ## Husky 🐕 and Lerna 🐉
 
 We use husky and lerna to manage the hooks and the packages. You can find the hooks in the root folder.
-
-```bash
-git commit -m "commit message"
-```
 
 Before each commit, husky will run the builder and the linter. If you want to skip the hooks, you can use the flag --no-verify.
 

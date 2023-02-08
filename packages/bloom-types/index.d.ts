@@ -1,3 +1,4 @@
+import { CID } from 'multiformats/cid';
 export = Bloom;
 export as namespace Bloom;
 
@@ -14,7 +15,13 @@ declare namespace Bloom {
       currency: string;
     };
   }
-
+  /* This alias is referred to all the Bloom Ipfs Types */
+  namespace Ipfs {
+    type BloomIpfsSdk = {
+      encrypt(payload: Record<string, any>): Promise<any>;
+      decrypt(cid: CID): Promise<Record<string, any>>;
+    };
+  }
   const enum Environment {
     production = 'https://api.bloom.com',
     sandbox = '/api',

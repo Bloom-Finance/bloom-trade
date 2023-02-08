@@ -1,0 +1,16 @@
+{
+  "name": "@bloom-trade/merklee-tree",
+  "version": "0.0.1",
+  "description": "Bloom merkle tree to verify addresses in orders",
+  "main": "index.js",
+  "repository": "https://github.com/Bloom-Finance/bloom-trade ",
+  "author": "Bloom Trade",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "hardhat": "^2.12.6"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1"
+  }
+}
