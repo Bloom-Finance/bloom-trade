@@ -14,7 +14,9 @@ import { useRouter } from "next/router";
 interface Props {
   children: React.ReactNode;
   title?: string;
+  subTitle?: string;
   currentLink?: string;
+  actions?: React.ReactNode;
 }
 
 const LogoLarge = () => {
@@ -136,6 +138,8 @@ const Component = (props: Props): JSX.Element => {
           user={getUserLoggedIn()}
           header={{
             title: props.title as string,
+            subTitle: props.subTitle as string,
+            actions: props.actions,
           }}
           navigationItems={itemsNavigatorMenu}
         >

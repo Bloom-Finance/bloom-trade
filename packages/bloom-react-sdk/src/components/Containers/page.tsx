@@ -12,6 +12,7 @@ export interface PageProps {
   user: User
   header: {
     title: string
+    subTitle?: string
     actions?: React.ReactNode
   }
   currentLink: string
@@ -66,20 +67,27 @@ export const Page: FC<PageProps> = (props) => {
 
       <Stack
         p={2}
-        pt={mdUp ? 4 : 0}
+        pt={mdUp ? 4 : 2}
         width={'100%'}
         pr={4}
         sx={{
           backgroundColor: '#FCFCFD',
         }}
       >
-        <Stack direction='row' justifyContent={'space-between'} alignItems='center'>
-          <Typography variant='h4' sx={{ fontWeight: 600, color: 'text.primary' }}>
-            {props.header.title}
-          </Typography>
+        <Stack direction='row' justifyContent={'space-between'} alignItems='start' pl={mdUp ? 2 : 0}>
+          <Stack>
+            <Typography variant='h4' sx={{ fontWeight: 600, color: 'text.primary' }} gutterBottom>
+              {props.header.title}
+            </Typography>
+            <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+              {props.header.subTitle}
+            </Typography>
+          </Stack>
           {props.header.actions}
         </Stack>
-        <Stack pt={mdUp ? 6 : 3}>{props.children}</Stack>
+        <Stack pt={mdUp ? 6 : 3} pl={mdUp ? 2 : 0}>
+          {props.children}
+        </Stack>
       </Stack>
     </Stack>
   )
