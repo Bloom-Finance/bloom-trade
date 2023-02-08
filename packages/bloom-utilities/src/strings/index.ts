@@ -1,6 +1,8 @@
 const sum = (a: any, b: any, positions: number) => {
   const factor = Math.pow(10, positions);
-  return (a.toFixed(positions) * factor + b.toFixed(positions) * factor) / factor;
+  return (
+    (a.toFixed(positions) * factor + b.toFixed(positions) * factor) / factor
+  );
 };
 /**
  * It checks if a string is a valid base64 string
@@ -8,7 +10,8 @@ const sum = (a: any, b: any, positions: number) => {
  * @returns A boolean value.
  */
 const isBase64 = (string: string) => {
-  const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+  const base64regex =
+    /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   return base64regex.test(string);
 };
 
@@ -40,7 +43,7 @@ const sumTwoFloatingStrings = (a: string, b: string, decimals: number) => {
  * @returns The capitalized word is being returned.
  */
 const capitalize = (word: string) => {
-  const arr = word.split(" ");
+  const arr = word.split(' ');
 
   //loop through each element of the array and capitalize the first letter.
 
@@ -50,7 +53,7 @@ const capitalize = (word: string) => {
 
   //Join all the elements of the array back into a string
   //using a blankspace as a separator
-  const str2 = arr.join(" ");
+  const str2 = arr.join(' ');
   return str2;
 };
 
@@ -65,4 +68,29 @@ const hex2rgba = (hex: any, alpha = 1) => {
   return `rgba(${r},${g},${b},${alpha})`;
 };
 
-export { isBase64, stringToMilisecondsDate, sumTwoFloatingStrings, capitalize, hex2rgba };
+/**
+ * It takes a string and returns a base64 encoded string
+ * @param {string} string - The string to convert to base64.
+ * @returns A base64 encoded string.
+ */
+const toBase64 = (string: string) => {
+  return Buffer.from(string).toString('base64');
+};
+
+/**
+ * It takes a base64 string and returns the decoded string
+ * @param {string} base64 - The base64 string to decode.
+ */
+const fromBase64 = (base64: string) => {
+  Buffer.from(base64, 'base64').toString('ascii');
+};
+
+export {
+  isBase64,
+  stringToMilisecondsDate,
+  sumTwoFloatingStrings,
+  capitalize,
+  hex2rgba,
+  toBase64,
+  fromBase64,
+};

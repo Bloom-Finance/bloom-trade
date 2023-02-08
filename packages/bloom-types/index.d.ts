@@ -18,8 +18,8 @@ declare namespace Bloom {
   /* This alias is referred to all the Bloom Ipfs Types */
   namespace Ipfs {
     type BloomIpfsSdk = {
-      encrypt(payload: Record<string, any>): Promise<any>;
-      decrypt(cid: CID): Promise<Record<string, any>>;
+      save(payload: Record<string, any>): Promise<CID>;
+      get(cid: CID): Promise<Record<string, any>>;
     };
   }
   const enum Environment {
@@ -108,6 +108,7 @@ declare namespace Bloom {
   type Order = {
     id: string;
     orderId: string;
+    txHash?: `0x${string}`;
     date: number;
     from?: {
       chain: Chain;

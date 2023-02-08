@@ -25,8 +25,16 @@ export interface CheckoutProps {
 }
 
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
-  const { requestTokenAccess, transfer, checkChain, waitingForUserResponse, waitingForBlockchain, error, data } =
-    useBloom()
+  const {
+    requestTokenAccess,
+    transfer,
+    checkChain,
+    saveToIpfs,
+    waitingForUserResponse,
+    waitingForBlockchain,
+    error,
+    data,
+  } = useBloom()
   const [hasRetried, setHasRetried] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const mdUp = useResponsive('up', 'md')
@@ -236,6 +244,14 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                       order.total.amount.toString(),
                     )
                     if (txReceipt) {
+                      OrderStore.update((s) => {
+                        s.order.txHash = txReceipt.transactionHash as `0x${string}`
+                      })
+                      //upload to ipfs
+                      const cid = await saveToIpfs({
+                        ...order,
+                        txHash: txReceipt.transactionHash as `0x${string}`,
+                      })
                       setShowSuccess(true)
                     }
                   } catch (error) {

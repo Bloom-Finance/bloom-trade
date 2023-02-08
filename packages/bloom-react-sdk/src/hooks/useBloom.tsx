@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-extra-semi */
 import { Button } from '@mui/material'
 import { useWeb3Modal, useWeb3ModalNetwork } from '@web3modal/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAccount, useSigner, useSwitchNetwork } from 'wagmi'
 import { Connector, disconnect } from '@wagmi/core'
 import { Stack } from '@mui/system'
 import { Chain, StableCoin, Testnet } from '@bloom-trade/types'
+import BloomIpfs from '@bloom-trade/ipfs'
+
 import {
   convertDecimalsUnitToToken,
   getBloomContractsByChain,
@@ -23,8 +26,30 @@ export default function useBloom(params?: {
     connector: Connector<any, any, any> | undefined,
     isReconnected: boolean,
   ) => void
+  ipfs?: {
+    infuraConfig: {
+      projectId: string
+      projectSecret: string
+    }
+  }
 }) {
   const [waitingForUserResponse, setWaitingForUserResponse] = useState(false)
+  const [ipfs, setIpfs] = useState<BloomIpfs>()
+  useEffect(() => {
+    ;(async () => {
+      if (params && params.ipfs) {
+        setIpfs(
+          await BloomIpfs.create({
+            mode: 'INFURA',
+            infuraConfig: {
+              projectId: params.ipfs.infuraConfig.projectId,
+              projectSecret: params.ipfs.infuraConfig.projectSecret,
+            },
+          }),
+        )
+      }
+    })()
+  }, [])
   const { data: signer } = useSigner()
   const [lastTxData, setLastTxData] = useState<{
     txHash: string
@@ -275,11 +300,23 @@ export default function useBloom(params?: {
       }
     }
   }
+  const saveToIpfs = async (object: Record<string, any>) => {
+    ///staff
+    if (!ipfs) throw new Error('No ipfs config provided')
+    try {
+      const cid = await ipfs.save(object)
+      return cid
+    } catch (e) {
+      console.log(e)
+      throw new Error('Error saving to ipfs')
+    }
+  }
   return {
     Connect: walletConnectButton,
     requestTokenAccess,
     checkChain,
     transfer,
+    saveToIpfs,
     waitingForUserResponse,
     waitingForBlockchain,
     error,

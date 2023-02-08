@@ -5,7 +5,6 @@ import {
   Chain,
   Asset,
   Scanners,
-  Brand,
 } from '@bloom-trade/types';
 import {
   goerli,
@@ -49,9 +48,9 @@ const formatWalletAddress = (address: string): string => {
 /**
  * Takes a chain ID as an argument and returns the chain name. (Bloom chain names)
  * @param {number} id - The chain ID of the network you want to connect to.
- * @returns Chain | Testnet | undefined
+ * @returns Chain | Testnet
  */
-const getChainNameById = (id: number): Chain | Testnet | undefined => {
+const getChainNameById = (id: number): Chain | Testnet => {
   switch (id) {
     case 1:
       return 'eth';
@@ -66,7 +65,7 @@ const getChainNameById = (id: number): Chain | Testnet | undefined => {
     case 80001:
       return 'mumbai';
     default:
-      return;
+      throw new Error('Invalid chain ID');
   }
 };
 

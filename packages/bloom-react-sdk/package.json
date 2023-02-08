@@ -66,6 +66,7 @@
     "@bloom-trade/services": "0.0.19",
     "@bloom-trade/themes": "^0.0.19",
     "@bloom-trade/utilities": "^0.0.19",
+    "@bloom-trade/ipfs": "*",
     "ethers": "^5.7.2",
     "framer-motion": "^9.0.1",
     "pullstate": "^1.25.0"

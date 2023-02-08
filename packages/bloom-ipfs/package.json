@@ -20,12 +20,9 @@
     "@bloom-trade/types": "*"
   },
   "dependencies": {
-    "dag-jose": "^4.0.0",
-    "dids": "^3.4.0",
     "ipfs-core": "^0.18.0",
     "ipfs-http-client": "^60.0.0",
-    "key-did-provider-ed25519": "^2.0.1",
-    "key-did-resolver": "^2.3.0",
+    "@bloom-trade/utilities": "*",
     "prom-client": "^14.1.1"
   }
 }
