@@ -1,6 +1,79 @@
+import { CID } from 'multiformats/cid';
 export = Bloom;
 export as namespace Bloom;
+
 declare namespace Bloom {
+  /* This alias is referred to all the Bloom Firebase Types */
+  namespace Firebase {
+    type wallets = {
+      id: string;
+      address: string;
+      chains: string[];
+      brand: Bloom.Brand;
+      isPrincipal: boolean;
+      owner: string; // userId
+      currency: string;
+    };
+  }
+  /* This alias is referred to all the Bloom Ipfs Types */
+  namespace Ipfs {
+    type BloomIpfsSdk = {
+      save(payload: Record<string, any>): Promise<CID>;
+      get(cid: CID): Promise<Record<string, any>>;
+    };
+  }
+  const enum Environment {
+    production = 'https://api.bloom.com',
+    sandbox = '/api',
+  }
+
+  const enum Scanners {
+    goerli = 'https://goerli.etherscan.io',
+    mumbai = 'https://mumbai.polygonscan.com',
+    fuji = 'https://testnet.snowtrace.io',
+    eth = 'https://etherscan.io',
+    polygon = 'https://polygonscan.com',
+    avax = 'https://snowtrace.io',
+  }
+  type User = {
+    userid: string;
+    displayName: string;
+    email: string;
+  };
+  type IBloomServices = {
+    getBalance(
+      config: {
+        dex?: {
+          addresses: string[];
+          chains: Chain[];
+        };
+        cex?: {
+          id: CustodialProvider;
+          auth: {
+            apiKey?: string;
+            apiSecret?: string;
+          };
+        }[];
+      },
+      params?: {
+        onlyStableCoins: boolean;
+      }
+    ): Promise<Balance>;
+    isTokenValid<T>(
+      token: string
+    ): Promise<{ isValid: boolean; payload: any | T }>;
+  };
+  type Balance = {
+    asset: Asset;
+    balance: string;
+    description: string;
+    detail: Array<{
+      address?: string;
+      provider: string;
+      chain?: string;
+      balance: string;
+    }>;
+  }[];
   type BloomError<T> = {
     isError: true;
     code?: number;
@@ -32,7 +105,42 @@ declare namespace Bloom {
       postalCode: string;
     };
   };
-
+  type Order = {
+    id: string;
+    orderId: string;
+    txHash?: `0x${string}`;
+    date: number;
+    from?: {
+      chain: Chain;
+      address: string;
+      token: StableCoin;
+      description?: {
+        name: string;
+      };
+    };
+    total: {
+      details?: {
+        items?: {
+          description: string;
+          amount: number;
+        }[];
+        taxes?: {
+          description: string;
+          amount: number;
+        }[];
+      };
+      amount: number;
+    };
+    destination: {
+      chain: Chain;
+      address: string;
+      token: StableCoin;
+      description?: {
+        name?: string;
+        image?: string;
+      };
+    };
+  };
   type Asset = 'usdt' | 'usdc' | 'dai' | 'eth' | 'btc' | 'matic' | 'avax';
   type StableCoin = 'usdt' | 'usdc' | 'dai';
   type STABLECOINS = ['usdt', 'usdc', 'dai'];
@@ -43,11 +151,13 @@ declare namespace Bloom {
     | 'snowtrace'
     | 'circle'
     | 'polygonscan';
+
   type Chain = 'eth' | 'avax' | 'polygon';
   type Testnet = 'goerli' | 'mumbai' | 'fuji';
   type CHAINS = ['eth', 'avax', 'polygon'];
   type CustodialProvider = 'binance' | 'coinbase' | 'circle';
   type CUSTODIALPROVIDERS = ['binance', 'coinbase', 'circle'];
+  type BLOOM_URL = 'https://api.bloom.com' | 'https://localhost:3000/api';
   type Transaction = {
     asset: Asset;
     amount: string;
@@ -62,5 +172,18 @@ declare namespace Bloom {
     gas?: string;
     gasPrice?: string;
     gasUsed?: string;
+  };
+  type Brand = 'circle' | 'mm' | 'trust' | 'notDefined' | 'walletConnect';
+  type Wallet = Firebase.wallets & {
+    balance: {
+      amount: string;
+      detail: {
+        address?: string;
+        balance?: string;
+        chain?: string;
+        provider: string;
+        currency: string;
+      }[];
+    };
   };
 }

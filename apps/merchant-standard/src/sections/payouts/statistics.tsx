@@ -9,8 +9,8 @@ import useResponsive from "../../hooks/useResponsive";
 import { fCurrency } from "@bloom-trade/utilities";
 
 export interface StatisticsProps {
-  income: number;
-  outcome: number;
+  income: number | undefined;
+  outcome: number | undefined;
   loading?: boolean;
 }
 
@@ -62,7 +62,7 @@ const Statistics = (props: StatisticsProps): JSX.Element => {
                 />
               </Stack>
             </Avatar>
-            <Typography variant="h3">{loading ? "Wait please" : fCurrency(income)}</Typography>
+            <Typography variant="h3">{!loading && income !== undefined ? fCurrency(income) : "Wait please"}</Typography>
             <Typography variant="body1">Weekly Income</Typography>
           </Stack>
         </CardSurfaces>
@@ -95,8 +95,8 @@ const Statistics = (props: StatisticsProps): JSX.Element => {
                 />
               </Stack>
             </Avatar>
-            <Typography variant="h3">{fCurrency(outcome)}</Typography>
-            <Typography variant="body1">Weekly Income</Typography>
+            <Typography variant="h3">{!loading && outcome !== undefined ? fCurrency(outcome) : "Loading..."}</Typography>
+            <Typography variant="body1">Weekly Outcome</Typography>
           </Stack>
         </CardSurfaces>
       </Grid>

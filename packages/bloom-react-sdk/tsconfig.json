@@ -1,7 +1,9 @@
 {
-  "include": ["src"],
+  "include": ["src", "src/styles.d.ts"],
   "exclude": ["dist", "node_modules"],
+  "files": ["src/styles.d.ts"],
   "compilerOptions": {
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
@@ -12,8 +14,6 @@
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "moduleResolution": "node",
     "jsx": "react",
     "esModuleInterop": true,

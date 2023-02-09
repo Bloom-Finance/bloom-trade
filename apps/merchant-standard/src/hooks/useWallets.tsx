@@ -1,26 +1,15 @@
-import { Balance } from '@bloom-trade/finance-connector/dist/@types';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { cryptoWalletServices } from '../services/cryptoWallet.services';
-import { CryptoWallet } from '../type';
-import { UserStore } from '../store/user.store';
-import { showAlert } from '../components/alert/handler';
-
-interface Wallet extends CryptoWallet {
-  balance: {
-    amount: string;
-    detail: {
-      address?: string;
-      balance?: string;
-      chain?: string;
-      provider: string;
-      currency: string;
-    }[];
-  };
-}
+import { Balance } from "@bloom-trade/finance-connector/dist/@types";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { cryptoWalletServices } from "../services/cryptoWallet.services";
+import { CryptoWallet } from "../type";
+import { UserStore } from "../store/user.store";
+import { showAlert } from "../components/alert/handler";
+import { authService } from "../services/auth.services";
+import { Wallet } from "@bloom-trade/types";
 
 export default function useWallets(userId: string) {
-  const STABLES = ['USDC', 'USDT', 'DAI'];
+  const STABLES = ["USDC", "USDT", "DAI"];
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState<{
     wallets: boolean;
@@ -33,32 +22,37 @@ export default function useWallets(userId: string) {
   const circleApiKey = UserStore.useState((s) => s.circleApiKey);
   const sum = (a: any, b: any, positions: number) => {
     const factor = Math.pow(10, positions);
-    return (
-      (a.toFixed(positions) * factor + b.toFixed(positions) * factor) / factor
-    );
+    return (a.toFixed(positions) * factor + b.toFixed(positions) * factor) / factor;
   };
+  /**
+   * It creates a new crypto wallet.
+   * @param wallet - Partial<CryptoWallet>
+   */
   const createNewCryptoWallet = async (wallet: Partial<CryptoWallet>) => {
     setLoading({ wallets: true, balances: true });
     await cryptoWalletServices.save(wallet);
   };
+
+  /**
+   * It refreshes the balance of a wallet
+   * @param {Wallet} wallet - Wallet
+   */
   const refreshOneWallet = async (wallet: Wallet) => {
     setIsRefreshingWallet({ id: wallet.id });
-    if (wallet.brand === 'circle') {
+    if (wallet.brand === "circle") {
       //TODO: implement circle wallet refresh
       const provider = {
-        type: 'circle',
+        type: "circle",
         auth: {
           apiKey: circleApiKey,
         },
       };
       const {
         data: { balance: balances },
-      } = await axios.post<{ balance: Balance }>('/api/wallets/getBalances', {
+      } = await axios.post<{ balance: Balance }>("/api/wallets/balance", {
         providers: [provider],
       });
-      const circleBalance = balances.filter((balance) =>
-        STABLES.includes(balance.asset)
-      )[0];
+      const circleBalance = balances.filter((balance) => STABLES.includes(balance.asset.toUpperCase()))[0];
       if (circleBalance.balance !== wallet.balance.amount) {
         //Balance is different => update wallet
         let details: any[] = [];
@@ -76,31 +70,25 @@ export default function useWallets(userId: string) {
           const newWallets = [...wallets];
           newWallets[index] = newWalletBalance;
           setWallets(newWallets);
-          showAlert('Balance actualizado', 'success');
+          showAlert("Balance actualizado", "success");
         });
       } else {
         //Balance is the same => do nothing
-        showAlert('No hay cambios en el balance de esa billetera', 'info');
+        showAlert("No hay cambios en el balance de esa billetera", "info");
       }
     } else {
       const address = wallet.address;
       const {
         data: { balance: balances },
-      } = await axios.post<{ balance: Balance }>('/api/wallets/getBalances', {
+      } = await axios.post<{ balance: Balance }>("/api/wallets/getBalances", {
         addresses: [address],
       });
-      const stableCoinsBalances = balances.filter((balance) =>
-        STABLES.includes(balance.asset)
-      );
+      const stableCoinsBalances = balances.filter((balance) => STABLES.includes(balance.asset.toUpperCase()));
       //Proceso si y solo si los balances son distintos =>
-      let totalBalance = '0';
+      let totalBalance = "0";
       let details: any[] = [];
       stableCoinsBalances.forEach(({ balance, detail, asset }) => {
-        totalBalance = sum(
-          parseFloat(balance),
-          parseFloat(totalBalance),
-          3
-        ).toString();
+        totalBalance = sum(parseFloat(balance), parseFloat(totalBalance), 3).toString();
         detail.forEach((d) => {
           details.push({
             ...d,
@@ -119,19 +107,20 @@ export default function useWallets(userId: string) {
         const newWallets = [...wallets];
         newWallets[index] = newWalletBalance;
         setWallets(newWallets);
-        showAlert('Balance actualizado', 'success');
+        showAlert("Balance actualizado", "success");
       } else {
-        showAlert('No hay cambios en el balance de esa billetera', 'info');
+        showAlert("No hay cambios en el balance de esa billetera", "info");
       }
     }
     setIsRefreshingWallet(undefined);
   };
+
   const loadWallets = async () => {
     setLoading({ wallets: true, balances: true });
     const wallets = await cryptoWalletServices.getWalletsByUserId(userId);
     let addresses: string[] = [];
     let providers: {
-      type: 'circle' | 'binance' | 'coinbase';
+      type: "circle" | "binance" | "coinbase";
       auth: {
         apiKey?: string;
         apiSecret?: string;
@@ -149,13 +138,13 @@ export default function useWallets(userId: string) {
       processedWallets.push({
         ...wallet,
         balance: {
-          amount: '-1',
+          amount: "-1",
           detail: [],
         },
       });
-      if (wallet.brand === 'circle') {
+      if (wallet.brand === "circle") {
         providers.push({
-          type: 'circle',
+          type: "circle",
           auth: {
             apiKey: circleApiKey,
           },
@@ -171,21 +160,25 @@ export default function useWallets(userId: string) {
     });
     const {
       data: { balance: balances },
-    } = await axios.post<{ balance: Balance }>('/api/wallets/getBalances', {
-      addresses,
-      providers,
-    });
-
-    const stableCoinsBalances = balances.filter((balance) =>
-      STABLES.includes(balance.asset)
+    } = await axios.post<{ balance: Balance }>(
+      "/api/wallets/balance",
+      {
+        addresses,
+        providers,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authService.getToken()}`,
+        },
+      }
     );
+
+    const stableCoinsBalances = balances.filter((balance) => STABLES.includes(balance.asset.toUpperCase()));
     stableCoinsBalances.forEach((balance) => {
       balance.detail.forEach((detail) => {
-        if (detail.balance === '0') return;
-        if (detail.provider === 'circle') {
-          const index = processedWallets.findIndex(
-            (wallet) => wallet.brand === 'circle'
-          );
+        if (detail.balance === "0") return;
+        if (detail.provider === "circle") {
+          const index = processedWallets.findIndex((wallet) => wallet.brand === "circle");
           processedWallets[index].balance.amount = detail.balance;
           processedWallets[index].balance.detail.push({
             ...detail,
@@ -193,15 +186,9 @@ export default function useWallets(userId: string) {
           });
           return;
         }
-        const index = processedWallets.findIndex(
-          (wallet) => wallet.address === detail.address
-        );
+        const index = processedWallets.findIndex((wallet) => wallet.address === detail.address);
         if (index === -1) return;
-        processedWallets[index].balance.amount = sum(
-          parseFloat(detail.balance),
-          parseFloat(processedWallets[index].balance.amount),
-          3
-        ).toString();
+        processedWallets[index].balance.amount = sum(parseFloat(detail.balance), parseFloat(processedWallets[index].balance.amount), 3).toString();
         processedWallets[index].balance.detail.push({
           ...detail,
           currency: balance.asset,

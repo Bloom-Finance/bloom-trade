@@ -1,0 +1,103 @@
+import {
+  Balance,
+  Chain,
+  CustodialProvider,
+  Environment,
+  IBloomServices,
+} from '@bloom-trade/types';
+import axios from 'axios';
+
+interface IProvidersRequest {
+  type: 'circle' | 'binance' | 'coinbase';
+  auth: {
+    apiKey?: string;
+    apiSecret?: string;
+  };
+}
+
+class BloomServices implements IBloomServices {
+  private url: string;
+  private token: string;
+  private isTestnet: boolean = false;
+  constructor(apiToken: string, params?: { test?: boolean }) {
+    this.token = apiToken;
+    if (params?.test) {
+      this.url = Environment.sandbox;
+      this.isTestnet = true;
+    } else {
+      this.url = Environment.production;
+    }
+  }
+  async isTokenValid<T>(
+    token: string
+  ): Promise<{ isValid: boolean; payload: T | any }> {
+    const { data } = await axios.get<{ isValid: boolean; payload: T }>(
+      `${this.url}/verifyToken?bloom=true`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return {
+      isValid: data.isValid,
+      payload: data.payload,
+    };
+  }
+  async getBalance(
+    config: {
+      dex?: { addresses: string[]; chains?: Chain[] } | undefined;
+      cex?:
+        | {
+            id: CustodialProvider;
+            auth: {
+              apiKey?: string | undefined;
+              apiSecret?: string | undefined;
+            };
+          }[]
+        | undefined;
+    },
+    params?: {
+      onlyStableCoins: boolean;
+    }
+  ): Promise<Balance> {
+    const { dex, cex } = config;
+    const addresses: string[] | undefined = dex?.addresses;
+    const chains: Chain[] | undefined = dex?.chains;
+    const providers: IProvidersRequest[] = [];
+
+    if (cex) {
+      cex.forEach((provider) => {
+        const { id, auth } = provider;
+        const { apiKey, apiSecret } = auth;
+        providers.push({
+          type: id,
+          auth: {
+            apiKey,
+            apiSecret,
+          },
+        });
+      });
+    }
+    let url = `${this.url}/wallets/balance?testnet=${this.isTestnet}`;
+    if (params?.onlyStableCoins) {
+      url += `&stableCoins=true`;
+    }
+    const { data } = await axios.post<{ balance: Balance }>(
+      url,
+      {
+        addresses,
+        providers,
+        chains,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      }
+    );
+    return data.balance;
+  }
+}
+
+export default BloomServices;

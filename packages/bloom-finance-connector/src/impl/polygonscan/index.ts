@@ -1,12 +1,6 @@
 import { ProviderConnector } from '../connector';
 import { IProviderConnector, Balance } from '../../@types/index';
-import {
-  Asset,
-  Chain,
-  CustodialProvider,
-  Provider,
-  Transaction,
-} from '@bloom-trade/types';
+import { Asset, Chain, Provider, Transaction } from '@bloom-trade/types';
 import axios from 'axios';
 import {
   convertToken,
@@ -44,7 +38,7 @@ export class ProviderConnectorImpl
         !balance.find((e) => {
           if (
             e.detail.find((e) => e.address === address) &&
-            e.asset === 'MATIC'
+            e.asset === 'matic'
           ) {
             return e;
           }
@@ -55,19 +49,21 @@ export class ProviderConnectorImpl
         );
         //TODO: Wei convertion
         const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
-        balance.push({
-          asset: 'MATIC',
-          description: 'Matic polygon asset',
-          balance: web3.utils.fromWei(data.result, 'ether'),
-          detail: [
-            {
-              address,
-              provider: this._provider.id,
-              chain: this.chain as string,
-              balance: web3.utils.fromWei(data.result, 'ether'),
-            },
-          ],
-        });
+        if (data.result !== '0') {
+          balance.push({
+            asset: 'matic',
+            description: 'Matic polygon asset',
+            balance: web3.utils.fromWei(data.result, 'ether'),
+            detail: [
+              {
+                address,
+                provider: this._provider.id,
+                chain: this.chain as string,
+                balance: web3.utils.fromWei(data.result, 'ether'),
+              },
+            ],
+          });
+        }
       }
       for (const contract of contracts) {
         const { data } = await axios.get(
@@ -93,7 +89,7 @@ export class ProviderConnectorImpl
             );
           }
           balance.push({
-            asset: contract.token,
+            asset: contract.token.toLowerCase(),
             description: getDescription(contract.token),
             balance: retrievedBalance,
             detail: [

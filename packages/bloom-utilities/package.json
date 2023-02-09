@@ -22,10 +22,12 @@
   "description": "Utilities to help with services and formating",
   "dependencies": {
     "axios": "^1.2.2",
+    "crypto": "^1.0.1",
     "firebase": "^9.15.0",
     "moment": "^2.29.4",
     "numeral": "^2.0.6",
-    "wagmi": "^0.10.11"
+    "wagmi": "^0.10.11",
+    "web3": "^1.8.2"
   },
   "devDependencies": {
     "@bloom-trade/types": "^0.0.19"

@@ -38,7 +38,7 @@ export class ProviderConnectorImpl
         !balance.find((e) => {
           if (
             e.detail.find((e) => e.address === address) &&
-            e.asset === 'ETH'
+            e.asset === 'eth'
           ) {
             return e;
           }
@@ -49,19 +49,21 @@ export class ProviderConnectorImpl
         );
         //TODO: Wei convertion
         const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
-        balance.push({
-          asset: 'ETH',
-          description: 'Ethereum',
-          balance: web3.utils.fromWei(data.result, 'ether'),
-          detail: [
-            {
-              address,
-              provider: this._provider.id,
-              chain: this.chain as string,
-              balance: web3.utils.fromWei(data.result, 'ether'),
-            },
-          ],
-        });
+        if (data.result !== '0') {
+          balance.push({
+            asset: 'eth',
+            description: 'Ethereum',
+            balance: web3.utils.fromWei(data.result, 'ether'),
+            detail: [
+              {
+                address,
+                provider: this._provider.id,
+                chain: this.chain as string,
+                balance: web3.utils.fromWei(data.result, 'ether'),
+              },
+            ],
+          });
+        }
       }
       for (const contract of contracts) {
         const { data } = await axios.get(
@@ -87,7 +89,7 @@ export class ProviderConnectorImpl
             );
           }
           balance.push({
-            asset: contract.token,
+            asset: contract.token.toLowerCase(),
             description: getDescription(contract.token),
             balance: retrievedBalance,
             detail: [

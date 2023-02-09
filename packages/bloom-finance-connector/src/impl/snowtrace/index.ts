@@ -4,18 +4,11 @@ import axios from 'axios';
 import {
   convertToken,
   getAssetDataByChain,
-  getAssetPriceInUSDC,
   getDescription,
   getSupportedContracts,
   weiToEth,
 } from '../../utils';
-import {
-  Asset,
-  Chain,
-  CustodialProvider,
-  Provider,
-  Transaction,
-} from '@bloom-trade/types';
+import { Asset, Chain, Provider, Transaction } from '@bloom-trade/types';
 import Web3 from 'web3';
 export class ProviderConnectorImpl
   extends ProviderConnector
@@ -45,7 +38,7 @@ export class ProviderConnectorImpl
         !balance.find((e) => {
           if (
             e.detail.find((e) => e.address === address) &&
-            e.asset === 'AVAX'
+            e.asset === 'avax'
           ) {
             return e;
           }
@@ -56,19 +49,21 @@ export class ProviderConnectorImpl
         );
         //TODO: Wei convertion
         const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
-        balance.push({
-          asset: 'AVAX',
-          description: 'Avalanche asset',
-          balance: web3.utils.fromWei(data.result, 'ether'),
-          detail: [
-            {
-              address,
-              provider: this._provider.id,
-              chain: this.chain as string,
-              balance: web3.utils.fromWei(data.result, 'ether'),
-            },
-          ],
-        });
+        if (data.result !== '0') {
+          balance.push({
+            asset: 'avax',
+            description: 'Avalanche asset',
+            balance: web3.utils.fromWei(data.result, 'ether'),
+            detail: [
+              {
+                address,
+                provider: this._provider.id,
+                chain: this.chain as string,
+                balance: web3.utils.fromWei(data.result, 'ether'),
+              },
+            ],
+          });
+        }
       }
       for (const contract of contracts) {
         const { data } = await axios.get(
@@ -94,7 +89,7 @@ export class ProviderConnectorImpl
             );
           }
           balance.push({
-            asset: contract.token,
+            asset: contract.token.toLowerCase(),
             description: getDescription(contract.token),
             balance: retrievedBalance,
             detail: [

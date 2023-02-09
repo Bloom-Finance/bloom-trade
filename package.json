@@ -19,7 +19,8 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "docs/*"
+    "docs/*",
+    "contracts/*"
   ],
   "husky": {
     "hooks": {

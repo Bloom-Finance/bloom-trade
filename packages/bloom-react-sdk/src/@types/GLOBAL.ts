@@ -1,13 +1,6 @@
-export enum STABLECOINS {
-  USDC = 'USDC',
-  USDT = 'USDT',
-  DAI = 'DAI',
-}
-export enum CHAINS {
-  ETH = 'ETHEREUM',
-  POLYGON = 'POLYGON',
-  AVALANCHE = 'AVALANCHE',
-}
+import { BLOOM_URL } from '@bloom-trade/types'
 
-export type Stablecoin = STABLECOINS.USDC | STABLECOINS.USDT | STABLECOINS.DAI
-export type Chain = CHAINS.ETH | CHAINS.POLYGON | CHAINS.AVALANCHE
+const BLOOM_URL_API: BLOOM_URL = 'https://api.bloom.com'
+const BLOOM_URL_API_TEST: BLOOM_URL = 'https://localhost:3000/api'
+
+export { BLOOM_URL_API, BLOOM_URL_API_TEST }

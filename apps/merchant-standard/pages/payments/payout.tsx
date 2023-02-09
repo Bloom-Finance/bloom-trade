@@ -3,31 +3,19 @@ import SecuredPage from '../../src/components/layout/securedPage';
 import InternalContainer from '../../src/components/layout/internalContainer';
 import Statistics from '../../src/sections/payouts/statistics';
 import PayOutTransactions from '../../src/sections/payouts/transactions';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import useTransactions from '../../src/hooks/useTransactions';
+import { TransactionsStore } from '../../src/store/transactions.store';
+import { useEffect } from 'react';
 
 const Page: NextPage = () => {
   const { refresh, fetching, weeklyIncome, weeklyOutcome } = useTransactions();
+  const store = TransactionsStore.useState((s) => s.transactions);
+
   return (
-    <SecuredPage>
-      <InternalContainer
-        title='Payouts'
-        actions={
-          <Button
-            variant='contained'
-            onClick={async () => {
-              refresh();
-            }}
-          >
-            {fetching ? 'Loading...' : 'Refresh'}
-          </Button>
-        }
-      >
-        {weeklyIncome && weeklyOutcome ? (
-          <Statistics income={weeklyIncome} outcome={weeklyOutcome} />
-        ) : (
-          'Loading'
-        )}
+    <SecuredPage title='Payouts' currentLink='payouts'>
+      <Stack spacing={2}>
+        <Statistics income={weeklyIncome} outcome={weeklyOutcome} />
         <PayOutTransactions
           headListTransactions={[
             {
@@ -102,7 +90,7 @@ const Page: NextPage = () => {
             },
           ]}
         />
-      </InternalContainer>
+      </Stack>
     </SecuredPage>
   );
 };

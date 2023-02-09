@@ -10,5 +10,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "355bbe805690dbf0ad13cf183fe617cf986b48c6"
+  "dependencies": {
+    "multiformats": "^11.0.1"
+  }
 }

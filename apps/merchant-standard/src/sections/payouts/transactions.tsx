@@ -3,10 +3,7 @@ import moment from "moment";
 import React from "react";
 import Label from "../../components/label";
 import QuickTransfer from "../../components/quickTransfer";
-import TableComponent, {
-  TableHeadProps,
-  TableRowProps,
-} from "../../components/table";
+import TableComponent, { TableHeadProps, TableRowProps } from "../../components/table";
 import { fCurrency } from "@bloom-trade/utilities";
 
 export interface PayOutsRowsProps {
@@ -40,24 +37,17 @@ const PayOutTransactions = (props: PayOutTransactionsProps): JSX.Element => {
         <Typography variant="body1">{row.from}</Typography>,
         <Typography variant="body1">{row.to}</Typography>,
         <Typography variant="body1">{fCurrency(row.amount)}</Typography>,
-        <Label color={row.status === "completed" ? "success" : "info"}>
-          {row.status}
-        </Label>,
+        <Label color={row.status === "completed" ? "success" : "info"}>{row.status}</Label>,
       ],
     };
   };
 
   return (
     <Grid container rowSpacing={2} columnSpacing={2}>
-      <Grid item xs={12} md={8}>
-        <TableComponent
-          head={headListTransactions}
-          rows={rowsListTransactions.map(parseRow)}
-          maxHeight={340}
-          title="Last Payouts"
-        />
+      <Grid item xs={12} md={9}>
+        <TableComponent head={headListTransactions} rows={rowsListTransactions.map(parseRow)} maxHeight={340} title="Last Payouts" />
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={2}>
         <Stack spacing={2}>
           <QuickTransfer />
         </Stack>

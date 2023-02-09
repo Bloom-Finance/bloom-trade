@@ -30,7 +30,6 @@ const Component = (props: Props): JSX.Element => {
     owner: user.id,
     isPrincipal: false,
   });
-
   const handleChange = (field: string, data: any) => {
     setWalletData({ ...walletData, [field]: data });
   };

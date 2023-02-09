@@ -1,5 +1,5 @@
-import { createTheme } from '@mui/material/styles';
-import componentsOverride from './overrides';
+import { createTheme } from "@mui/material/styles";
+import componentsOverride from "./overrides";
 
 export function remToPx(value: string) {
   return Math.round(parseFloat(value) * 16);
@@ -144,9 +144,9 @@ const theme = createTheme({
 });
 
 export default theme; */
-export const Pink = '#F82A91';
-export const GraySmoth = '#637381';
-export const Gray = '#E5E5E5';
+export const Pink = "#F82A91";
+export const GraySmoth = "#637381";
+export const Gray = "#E5E5E5";
 const fontSize = 14; // px
 // Tell Material-UI what's the font-size on the html element.
 // 16px is the default font-size used by browsers.
@@ -156,23 +156,21 @@ const coef = fontSize / 14;
 const defaultTheme = createTheme({
   palette: {
     primary: {
-      main: '#000000',
-      light: '#F82A91',
+      main: "#000000",
+      light: "#F82A91",
     },
     secondary: {
-      main: '#EE9975',
-      contrastText: '#fff',
+      main: "#F82A91",
+      contrastText: "#fff",
+    },
+    text: {
+      primary: "#000000",
+      secondary: "#637381",
     },
   },
 });
 
-export type ColorSchema =
-  | 'primary'
-  | 'secondary'
-  | 'info'
-  | 'success'
-  | 'warning'
-  | 'error';
+export type ColorSchema = "primary" | "secondary" | "info" | "success" | "warning" | "error";
 
 const { breakpoints, typography } = defaultTheme;
 
@@ -190,8 +188,8 @@ const theme = {
     MuiContainer: {
       styleOverrides: {
         root: {
-          paddingBottom: '15px',
-          paddingTop: '15px',
+          paddingBottom: "15px",
+          paddingTop: "15px",
         },
       },
     },
@@ -202,72 +200,80 @@ const theme = {
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "16px",
+          boxShadow: "0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24)",
+        },
+      },
+    },
     MuiLink: {
       styleOverrides: {
         root: {
           fontSize: pxToRem(16),
 
-          [breakpoints.down('sm')]: {
+          [breakpoints.down("sm")]: {
             fontSize: pxToRem(14),
           },
           mt: 2,
-          color: '#373737',
-          lineHeight: '160%',
+          color: "#373737",
+          lineHeight: "160%",
           fontWeight: 250,
-          textDecoration: 'none',
+          textDecoration: "none",
         },
       },
     },
   },
   typography: {
     pxToRem: (size: number) => `${(size / htmlFontSize) * coef}rem`,
-    color: '#212B36',
+    color: "#212B36",
     h1: {
       fontSize: pxToRem(64),
-      lineHeight: '120%',
-      [breakpoints.down('sm')]: {
+      lineHeight: "120%",
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(40),
       },
     },
     h2: {
       fontSize: pxToRem(48),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(28),
       },
     },
     h3: {
       fontSize: pxToRem(40),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(26),
       },
     },
     h4: {
       fontSize: pxToRem(32),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(26),
       },
     },
     h5: {
       fontSize: pxToRem(18),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(16),
       },
-      lineHeght: '30px',
+      lineHeght: "30px",
       fontWeight: 700,
     },
     h6: {
       fontSize: pxToRem(20),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(18),
       },
-      lineHeght: '30px',
+      lineHeght: "30px",
       fontWeight: 700,
     },
     subtitle1: {
       fontWeight: 400,
       lineHeight: 80 / 64,
       fontSize: pxToRem(24),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(18),
       },
       // letterSpacing: 2,
@@ -277,36 +283,36 @@ const theme = {
       fontWeight: 400,
       lineHeight: 80 / 64,
       fontSize: pxToRem(18),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(16),
       },
       // letterSpacing: 2,
     },
     body1: {
       fontSize: pxToRem(16),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(14),
       },
       fontWeight: 400,
-      lineHeight: '160%',
+      lineHeight: "160%",
 
-      color: '#373737',
+      color: "#373737",
     },
     overline: {
       fontSize: pxToRem(12),
-      [breakpoints.down('sm')]: {
+      [breakpoints.down("sm")]: {
         fontSize: pxToRem(12),
       },
       fontWeight: 700,
-      lineHeight: '18px%',
-      textTransform: 'uppercase',
-      letterSpacing: '1.1px',
+      lineHeight: "18px%",
+      textTransform: "uppercase",
+      letterSpacing: "1.1px",
 
-      color: '#637381',
+      color: "#637381",
     },
     caption: {
       fontSize: pxToRem(14),
-      lineHeight: '150%',
+      lineHeight: "150%",
       fontWeight: 400,
     },
   },
