@@ -29,7 +29,6 @@ contract BloomReceipts is
     }
 
     // The following functions are overrides required by Solidity.
-
     function _beforeTokenTransfer(
         address from,
         address to,

@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
+  "private": true,
   "scripts": {
+    "hardhat": "node --require esm node_modules/.bin/hardhat",
     "deploy:goerli": "npx hardhat run  scripts/deploy.ts --network goerli",
     "deploy:ethereum": "npx hardhat run  scripts/deploy.ts --network ethereum",
     "deploy:polygon": "npx hardhat run  scripts/deploy.ts --network polygon",
@@ -25,7 +26,6 @@
     "typechain": "^8.1.1"
   },
   "dependencies": {
-    "@bloom-trade/utilities": "*",
     "@openzeppelin/contracts": "^4.8.1",
     "dotenv": "^16.0.3"
   }

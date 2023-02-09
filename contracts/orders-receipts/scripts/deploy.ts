@@ -1,9 +1,6 @@
 import { run, network, ethers } from 'hardhat';
 import signale from 'signale';
-import {
-  getBlockchainExplorerName,
-  getChainNameById,
-} from '@bloom-trade/utilities';
+
 async function main() {
   signale.pending(`Deploying BloomReceipts contract to ${network.name} \n`);
   const ContractFactory = await ethers.getContractFactory('BloomReceipts');
@@ -14,11 +11,6 @@ async function main() {
   );
   signale.pending(`Waiting for contract to be mined...`);
   await contract.deployTransaction.wait(10);
-  signale.pending(
-    `Verifying contract on ${getBlockchainExplorerName(
-      getChainNameById(network.config.chainId as number)
-    )}`
-  );
   await verify(contract.address, []);
 }
 async function verify(contractAddress: string, args: any[]) {
