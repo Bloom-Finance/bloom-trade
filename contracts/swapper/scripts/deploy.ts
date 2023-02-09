@@ -1,18 +1,11 @@
 import {ethers, network, run} from "hardhat";
 import signale from "signale";
-import {terminal} from "terminal-kit";
 async function main() {
     const _owners = ["0xF274800E82717D38d2e2ffe18A4C6489a50C5Add"];
     const currentNetworkId = network.config.chainId;
     signale.pending(`Deploying  contracts to ${network.name} \n`);
     const {_dai, _usdc, _usdt, _wdai} = getContractsAddresses(
         currentNetworkId as any
-    );
-    const OrdersFactory = await ethers.getContractFactory("BloomOrders");
-    const orders = await OrdersFactory.deploy();
-    await orders.deployed();
-    signale.success(
-        `Bloom Orders contract was deployed to:${orders.address} 🚀🚀 `
     );
     //send array of owners
     const TreasureFactory = await ethers.getContractFactory("BloomTreasure");
@@ -58,14 +51,12 @@ async function main() {
         process.env.ETHERSCAN_API_KEY
     ) {
         signale.pending("Waiting for blocks to be mined 🕑 ");
-        await orders.deployTransaction.wait(10);
         await swap.deployTransaction.wait(10);
         await treasure.deployTransaction.wait(10);
         await transfer.deployTransaction.wait(10);
         await wormholeSwapper.deployTransaction.wait(10);
         signale.success("Blocks mined ");
         signale.pending("Verifying  contracts on Etherscan");
-        await verify(orders.address, []);
         await verify(swap.address, [_dai, _usdc, _usdt, treasure.address]);
         await verify(treasure.address, [_owners, _dai, _usdc, _usdt]);
         await verify(transfer.address, [_dai, _usdc, _usdt, treasure.address]);

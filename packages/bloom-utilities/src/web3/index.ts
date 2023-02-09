@@ -145,7 +145,6 @@ const getTokenContractMetadataBySymbolAndChain = (
   | {
       address: string;
       decimals: number;
-      abi: any;
     }
   | undefined => {
   const foundSymbol = Tokens.tokens.find(
@@ -164,7 +163,6 @@ const getTokenContractMetadataBySymbolAndChain = (
   return {
     address: network.address,
     decimals: network.decimalPosition,
-    abi: network.abi,
   };
 };
 
@@ -182,7 +180,7 @@ const getTokenIconBySymbol = (symbol: Asset) => {
     case 'usdc':
       return 'https://s2.coinmarketcap.com/static/img/coins/200x200/3408.png';
     case 'btc':
-      return 'https://s2.coinmarketcap.com/static/img/coins/200x200/1.png';
+      return 'https://s2.coinm1rketcap.com/static/img/coins/200x200/1.png';
     case 'eth':
       return 'https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png';
     case 'matic':

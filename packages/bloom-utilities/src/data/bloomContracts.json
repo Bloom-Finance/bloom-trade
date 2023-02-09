@@ -13,6 +13,12 @@
       "treasure": "0x78A27aeFaac1F7A7F1530E095F03CA773B233325",
       "transfers": "0xF1748e94300D8139A715Dc7804c26b2a6bF152D3",
       "receipts": "0xdF449319401792f35628BFEC8cBAd504e5F551F0"
+    },
+    "mainnet": {
+      "swapper": "0x8902093F8CD97e0EB3Fc570F20E91CD856d78329",
+      "treasure": "0x01c58605b0854238aA15a4351a93D493d8776D7e",
+      "transfers": "0x4B8Ce3ED417D610A21a9674a8b591CFd1F678885",
+      "receipts": "0x"
     }
   }
 }

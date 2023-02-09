@@ -28,6 +28,12 @@ All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 -   [TREASURE 🤑](https://mumbai.polygonscan.com/address/0x78A27aeFaac1F7A7F1530E095F03CA773B233325): 0x78A27aeFaac1F7A7F1530E095F03CA773B233325
 -   [TRANSFERS 💸](https://mumbai.polygonscan.com/address/0xF1748e94300D8139A715Dc7804c26b2a6bF152D3): 0xF1748e94300D8139A715Dc7804c26b2a6bF152D3
 
+### Last stable testnet contracts for Polygon 🔮
+
+-   [SWAPPER 🔄](https://polygonscan.com/address/0x8902093F8CD97e0EB3Fc570F20E91CD856d78329#code): 0x8902093F8CD97e0EB3Fc570F20E91CD856d78329
+-   [TREASURE 🤑](https://polygonscan.com/address/0x01c58605b0854238aA15a4351a93D493d8776D7e): 0x01c58605b0854238aA15a4351a93D493d8776D7e
+-   [TRANSFERS 💸](https://polygonscan.com/address/0x4B8Ce3ED417D610A21a9674a8b591CFd1F678885): 0x4B8Ce3ED417D610A21a9674a8b591CFd1F678885
+
 ## Ethereum 🌎
 
 ### Contract addresses for Goerli Testnet

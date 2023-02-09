@@ -39,10 +39,10 @@ const config: HardhatUserConfig = {
     },
     etherscan: {
         apiKey: {
-            mainnet: process.env.ETHERSCAN_API_KEY,
-            goerli: process.env.ETHERSCAN_API_KEY,
-            polygon: process.env.POLYGONSCAN_API_KEY,
-            polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+            mainnet: process.env.ETHERSCAN_API_KEY as string,
+            goerli: process.env.ETHERSCAN_API_KEY as string,
+            polygon: process.env.POLYGONSCAN_API_KEY as string,
+            polygonMumbai: process.env.POLYGONSCAN_API_KEY as string,
         },
     },
     gasReporter: {
@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
         coinmarketcap: process.env.COINMARKETCAP_API_KEY,
         outputFile: "gas-report.txt",
         currency: "USD",
-        token: process.env.CHAIN === "ETH" ? "ETH" : "MATIC",
+        token: "MATIC",
         noColors: true,
     },
 };
