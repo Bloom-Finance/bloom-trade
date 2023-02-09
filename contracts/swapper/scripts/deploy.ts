@@ -29,20 +29,6 @@ async function main() {
     signale.success(
         `Transfers contract was deployed to:${transfer.address} 🚀🚀 `
     );
-    const WormholeSwapper = await ethers.getContractFactory(
-        "BloomWormholeSwapper"
-    );
-    const wormholeSwapper = await WormholeSwapper.deploy(
-        _dai,
-        _usdc,
-        _usdt,
-        treasure.address,
-        _wdai
-    );
-    await wormholeSwapper.deployed();
-    signale.success(
-        `Wormhole Swapper contract was deployed to:${wormholeSwapper.address} 🚀🚀 `
-    );
     if (
         (currentNetworkId === 5 ||
             currentNetworkId === 1 ||
@@ -54,19 +40,12 @@ async function main() {
         await swap.deployTransaction.wait(10);
         await treasure.deployTransaction.wait(10);
         await transfer.deployTransaction.wait(10);
-        await wormholeSwapper.deployTransaction.wait(10);
+
         signale.success("Blocks mined ");
         signale.pending("Verifying  contracts on Etherscan");
         await verify(swap.address, [_dai, _usdc, _usdt, treasure.address]);
         await verify(treasure.address, [_owners, _dai, _usdc, _usdt]);
         await verify(transfer.address, [_dai, _usdc, _usdt, treasure.address]);
-        await verify(wormholeSwapper.address, [
-            _dai,
-            _usdc,
-            _usdt,
-            treasure.address,
-            _wdai,
-        ]);
     }
 }
 async function verify(contractAddress: string, args: any[]) {
@@ -112,9 +91,9 @@ function getContractsAddresses(chainId: 1 | 5) {
     if (chainId === 137) {
         //polygon mainnet
         return {
-            _dai: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-            _usdc: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-            _usdt: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+            _dai: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+            _usdc: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+            _usdt: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
             _wdai: "0x87374d35C5F1bD78c2b1da383F460e154e7D3E5e", //TODO: Add attested token
         };
     } else {

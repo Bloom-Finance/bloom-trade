@@ -30,9 +30,9 @@ All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 
 ### Last stable testnet contracts for Polygon 🔮
 
--   [SWAPPER 🔄](https://polygonscan.com/address/0x8902093F8CD97e0EB3Fc570F20E91CD856d78329#code): 0x8902093F8CD97e0EB3Fc570F20E91CD856d78329
--   [TREASURE 🤑](https://polygonscan.com/address/0x01c58605b0854238aA15a4351a93D493d8776D7e): 0x01c58605b0854238aA15a4351a93D493d8776D7e
--   [TRANSFERS 💸](https://polygonscan.com/address/0x4B8Ce3ED417D610A21a9674a8b591CFd1F678885): 0x4B8Ce3ED417D610A21a9674a8b591CFd1F678885
+-   [SWAPPER 🔄](https://polygonscan.com/address/0xF127Ec80A01Dae09F499742Cf56A71906937d37B): 0xF127Ec80A01Dae09F499742Cf56A71906937d37B
+-   [TREASURE 🤑](https://polygonscan.com/address/0xD27F7c171BA726d0D747a70285F41eb7600E304a): 0xD27F7c171BA726d0D747a70285F41eb7600E304a
+-   [TRANSFERS 💸](https://polygonscan.com/address/0x5e5B5109AdBF940317e2a782dc2934f149408F0c): 0x5e5B5109AdBF940317e2a782dc2934f149408F0c
 
 ## Ethereum 🌎
 
@@ -66,9 +66,9 @@ All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 
 | Tokens |                                  Addresses |
 | ------ | -----------------------------------------: |
-| DAI    | 0x6B175474E89094C44Da98b954EedeAC495271d0F |
-| USDT   | 0xdAC17F958D2ee523a2206206994597C13D831ec7 |
-| USDC   | 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 |
+| DAI    | 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063 |
+| USDT   | 0xc2132D05D31c914a87C6611C10748AEb04B58e8F |
+| USDC   | 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174 |
 
 ### How to use 🤔
 
