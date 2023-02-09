@@ -252,6 +252,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                         ...order,
                         txHash: txReceipt.transactionHash as `0x${string}`,
                       })
+                      //mint nft
                       setShowSuccess(true)
                     }
                   } catch (error) {

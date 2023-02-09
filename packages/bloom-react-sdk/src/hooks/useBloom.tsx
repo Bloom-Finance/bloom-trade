@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-extra-semi */
 import { Button } from '@mui/material'
-import { useWeb3Modal, useWeb3ModalNetwork } from '@web3modal/react'
+import { useWeb3Modal } from '@web3modal/react'
 import React, { useEffect, useState } from 'react'
-import { useAccount, useSigner, useSwitchNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 import { Connector, disconnect } from '@wagmi/core'
 import { Stack } from '@mui/system'
 import { Chain, StableCoin, Testnet } from '@bloom-trade/types'
@@ -61,9 +61,8 @@ export default function useBloom(params?: {
   }>()
   const store = BloomStore.useState((s) => s)
   const { switchNetwork } = useSwitchNetwork()
-  const { selectedChain } = useWeb3ModalNetwork()
   const [waitingForBlockchain, setWaitingForBlockchain] = useState(false)
-
+  const { chain: selectedChain } = useNetwork()
   const { open, isOpen } = useWeb3Modal()
   const { isConnected } = useAccount({
     onConnect({ address, connector, isReconnected }) {

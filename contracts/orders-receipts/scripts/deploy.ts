@@ -11,6 +11,7 @@ async function main() {
   );
   signale.pending(`Waiting for contract to be mined...`);
   await contract.deployTransaction.wait(10);
+
   await verify(contract.address, []);
 }
 async function verify(contractAddress: string, args: any[]) {

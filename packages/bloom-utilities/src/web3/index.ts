@@ -18,7 +18,6 @@ import Tokens from '../data/tokens.json';
 import Contracts from '../data/bloomContracts.json';
 import Abis from '../data/abis.json';
 import Web3 from 'web3';
-
 /**
  * If the address starts with 0x, then it's a web3 wallet.
  * @param {string} address - The address of the wallet.
@@ -207,17 +206,18 @@ const getTokenDescriptionBySymbol = (symbol: Asset) => {
   if (!token) return;
   return token.description;
 };
+
 /**
  * It returns the contract address for a given chain and type
  * @param {Chain} chain - Chain - The chain you want to get the contract address for.
- * @param {'transfers' | 'swapper'} type - 'transfers' | 'swapper'
+ * @param {'transfers' | 'swapper' | 'receipts'} type - 'transfers' | 'swapper'
  * @param [params] - {
  * @returns The contract address for the chain and type specified.
  */
 
 const getBloomContractsByChain = (
   chain: Chain | Testnet,
-  type: 'transfers' | 'swapper'
+  type: 'transfers' | 'swapper' | 'receipts'
 ): string | `0x${string}` => {
   let isTestnet = false;
   if (chain === 'fuji' || chain === 'mumbai' || chain === 'goerli') {

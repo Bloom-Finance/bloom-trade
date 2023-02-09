@@ -3,14 +3,16 @@
     "testnet": {
       "swapper": "0x760ec0C1213261d9518e18AB48639D97C9A03646",
       "treasure": "0xC1843CE3fE074F3c4427Ee9054a3e3810123AC1A",
-      "transfers": "0xA52266a2f0c31C50899298DC41c9fFa5752f938a"
+      "transfers": "0xA52266a2f0c31C50899298DC41c9fFa5752f938a",
+      "receipts": "0x025c233a133126FE0386e6580F0D52F984ECfA14"
     }
   },
   "polygon": {
     "testnet": {
       "swapper": "0xf2Bc02967231C666e0956E8F2A205efe52406EC0",
       "treasure": "0x78A27aeFaac1F7A7F1530E095F03CA773B233325",
-      "transfers": "0xF1748e94300D8139A715Dc7804c26b2a6bF152D3"
+      "transfers": "0xF1748e94300D8139A715Dc7804c26b2a6bF152D3",
+      "receipts": "0xdF449319401792f35628BFEC8cBAd504e5F551F0"
     }
   }
 }

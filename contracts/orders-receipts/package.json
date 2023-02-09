@@ -5,7 +5,6 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "hardhat": "node --require esm node_modules/.bin/hardhat",
     "deploy:goerli": "npx hardhat run  scripts/deploy.ts --network goerli",
     "deploy:ethereum": "npx hardhat run  scripts/deploy.ts --network ethereum",
     "deploy:polygon": "npx hardhat run  scripts/deploy.ts --network polygon",
