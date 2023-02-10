@@ -80,7 +80,7 @@ export default function useWallets(userId: string) {
       const address = wallet.address;
       const {
         data: { balance: balances },
-      } = await axios.post<{ balance: Balance }>("/api/wallets/getBalances", {
+      } = await axios.post<{ balance: Balance }>("/api/wallets/balance", {
         addresses: [address],
       });
       const stableCoinsBalances = balances.filter((balance) => STABLES.includes(balance.asset.toUpperCase()));

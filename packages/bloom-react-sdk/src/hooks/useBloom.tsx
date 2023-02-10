@@ -34,6 +34,10 @@ export default function useBloom(params?: {
   }
 }) {
   const [waitingForUserResponse, setWaitingForUserResponse] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
   const [ipfs, setIpfs] = useState<BloomIpfs>()
   useEffect(() => {
     ;(async () => {
@@ -72,6 +76,7 @@ export default function useBloom(params?: {
 
   /* A function that returns a button that connects to a wallet. */
   const walletConnectButton = (params: { icon?: 'show' | 'hide'; label?: string; disabled?: boolean }) => {
+    if (!hasMounted) return null
     return (
       <Button
         disabled={params.disabled}

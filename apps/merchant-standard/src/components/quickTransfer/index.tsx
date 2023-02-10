@@ -2,7 +2,9 @@ import { Button, Stack, Typography } from '@mui/material';
 import { Pink } from '../../theme';
 import { fCurrency } from '@bloom-trade/utilities';
 
-export interface QuickTransferProps {}
+export interface QuickTransferProps {
+  onPay: () => void;
+}
 
 const QuickTransfer = (props: QuickTransferProps): JSX.Element => {
   return (
@@ -62,8 +64,14 @@ const QuickTransfer = (props: QuickTransferProps): JSX.Element => {
             {fCurrency(3200)}
           </Typography>
         </Stack>
-        <Button variant='contained' sx={{ width: '100%' }}>
-          Pay with Metamask
+        <Button
+          onClick={() => {
+            props.onPay();
+          }}
+          variant='contained'
+          sx={{ width: '100%' }}
+        >
+          Send
         </Button>
       </Stack>
     </Stack>

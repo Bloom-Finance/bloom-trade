@@ -30,9 +30,9 @@ All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 
 ### Last stable testnet contracts for Polygon 🔮
 
--   [SWAPPER 🔄](https://polygonscan.com/address/0xF127Ec80A01Dae09F499742Cf56A71906937d37B): 0xF127Ec80A01Dae09F499742Cf56A71906937d37B
--   [TREASURE 🤑](https://polygonscan.com/address/0xD27F7c171BA726d0D747a70285F41eb7600E304a): 0xD27F7c171BA726d0D747a70285F41eb7600E304a
--   [TRANSFERS 💸](https://polygonscan.com/address/0x5e5B5109AdBF940317e2a782dc2934f149408F0c): 0x5e5B5109AdBF940317e2a782dc2934f149408F0c
+-   [SWAPPER 🔄](https://polygonscan.com/address/0x0BB38d7E6dbD85432F27330f03A8311B3E8Ded32): 0x0BB38d7E6dbD85432F27330f03A8311B3E8Ded32
+-   [TREASURE 🤑](https://polygonscan.com/address/0x02B40c15024EE30D4A390671438c2BcF7dA7Dfa1): 0x02B40c15024EE30D4A390671438c2BcF7dA7Dfa1
+-   [TRANSFERS 💸](https://polygonscan.com/address/0x64E69A4080cC70D6b942E65ECFa799627C862e4e): 0x64E69A4080cC70D6b942E65ECFa799627C862e4e
 
 ## Ethereum 🌎
 

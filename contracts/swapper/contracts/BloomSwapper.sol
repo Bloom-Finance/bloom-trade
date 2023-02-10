@@ -32,8 +32,9 @@ contract Router {
 
 // Author: @alexFiorenza
 contract BloomSwapper {
+    //TODO: Add dinamic router address
     address private constant UNISWAP_V2_ROUTER =
-        0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+        0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff;
     Router private router = Router(UNISWAP_V2_ROUTER);
     BloomTreasure private treasure;
     address private TREASURE;
@@ -204,7 +205,7 @@ contract BloomSwapper {
         address[] memory path;
         path = new address[](2);
         path[0] = router.WETH();
-        path[1] = DAI;
+        path[1] = USDT;
         uint256 fee = treasure.calculateFee(msg.value);
         require(
             address(this).balance > fee,
