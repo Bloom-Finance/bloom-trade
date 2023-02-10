@@ -155,7 +155,7 @@ const setProdUrl = (provider: Providers) => {
     case 'polygonscan':
       return 'https://api.polygonscan.com/api';
     case 'snowtrace':
-      return 'https://snowtrace.io/api';
+      return 'https://api.snowtrace.io/api';
     case 'circle':
       return 'https://api.circle.com/v1';
     default:

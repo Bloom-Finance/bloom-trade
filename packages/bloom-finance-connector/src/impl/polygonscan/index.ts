@@ -151,7 +151,7 @@ export class ProviderConnectorImpl
         `${this._baseurl}?module=account&action=txlist&address=${address}&startblock=${startingBlock}&endblock=99999999&tag=latest&apikey=${apiKey}`
       );
       for (const e of ethTransactions) {
-        if (e.value !== '0') {
+        if (e instanceof Object && e.value !== '0') {
           const lowerCaseAddress = address.toLowerCase();
           const lowerCaseFrom = e.from.toLowerCase();
           const obj: Transaction = {
@@ -186,7 +186,7 @@ export class ProviderConnectorImpl
           }&address=${address}&startblock=${startingBlock}&endblock=99999999&tag=latest&apikey=${apiKey}`
         );
         for (const e of ERC20Transactions) {
-          if (e.value !== '0') {
+          if (e instanceof Object && e.value !== '0') {
             const lowerCaseAddress = address.toLowerCase();
             const lowerCaseFrom = e.from.toLowerCase();
             const obj: Transaction = {
