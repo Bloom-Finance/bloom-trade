@@ -15,9 +15,9 @@
       "receipts": "0xdF449319401792f35628BFEC8cBAd504e5F551F0"
     },
     "mainnet": {
-      "swapper": "0x8902093F8CD97e0EB3Fc570F20E91CD856d78329",
-      "treasure": "0x01c58605b0854238aA15a4351a93D493d8776D7e",
-      "transfers": "0x4B8Ce3ED417D610A21a9674a8b591CFd1F678885",
+      "swapper": "0x0BB38d7E6dbD85432F27330f03A8311B3E8Ded32",
+      "treasure": "0x02B40c15024EE30D4A390671438c2BcF7dA7Dfa1",
+      "transfers": "0x64E69A4080cC70D6b942E65ECFa799627C862e4e",
       "receipts": "0x"
     }
   }
