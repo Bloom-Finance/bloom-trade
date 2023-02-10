@@ -82,17 +82,6 @@ export default async function handler(
         },
       });
     }
-    console.log(
-      providerCreds,
-      filterParams.from !== 'beginning'
-        ? {
-            from: {
-              custodialProviders: filterParams.from.custodialProviders,
-              selfCustodialProviders: filterParams.from.selfCustodialProviders,
-            },
-          }
-        : { from: 'beginning' }
-    );
     const client = connector.getClient(providerCreds);
     const transactions = await client.getTransactionHistory(
       filterParams.from !== 'beginning'

@@ -11,7 +11,7 @@ export const contracts = {
         {
           chain: 'erc20',
           address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-          decimalPosition: 18,
+          decimalPosition: 6,
         },
         {
           chain: 'fuji',

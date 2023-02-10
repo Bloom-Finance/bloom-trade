@@ -139,7 +139,7 @@ const Component = (props: Props): JSX.Element => {
   return (
     <BloomReact
       credentials={authService.getToken() as string}
-      useTestnet={true}
+      useTestnet={process.env.MODE === 'DEV' ? true : false}
     >
       <Stack>
         <Stack

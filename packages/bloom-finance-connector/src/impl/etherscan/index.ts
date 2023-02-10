@@ -10,6 +10,8 @@ import {
 } from '../../utils';
 import Web3 from 'web3';
 import { Asset, Chain, Provider, Transaction } from '@bloom-trade/types';
+
+const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 export class ProviderConnectorImpl
   extends ProviderConnector
   implements IProviderConnector
@@ -34,6 +36,7 @@ export class ProviderConnectorImpl
       return [] as any;
     }
     for (const address of this.addresses) {
+      await timer(2000);
       if (
         !balance.find((e) => {
           if (
@@ -47,6 +50,7 @@ export class ProviderConnectorImpl
         const { data } = await axios.get(
           `${this._baseurl}?module=account&action=balance&address=${address}&tag=latest&apikey=${apiKey}`
         );
+
         //TODO: Wei convertion
         const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
         if (data.result !== '0') {
@@ -102,6 +106,7 @@ export class ProviderConnectorImpl
             ],
           });
         }
+
         continue;
       }
     }
@@ -131,6 +136,7 @@ export class ProviderConnectorImpl
     const transactions: Transaction[] = [];
     let startingBlock = 0;
     for (const address of this.addresses) {
+      await timer(2000);
       if (
         filters.from !== 'beginning' &&
         filters.from.selfCustodialProviders &&

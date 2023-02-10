@@ -121,7 +121,6 @@ export default async function handler(
       balance,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
   }
 }

@@ -46,7 +46,11 @@ const CurrencySelectorComponent = (props: CurrencySelectorProps): JSX.Element =>
             <ListItem
               secondaryAction={`$ ${balance.amount}`}
               key={balance.currency}
-              onClick={() => props.onSelect(balance.currency)}
+              onClick={() => {
+                if (!amountLimit || Number(amountLimit) < Number(balance.amount)) {
+                  props.onSelect(balance.currency)
+                }
+              }}
               sx={{
                 background:
                   amountLimit && Number(amountLimit) > Number(balance.amount) ? 'rgba(162, 0, 29, 0.2)' : 'none',

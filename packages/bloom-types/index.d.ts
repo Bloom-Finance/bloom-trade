@@ -23,7 +23,7 @@ declare namespace Bloom {
     };
   }
   const enum Environment {
-    production = 'https://api.bloom.com',
+    production = '/api',
     sandbox = '/api',
   }
 
