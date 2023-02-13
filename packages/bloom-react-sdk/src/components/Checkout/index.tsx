@@ -248,12 +248,6 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                       OrderStore.update((s) => {
                         s.order.txHash = txReceipt.transactionHash as `0x${string}`
                       })
-                      //upload to ipfs
-                      const cid = await saveToIpfs({
-                        ...order,
-                        txHash: txReceipt.transactionHash as `0x${string}`,
-                      })
-                      //mint nft
                       setShowSuccess(true)
                     }
                   } catch (error) {
