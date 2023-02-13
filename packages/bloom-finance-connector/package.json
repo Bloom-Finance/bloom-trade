@@ -31,6 +31,7 @@
     "@binance/connector": "^1.13.0",
     "@circle-fin/circle-sdk": "^1.3.0",
     "axios": "^0.27.2",
+    "ethers": "^6.0.3",
     "moment": "^2.29.4",
     "web3": "1.7.4"
   },

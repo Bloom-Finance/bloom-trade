@@ -11,7 +11,6 @@ export default async function handler(
   /* It's getting the idToken from the request. */
   const idToken = req.headers.authorization?.split(' ')[1];
   const { bloom, type } = req.query;
-  console.log(idToken);
   if (!idToken) return res.status(400).json({ isValid: false, payload: null });
   const jwks = jose.createRemoteJWKSet(
     new URL(

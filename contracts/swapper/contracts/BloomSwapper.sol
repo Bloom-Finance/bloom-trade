@@ -32,10 +32,8 @@ contract Router {
 
 // Author: @alexFiorenza
 contract BloomSwapper {
-    //TODO: Add dinamic router address
-    address private constant UNISWAP_V2_ROUTER =
-        0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff;
-    Router private router = Router(UNISWAP_V2_ROUTER);
+    address private UNISWAP_V2_ROUTER;
+    Router private router;
     BloomTreasure private treasure;
     address private TREASURE;
     address private DAI;
@@ -45,7 +43,13 @@ contract BloomSwapper {
     IERC20 private usdt;
     IERC20 private usdc;
 
-    constructor(address _dai, address _usdc, address _usdt, address _treasure) {
+    constructor(
+        address _dai,
+        address _usdc,
+        address _usdt,
+        address _treasure,
+        address exchange_router
+    ) {
         dai = IERC20(_dai);
         DAI = _dai;
         usdt = IERC20(_usdt);
@@ -54,6 +58,8 @@ contract BloomSwapper {
         USDC = _usdc;
         treasure = BloomTreasure(_treasure);
         TREASURE = _treasure;
+        UNISWAP_V2_ROUTER = exchange_router;
+        router = Router(UNISWAP_V2_ROUTER);
     }
 
     function minimumAmount(uint256 amount) private pure {
@@ -62,6 +68,10 @@ contract BloomSwapper {
 
     function getTreasureAddress() public view returns (address) {
         return TREASURE;
+    }
+
+    function getExchangeRouterAddress() public view returns (address) {
+        return UNISWAP_V2_ROUTER;
     }
 
     /** DAI CONTRACT FUNCTIONS */
@@ -257,7 +267,7 @@ contract BloomSwapper {
     /// @param amount Amount of USDT to swap
     /// @param daiAddress DAI address to be sent the money
     /// @return Amount of DAI received
-    function sendUSDToDAIAddress(
+    function sendUSDTToDAIAddress(
         address daiAddress,
         uint256 amount
     ) external returns (uint256) {

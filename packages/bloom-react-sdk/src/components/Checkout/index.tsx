@@ -96,6 +96,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitingForUserResponse, waitingForBlockchain])
+  console.log(error)
   const steps = [
     {
       label: !order.total.amount ? 'You are going to send USD' : `Please, Confirm send $${order.total.amount}`,

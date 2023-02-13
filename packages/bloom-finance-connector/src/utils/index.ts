@@ -7,7 +7,7 @@ import {
   Contracts,
   PoloniexPrice,
 } from '../@types/index';
-import Web3 from 'web3';
+import web3 from 'web3';
 import { cryptocurrencies } from '../data/cryptocurrencies';
 import { contracts } from '../data/contracts';
 import {
@@ -191,7 +191,6 @@ const getTestnetByMainnet = (chain: Chain) => {
   }
 };
 const sumEthsBalances = (referenceBalance: string, balanceToAdd: string) => {
-  const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
   const totalBalanceInWei = web3.utils.toWei(referenceBalance, 'ether');
   const foundElementInWei = web3.utils.toWei(balanceToAdd, 'ether');
   const newBalance = web3.utils
@@ -202,11 +201,9 @@ const sumEthsBalances = (referenceBalance: string, balanceToAdd: string) => {
   return formattedBalance;
 };
 const weiToEth = (value: string) => {
-  const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
   return web3.utils.fromWei(value, 'ether');
 };
 const convertToken = (value: string, decimals: number) => {
-  const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
   return web3.utils
     .toBN(value)
     .div(web3.utils.toBN(10 ** decimals))

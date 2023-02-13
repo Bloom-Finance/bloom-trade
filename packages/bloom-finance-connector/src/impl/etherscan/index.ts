@@ -8,7 +8,7 @@ import {
   getSupportedContracts,
   weiToEth,
 } from '../../utils';
-import Web3 from 'web3';
+import web3 from 'web3';
 import { Asset, Chain, Provider, Transaction } from '@bloom-trade/types';
 
 const timer = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -50,9 +50,7 @@ export class ProviderConnectorImpl
         const { data } = await axios.get(
           `${this._baseurl}?module=account&action=balance&address=${address}&tag=latest&apikey=${apiKey}`
         );
-
         //TODO: Wei convertion
-        const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
         if (data.result !== '0') {
           balance.push({
             asset: 'eth',

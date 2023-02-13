@@ -198,11 +198,15 @@ export default function useBloom(params?: {
           getTokenContractMetadataBySymbolAndChain(from.token, to.chain)?.decimals as number,
         ),
       }
+
       const functionName =
         type === 'transfers'
           ? `send${from.token.toUpperCase()}ToAddress`
           : `send${from.token.toUpperCase()}To${to.token.toUpperCase()}Address`
       const bloomContract = new ethers.Contract(bloomContractAddress as `0x${string}`, abi, signer)
+      console.log(functionName)
+      console.log(bloomContract)
+      console.log(bloomContract[functionName])
       setWaitingForUserResponse(true)
       const tx = await bloomContract[functionName](args.to, args.amount)
       setLastTxData({

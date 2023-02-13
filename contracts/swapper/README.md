@@ -18,21 +18,21 @@ All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 
 ### Last stable testnet contracts for GOERLI ⚙️
 
--   [SWAPPER 🔄](https://goerli.etherscan.io/address/0x760ec0C1213261d9518e18AB48639D97C9A03646): 0x760ec0C1213261d9518e18AB48639D97C9A03646
--   [TREASURE 🤑](https://goerli.etherscan.io/address/0xC1843CE3fE074F3c4427Ee9054a3e3810123AC1A): 0xC1843CE3fE074F3c4427Ee9054a3e3810123AC1A
--   [TRANSFERS 💸](https://goerli.etherscan.io/address/0xA52266a2f0c31C50899298DC41c9fFa5752f938a): 0xA52266a2f0c31C50899298DC41c9fFa5752f938a
+-   [SWAPPER 🔄](https://goerli.etherscan.io/address/0x067e55e43dFc70515e622035675f48A11C2BB031): 0x067e55e43dFc70515e622035675f48A11C2BB031
+-   [TREASURE 🤑](https://goerli.etherscan.io/address/0x7fa5C52E91aa82A05B68Fb8e5450213E9c17Be3a): 0x7fa5C52E91aa82A05B68Fb8e5450213E9c17Be3a
+-   [TRANSFERS 💸](https://goerli.etherscan.io/address/0x5EE0685b721711C1417b8494eC7B1A8A207ccCa3): 0x5EE0685b721711C1417b8494eC7B1A8A207ccCa3
 
 ### Last stable testnet contracts for MUMBAI 🟣
 
--   [SWAPPER 🔄](https://mumbai.polygonscan.com/address/0xf2Bc02967231C666e0956E8F2A205efe52406EC0): 0xf2Bc02967231C666e0956E8F2A205efe52406EC0
--   [TREASURE 🤑](https://mumbai.polygonscan.com/address/0x78A27aeFaac1F7A7F1530E095F03CA773B233325): 0x78A27aeFaac1F7A7F1530E095F03CA773B233325
--   [TRANSFERS 💸](https://mumbai.polygonscan.com/address/0xF1748e94300D8139A715Dc7804c26b2a6bF152D3): 0xF1748e94300D8139A715Dc7804c26b2a6bF152D3
+-   [SWAPPER 🔄](https://mumbai.polygonscan.com/address/0xf74bEC67585bfda41d38e115ad013eb9cD2895b7): 0xf74bEC67585bfda41d38e115ad013eb9cD2895b7
+-   [TREASURE 🤑](https://mumbai.polygonscan.com/address/0x21d1A21859cad13ac5ae6619D4FE6AFC10156Cc9): 0x21d1A21859cad13ac5ae6619D4FE6AFC10156Cc9
+-   [TRANSFERS 💸](https://mumbai.polygonscan.com/address/0xD36c225B9E5d12DFe03b358D8B7590f044e4449A): 0xD36c225B9E5d12DFe03b358D8B7590f044e4449A
 
 ### Last stable testnet contracts for Polygon 🔮
 
--   [SWAPPER 🔄](https://polygonscan.com/address/0x0BB38d7E6dbD85432F27330f03A8311B3E8Ded32): 0x0BB38d7E6dbD85432F27330f03A8311B3E8Ded32
--   [TREASURE 🤑](https://polygonscan.com/address/0x02B40c15024EE30D4A390671438c2BcF7dA7Dfa1): 0x02B40c15024EE30D4A390671438c2BcF7dA7Dfa1
--   [TRANSFERS 💸](https://polygonscan.com/address/0x64E69A4080cC70D6b942E65ECFa799627C862e4e): 0x64E69A4080cC70D6b942E65ECFa799627C862e4e
+-   [SWAPPER 🔄](https://polygonscan.com/address/0x034D2685049c4B04AF0e5cb3b196331D8Aa80931): 0x034D2685049c4B04AF0e5cb3b196331D8Aa80931
+-   [TREASURE 🤑](https://polygonscan.com/address/0x20BEBF54ef1c222BfA1CF565cFB58240751Dc7DB): 0x20BEBF54ef1c222BfA1CF565cFB58240751Dc7DB
+-   [TRANSFERS 💸](https://polygonscan.com/address/0x7Ea9a426D9a5483595d47872f8863dfF006E593C): 0x7Ea9a426D9a5483595d47872f8863dfF006E593C
 
 ## Ethereum 🌎
 
