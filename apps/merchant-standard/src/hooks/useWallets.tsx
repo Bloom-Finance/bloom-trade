@@ -175,52 +175,54 @@ export default function useWallets(userId: string) {
         },
       }
     );
-
-    const stableCoinsBalances = balances.filter((balance) =>
-      STABLES.includes(balance.asset.toUpperCase())
-    );
-    stableCoinsBalances.forEach((balance) => {
-      balance.detail.forEach((detail) => {
-        if (detail.balance === '0') return;
-        if (detail.provider === 'circle') {
+    if (balances.length > 0) {
+      const stableCoinsBalances = balances.filter((balance) =>
+        STABLES.includes(balance.asset.toUpperCase())
+      );
+      stableCoinsBalances.forEach((balance) => {
+        balance.detail.forEach((detail) => {
+          if (detail.balance === '0') return;
+          if (detail.provider === 'circle') {
+            const index = processedWallets.findIndex(
+              (wallet) => wallet.brand === 'circle'
+            );
+            processedWallets[index].balance.amount = detail.balance;
+            processedWallets[index].balance.detail.push({
+              ...detail,
+              currency: balance.asset,
+            });
+            return;
+          }
           const index = processedWallets.findIndex(
-            (wallet) => wallet.brand === 'circle'
+            (wallet) => wallet.address === detail.address
           );
-          processedWallets[index].balance.amount = detail.balance;
+          if (index === -1) return;
+          processedWallets[index].balance.amount = (
+            parseFloat(detail.balance).toFixed(3) +
+            (processedWallets[index].balance.amount === '-1'
+              ? 0
+              : parseFloat(processedWallets[index].balance.amount).toFixed(3))
+          ).toString();
+
           processedWallets[index].balance.detail.push({
             ...detail,
             currency: balance.asset,
           });
-          return;
-        }
-        const index = processedWallets.findIndex(
-          (wallet) => wallet.address === detail.address
-        );
-        if (index === -1) return;
-        processedWallets[index].balance.amount = (
-          parseFloat(detail.balance).toFixed(3) +
-          (processedWallets[index].balance.amount === '-1'
-            ? 0
-            : parseFloat(processedWallets[index].balance.amount).toFixed(3))
-        ).toString();
-
-        processedWallets[index].balance.detail.push({
-          ...detail,
-          currency: balance.asset,
         });
       });
-      //Check if any wallet is with -1 balance
-      const wallets = processedWallets.filter(
-        (wallet) => wallet.balance.amount === '-1'
-      );
-      if (wallets.length > 0) {
-        wallets.forEach((wallet) => {
-          processedWallets[
-            processedWallets.findIndex((w) => w.id === wallet.id)
-          ].balance.amount = '0';
-        });
-      }
-    });
+    }
+
+    //Check if any wallet is with -1 balance
+    const filteredWallets = processedWallets.filter(
+      (wallet) => wallet.balance.amount === '-1'
+    );
+    if (filteredWallets.length > 0) {
+      filteredWallets.forEach((wallet) => {
+        processedWallets[
+          processedWallets.findIndex((w) => w.id === wallet.id)
+        ].balance.amount = '0';
+      });
+    }
     setWallets(processedWallets);
     setLoading({
       wallets: false,
