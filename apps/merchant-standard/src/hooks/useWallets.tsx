@@ -179,6 +179,7 @@ export default function useWallets(userId: string) {
       const stableCoinsBalances = balances.filter((balance) =>
         STABLES.includes(balance.asset.toUpperCase())
       );
+      console.log(stableCoinsBalances);
       stableCoinsBalances.forEach((balance) => {
         balance.detail.forEach((detail) => {
           if (detail.balance === '0') return;
@@ -198,10 +199,12 @@ export default function useWallets(userId: string) {
           );
           if (index === -1) return;
           processedWallets[index].balance.amount = (
-            parseFloat(detail.balance).toFixed(3) +
+            parseFloat(parseFloat(detail.balance).toFixed(3)) +
             (processedWallets[index].balance.amount === '-1'
               ? 0
-              : parseFloat(processedWallets[index].balance.amount).toFixed(3))
+              : parseFloat(
+                  parseFloat(processedWallets[index].balance.amount).toFixed(3)
+                ))
           ).toString();
 
           processedWallets[index].balance.detail.push({
