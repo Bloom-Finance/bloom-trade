@@ -171,8 +171,10 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             amountLimit={order.total.amount.toString()}
             balances={balances}
             onSelect={async (selectedToken) => {
+              console.log('calling select token')
               try {
                 const { isChainCorrect, change, chains } = checkChain(order.destination.chain)
+                console.log(isChainCorrect)
                 if (!isChainCorrect) {
                   change()
                   return

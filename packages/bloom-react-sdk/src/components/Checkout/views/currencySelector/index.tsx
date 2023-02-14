@@ -47,7 +47,7 @@ const CurrencySelectorComponent = (props: CurrencySelectorProps): JSX.Element =>
               secondaryAction={`$ ${balance.amount}`}
               key={balance.currency}
               onClick={() => {
-                if (!amountLimit || Number(amountLimit) < Number(balance.amount)) {
+                if (!amountLimit || Number(amountLimit) <= Number(balance.amount)) {
                   props.onSelect(balance.currency)
                 }
               }}
