@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react'
+import { useAccount } from 'wagmi'
 import { BLOOM_URL_API, BLOOM_URL_API_TEST } from '../@types/GLOBAL'
 import { IBloomReactProps } from '../components/BloomReact'
 import { BloomStore } from '../store/BloomReact'
 
 const withPreCheckStore = (Component: React.ComponentType<IBloomReactProps>) => {
   const PreFetch = (props: IBloomReactProps) => {
-    const deepLink = window.localStorage.getItem('WALLETCONNECT_DEEPLINK_CHOICE')
+    const { isConnected } = useAccount()
     useEffect(() => {
-      if (deepLink) {
+      const deepLink = window.localStorage.getItem('WALLETCONNECT_DEEPLINK_CHOICE')
+      if (isConnected && deepLink) {
         try {
           const _deepLink: { name: string; href: string } = JSON.parse(deepLink)
           if (_deepLink.href === 'https://link.trustwallet.com/wc') {
@@ -21,7 +23,7 @@ const withPreCheckStore = (Component: React.ComponentType<IBloomReactProps>) => 
           console.log('TrustWallet force redirect err', err)
         }
       }
-    }, [deepLink])
+    }, [isConnected])
     useEffect(() => {
       if (!props.credentials) {
         throw new Error('Credentials are required')
