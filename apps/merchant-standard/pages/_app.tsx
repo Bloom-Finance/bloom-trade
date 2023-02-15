@@ -1,22 +1,40 @@
-import * as React from "react";
-import Head from "next/head";
-import { AppProps } from "next/app";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { CacheProvider, EmotionCache } from "@emotion/react";
-import { DefaultTheme } from "@bloom-trade/themes";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import "../src/styles/global.css";
-import { BloomReact } from "@bloom-trade/react-sdk";
-import createEmotionCache from "../src/createEmotionCache";
-import { EthereumClient, modalConnectors, walletConnectProvider } from "@web3modal/ethereum";
-import { Web3Modal } from "@web3modal/react";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { mainnet, goerli, polygon, polygonMumbai, avalancheFuji, avalanche } from "wagmi/chains";
-import { authService } from "../src/services/auth.services";
+import * as React from 'react';
+import Head from 'next/head';
+import { AppProps } from 'next/app';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import { DefaultTheme } from '@bloom-trade/themes';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import '../src/styles/global.css';
+import { BloomReact } from '@bloom-trade/react-sdk';
+import createEmotionCache from '../src/createEmotionCache';
+import {
+  EthereumClient,
+  modalConnectors,
+  walletConnectProvider,
+} from '@web3modal/ethereum';
+import { Web3Modal } from '@web3modal/react';
+import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import {
+  mainnet,
+  goerli,
+  polygon,
+  polygonMumbai,
+  avalancheFuji,
+  avalanche,
+} from 'wagmi/chains';
+import { authService } from '../src/services/auth.services';
 
-const chains = [mainnet, polygon, goerli, polygonMumbai, avalancheFuji, avalanche];
+const chains = [
+  mainnet,
+  polygon,
+  goerli,
+  polygonMumbai,
+  avalancheFuji,
+  avalanche,
+];
 
 // Wagmi client
 const { provider } = configureChains(chains, [
@@ -27,7 +45,7 @@ const { provider } = configureChains(chains, [
 const wagmiClient = createClient({
   autoConnect: true,
   connectors: modalConnectors({
-    appName: "Bloom",
+    appName: 'Bloom',
     chains,
     projectId: process.env.WALLETCONNECT_PROJECTID as string,
   }),
@@ -46,14 +64,13 @@ interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
   React.useEffect(() => {
     AOS.init();
   }, []);
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <meta name='viewport' content='initial-scale=1, width=device-width' />
         <title>Bloom Standard Version</title>
       </Head>
       <ThemeProvider theme={DefaultTheme}>
@@ -61,7 +78,22 @@ export default function MyApp(props: MyAppProps) {
         <WagmiConfig client={wagmiClient}>
           <Component {...pageProps} />
         </WagmiConfig>
-        <Web3Modal projectId={process.env.WALLETCONNECT_PROJECTID as string} ethereumClient={ethereumClient} privacyPolicyUrl="https://www.bloom.trade/legal/terms" termsOfServiceUrl="https://example.com/terms-and-conditions" />
+        <Web3Modal
+          mobileWallets={[
+            {
+              id: '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
+              name: 'Trust Wallet',
+              links: {
+                native: 'trust://',
+                universal: 'https://link.trustwallet.com/wc',
+              },
+            },
+          ]}
+          ethereumClient={ethereumClient}
+          privacyPolicyUrl='https://www.bloom.trade/legal/terms'
+          termsOfServiceUrl='https://example.com/terms-and-conditions'
+          projectId={process.env.WALLETCONNECT_PROJECTID as string}
+        />
       </ThemeProvider>
     </CacheProvider>
   );
