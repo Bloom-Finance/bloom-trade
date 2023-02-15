@@ -7,7 +7,8 @@ import { Connector, disconnect } from '@wagmi/core'
 import { Stack } from '@mui/system'
 import { Chain, StableCoin, Testnet } from '@bloom-trade/types'
 import BloomIpfs from '@bloom-trade/ipfs'
-
+import { BloomStore } from '../store/BloomReact'
+import { ethers } from 'ethers'
 import {
   convertDecimalsUnitToToken,
   getBloomContractsByChain,
@@ -18,8 +19,7 @@ import {
   getTokenContractMetadataBySymbolAndChain,
   getTransfersAbi,
 } from '@bloom-trade/utilities'
-import { BloomStore } from '../store/BloomReact'
-import { ethers } from 'ethers'
+
 export default function useBloom(params?: {
   onWalletConnect?: (
     address: `0x${string}` | undefined,
@@ -54,15 +54,19 @@ export default function useBloom(params?: {
       }
     })()
   }, [])
+
   const { data: signer } = useSigner()
+
   const [lastTxData, setLastTxData] = useState<{
     txHash: string
     transactionReceipt?: ethers.providers.TransactionReceipt
   }>()
+
   const [error, setError] = useState<{
     type: 'UserRejectedError' | 'common'
     message: string
   }>()
+
   const store = BloomStore.useState((s) => s)
   const { switchNetwork } = useSwitchNetwork()
   const [waitingForBlockchain, setWaitingForBlockchain] = useState(false)
@@ -149,7 +153,7 @@ export default function useBloom(params?: {
       })
       setWaitingForUserResponse(false)
       setWaitingForBlockchain(true)
-      const transactionReceipt = (await tx.wait()) as ethers.providers.TransactionReceipt
+      const transactionReceipt = (await tx.wait(2)) as ethers.providers.TransactionReceipt
       setWaitingForBlockchain(false)
       setLastTxData({
         txHash: tx.hash,
@@ -204,9 +208,7 @@ export default function useBloom(params?: {
           ? `send${from.token.toUpperCase()}ToAddress`
           : `send${from.token.toUpperCase()}To${to.token.toUpperCase()}Address`
       const bloomContract = new ethers.Contract(bloomContractAddress as `0x${string}`, abi, signer)
-      console.log(functionName)
-      console.log(bloomContract)
-      console.log(bloomContract[functionName])
+
       setWaitingForUserResponse(true)
       const tx = await bloomContract[functionName](args.to, args.amount)
       setLastTxData({
@@ -214,7 +216,7 @@ export default function useBloom(params?: {
       })
       setWaitingForUserResponse(false)
       setWaitingForBlockchain(true)
-      const transactionReceipt = (await tx.wait()) as ethers.providers.TransactionReceipt
+      const transactionReceipt = (await tx.wait(2)) as ethers.providers.TransactionReceipt
       setWaitingForBlockchain(false)
       setLastTxData({
         txHash: tx.hash,
