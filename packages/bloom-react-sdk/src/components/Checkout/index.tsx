@@ -25,16 +25,8 @@ export interface CheckoutProps {
 }
 
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
-  const {
-    requestTokenAccess,
-    transfer,
-    checkChain,
-    saveToIpfs,
-    waitingForUserResponse,
-    waitingForBlockchain,
-    error,
-    data,
-  } = useBloom()
+  const { requestTokenAccess, transfer, checkChain, waitingForUserResponse, waitingForBlockchain, error, data } =
+    useBloom()
   const [hasRetried, setHasRetried] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const mdUp = useResponsive('up', 'md')
@@ -171,7 +163,6 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             amountLimit={order.total.amount.toString()}
             balances={balances}
             onSelect={async (selectedToken) => {
-              console.log('calling select token')
               try {
                 const { isChainCorrect, change, chains } = checkChain(order.destination.chain)
                 console.log(isChainCorrect)

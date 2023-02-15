@@ -6,11 +6,12 @@ import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 import { Connector, disconnect } from '@wagmi/core'
 import { Stack } from '@mui/system'
 import { Chain, StableCoin, Testnet } from '@bloom-trade/types'
-import BloomIpfs from '@bloom-trade/ipfs'
 import { BloomStore } from '../store/BloomReact'
-import { ethers } from 'ethers'
+import { erc20ABI } from '@wagmi/core'
+import { ethers, BigNumber } from 'ethers'
 import {
   convertDecimalsUnitToToken,
+  convertTokenToDecimalsUnit,
   getBloomContractsByChain,
   getChainIdByName,
   getChainNameById,
@@ -26,33 +27,11 @@ export default function useBloom(params?: {
     connector: Connector<any, any, any> | undefined,
     isReconnected: boolean,
   ) => void
-  ipfs?: {
-    infuraConfig: {
-      projectId: string
-      projectSecret: string
-    }
-  }
 }) {
   const [waitingForUserResponse, setWaitingForUserResponse] = useState(false)
   const [hasMounted, setHasMounted] = useState(false)
   useEffect(() => {
     setHasMounted(true)
-  }, [])
-  const [ipfs, setIpfs] = useState<BloomIpfs>()
-  useEffect(() => {
-    ;(async () => {
-      if (params && params.ipfs) {
-        setIpfs(
-          await BloomIpfs.create({
-            mode: 'INFURA',
-            infuraConfig: {
-              projectId: params.ipfs.infuraConfig.projectId,
-              projectSecret: params.ipfs.infuraConfig.projectSecret,
-            },
-          }),
-        )
-      }
-    })()
   }, [])
 
   const { data: signer } = useSigner()
@@ -72,7 +51,7 @@ export default function useBloom(params?: {
   const [waitingForBlockchain, setWaitingForBlockchain] = useState(false)
   const { chain: selectedChain } = useNetwork()
   const { open, isOpen } = useWeb3Modal()
-  const { isConnected } = useAccount({
+  const { isConnected, address } = useAccount({
     onConnect({ address, connector, isReconnected }) {
       params?.onWalletConnect?.(address, connector, isReconnected)
     },
@@ -124,25 +103,11 @@ export default function useBloom(params?: {
     type: 'transfers' | 'swapper',
   ) => {
     try {
-      const ABI = [
-        {
-          constant: false,
-          inputs: [
-            { internalType: 'address', name: 'usr', type: 'address' },
-            { internalType: 'uint256', name: 'wad', type: 'uint256' },
-          ],
-          name: 'approve',
-          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-      ]
       const retrievedToken = getTokenContractMetadataBySymbolAndChain(token, chain)
       if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
       if (!retrievedToken) throw new Error('No token found')
       if (!signer) throw new Error('No detected signer')
-      const requestContract = new ethers.Contract(retrievedToken.address as `0x${string}`, ABI, signer)
+      const requestContract = new ethers.Contract(retrievedToken.address as `0x${string}`, erc20ABI, signer)
       setWaitingForUserResponse(true)
       const tx = await requestContract.approve(
         getBloomContractsByChain(chain, type) as `0x${string}`,
@@ -189,11 +154,37 @@ export default function useBloom(params?: {
         return
       }
       if (!signer) throw new Error('No detected signer')
+      console.log(getTokenContractMetadataBySymbolAndChain(from.token, to.chain)?.address as string)
+      const allowanceContract = new ethers.Contract(
+        getTokenContractMetadataBySymbolAndChain(
+          from.token,
+          store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+        )?.address as string,
+        erc20ABI,
+        signer,
+      )
       const type = from.token === to.token ? 'transfers' : 'swapper'
       const bloomContractAddress = getBloomContractsByChain(
         store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
         type,
       )
+      const allowanceOfToken = (await allowanceContract.allowance(address, bloomContractAddress)) as BigNumber
+
+      console.log(parseInt(amount))
+      if (
+        parseInt(
+          convertTokenToDecimalsUnit(
+            allowanceOfToken.toString(),
+            getTokenContractMetadataBySymbolAndChain(
+              from.token,
+              store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+            )?.decimals as number,
+          ),
+        ) < parseInt(amount)
+      ) {
+        throw new Error('We do not have enough allowance to transfer this amount of tokens')
+      }
+
       const abi = type === 'transfers' ? getTransfersAbi() : getSwapperAbi()
       const args = {
         to: to.address,
@@ -310,23 +301,11 @@ export default function useBloom(params?: {
       }
     }
   }
-  const saveToIpfs = async (object: Record<string, any>) => {
-    ///staff
-    if (!ipfs) throw new Error('No ipfs config provided')
-    try {
-      const cid = await ipfs.save(object)
-      return cid
-    } catch (e) {
-      console.log(e)
-      throw new Error('Error saving to ipfs')
-    }
-  }
   return {
     Connect: walletConnectButton,
     requestTokenAccess,
     checkChain,
     transfer,
-    saveToIpfs,
     waitingForUserResponse,
     waitingForBlockchain,
     error,

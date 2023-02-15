@@ -1,11 +1,18 @@
-import React, { useEffect } from "react";
-import type { NextPage } from "next";
-import { Button, Stack, Typography } from "@mui/material";
-import { useBloom } from "@bloom-trade/react-sdk";
-import { useAccount } from "wagmi";
+import React, { useEffect } from 'react';
+import type { NextPage } from 'next';
+import { Button, Stack, Typography } from '@mui/material';
+import { useBloom } from '@bloom-trade/react-sdk';
+import { useAccount } from 'wagmi';
 
 const SwapPage: NextPage = () => {
-  const { Connect, requestTokenAccess, data, waitingForUserResponse, waitingForBlockchain, transfer } = useBloom();
+  const {
+    Connect,
+    requestTokenAccess,
+    data,
+    waitingForUserResponse,
+    waitingForBlockchain,
+    transfer,
+  } = useBloom();
   const { isConnected, address } = useAccount();
 
   const [hasLoaded, setHasLoaded] = React.useState(false);
@@ -18,39 +25,44 @@ const SwapPage: NextPage = () => {
   const swap = async () => {
     const receipt = await transfer(
       {
-        token: "usdt",
+        token: 'dai',
       },
       {
-        chain: "polygon",
-        token: "dai",
+        chain: 'polygon',
+        token: 'usdc',
         address: address as string,
       },
-      "2"
+      '2'
     );
-
-    console.log(receipt);
     setReceipt(receipt);
   };
 
   return (
     <div>
-      <Stack direction="row" spacing={2}>
-        <Typography variant="body1">From Matic to USDT</Typography>
+      <Stack direction='row' spacing={2}>
+        <Typography variant='body1'>From Matic to USDT</Typography>
 
-        {hasLoaded && <Connect label="Conectate fiera" />}
+        {hasLoaded && <Connect label='Conectate fiera' />}
 
         {isConnected && (
           <Stack>
             {!data && !waitingForUserResponse && (
-              <Button variant="contained" onClick={() => requestTokenAccess("usdt", "polygon", "1000", "swapper")}>
+              <Button
+                variant='contained'
+                onClick={() =>
+                  requestTokenAccess('dai', 'polygon', '2', 'swapper')
+                }
+              >
                 Autorizar USDT
               </Button>
             )}
 
-            {waitingForUserResponse && "Autorizame"}
-            {data && waitingForBlockchain && "Esperando a que se confirme la transacción"}
+            {waitingForUserResponse && 'Autorizame'}
+            {data &&
+              waitingForBlockchain &&
+              'Esperando a que se confirme la transacción'}
             {data?.txHash && data.transactionReceipt && !receipt && (
-              <Button variant="contained" onClick={swap}>
+              <Button variant='contained' onClick={swap}>
                 Swap
               </Button>
             )}
