@@ -13,10 +13,7 @@ const withPreCheckStore = (Component: React.ComponentType<IBloomReactProps>) => 
         try {
           const _deepLink: { name: string; href: string } = JSON.parse(deepLink)
           if (_deepLink.href === 'https://link.trustwallet.com') {
-            window.localStorage.setItem(
-              'WALLETCONNECT_DEEPLINK_CHOICE',
-              JSON.stringify({ name: 'Trust Wallet', href: 'https://link.trustwallet.com/wc' }),
-            )
+            window.localStorage.removeItem('WALLETCONNECT_DEEPLINK_CHOICE')
           }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
