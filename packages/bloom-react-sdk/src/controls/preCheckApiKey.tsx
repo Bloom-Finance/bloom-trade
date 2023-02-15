@@ -13,7 +13,7 @@ const withPreCheckStore = (Component: React.ComponentType<IBloomReactProps>) => 
       if (isConnected && deepLink) {
         try {
           const _deepLink: { name: string; href: string } = JSON.parse(deepLink)
-          if (_deepLink.href === 'https://link.trustwallet.com/wc') {
+          if (_deepLink.href === 'https://link.trustwallet.com') {
             window.localStorage.setItem(
               'WALLETCONNECT_DEEPLINK_CHOICE',
               JSON.stringify({ name: 'Trust Wallet', href: 'trust://' }),
