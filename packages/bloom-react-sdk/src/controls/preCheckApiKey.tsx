@@ -9,6 +9,7 @@ const withPreCheckStore = (Component: React.ComponentType<IBloomReactProps>) => 
     const { isConnected } = useAccount()
     useEffect(() => {
       const deepLink = window.localStorage.getItem('WALLETCONNECT_DEEPLINK_CHOICE')
+      console.log(deepLink, isConnected)
       if (isConnected && deepLink) {
         try {
           const _deepLink: { name: string; href: string } = JSON.parse(deepLink)
