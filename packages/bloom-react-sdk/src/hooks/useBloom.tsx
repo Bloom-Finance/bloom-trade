@@ -45,7 +45,6 @@ export default function useBloom(params?: {
     type: 'UserRejectedError' | 'common'
     message: string
   }>()
-
   const store = BloomStore.useState((s) => s)
   const { switchNetwork } = useSwitchNetwork()
   const [waitingForBlockchain, setWaitingForBlockchain] = useState(false)
@@ -107,12 +106,14 @@ export default function useBloom(params?: {
       if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
       if (!retrievedToken) throw new Error('No token found')
       if (!signer) throw new Error('No detected signer')
+
       const requestContract = new ethers.Contract(retrievedToken.address as `0x${string}`, erc20ABI, signer)
       setWaitingForUserResponse(true)
-      const tx = await requestContract.approve(
+      const populatedApprove = await requestContract.populateTransaction.approve(
         getBloomContractsByChain(chain, type) as `0x${string}`,
         convertDecimalsUnitToToken(amount, retrievedToken.decimals),
       )
+      const tx = await signer.sendTransaction(populatedApprove)
       setLastTxData({
         txHash: tx.hash,
       })
