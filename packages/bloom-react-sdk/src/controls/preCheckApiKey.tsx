@@ -8,18 +8,18 @@ const withPreCheckStore = (Component: React.ComponentType<IBloomReactProps>) => 
   const PreFetch = (props: IBloomReactProps) => {
     const { isConnected } = useAccount()
     useEffect(() => {
-      const deepLink = window.localStorage.getItem('WALLETCONNECT_DEEPLINK_CHOICE')
-      if (isConnected && deepLink) {
-        try {
-          const _deepLink: { name: string; href: string } = JSON.parse(deepLink)
-          if (_deepLink.href === 'https://link.trustwallet.com') {
-            window.localStorage.removeItem('WALLETCONNECT_DEEPLINK_CHOICE')
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-          console.log('TrustWallet force redirect err', err)
-        }
-      }
+      // const deepLink = window.localStorage.getItem('WALLETCONNECT_DEEPLINK_CHOICE')
+      // if (isConnected && deepLink) {
+      //   try {
+      //     const _deepLink: { name: string; href: string } = JSON.parse(deepLink)
+      //     if (_deepLink.href === 'https://link.trustwallet.com') {
+      //       window.localStorage.removeItem('WALLETCONNECT_DEEPLINK_CHOICE')
+      //     }
+      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //   } catch (err: any) {
+      //     console.log('TrustWallet force redirect err', err)
+      //   }
+      // }
     }, [isConnected])
     useEffect(() => {
       if (!props.credentials) {

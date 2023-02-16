@@ -79,6 +79,16 @@ export default function MyApp(props: MyAppProps) {
           <Component {...pageProps} />
         </WagmiConfig>
         <Web3Modal
+          mobileWallets={[
+            {
+              id: '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
+              name: 'Trust Wallet',
+              links: {
+                native: 'trust:',
+                universal: 'https://link.trustwallet.com/wc',
+              },
+            },
+          ]}
           ethereumClient={ethereumClient}
           privacyPolicyUrl='https://www.bloom.trade/legal/terms'
           termsOfServiceUrl='https://example.com/terms-and-conditions'
