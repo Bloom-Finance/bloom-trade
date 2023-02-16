@@ -1,75 +1,31 @@
 import React, { useEffect } from 'react';
 import type { NextPage } from 'next';
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { useBloom } from '@bloom-trade/react-sdk';
-import { useAccount } from 'wagmi';
-
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { erc20ABI } from 'wagmi';
 const SwapPage: NextPage = () => {
-  const {
-    Connect,
-    requestTokenAccess,
-    data,
-    waitingForUserResponse,
-    waitingForBlockchain,
-    transfer,
-  } = useBloom();
-  const { isConnected, address } = useAccount();
-
-  const [hasLoaded, setHasLoaded] = React.useState(false);
-  const [receipt, setReceipt] = React.useState<any>(null);
-
-  useEffect(() => {
-    setHasLoaded(true);
-  }, []);
-
-  const swap = async () => {
-    const receipt = await transfer(
-      {
-        token: 'dai',
-      },
-      {
-        chain: 'polygon',
-        token: 'usdc',
-        address: address as string,
-      },
-      '2'
-    );
-    setReceipt(receipt);
-  };
-
+  const { Connect } = useBloom();
+  const config = usePrepareContractWrite({
+    address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    abi: erc20ABI,
+    functionName: 'approve',
+    args: ['0xf07e49801ef7ae4e7DEcF260Cb1F9FD258169dF4', '1000000' as any],
+  });
+  const { write } = useContractWrite(config as any);
   return (
     <div>
       <Stack direction='row' spacing={2}>
-        <Typography variant='body1'>From Matic to USDT</Typography>
-
-        {hasLoaded && <Connect label='Conectate fiera' />}
-
-        {isConnected && (
-          <Stack>
-            {!data && !waitingForUserResponse && (
-              <Button
-                variant='contained'
-                onClick={() =>
-                  requestTokenAccess('dai', 'polygon', '2', 'swapper')
-                }
-              >
-                Autorizar USDT
-              </Button>
-            )}
-
-            {waitingForUserResponse && 'Autorizame'}
-            {data &&
-              waitingForBlockchain &&
-              'Esperando a que se confirme la transacción'}
-            {data?.txHash && data.transactionReceipt && !receipt && (
-              <Button variant='contained' onClick={swap}>
-                Swap
-              </Button>
-            )}
-
-            {receipt && <div>Tengo recibo. Fin de la joda</div>}
-          </Stack>
-        )}
+        <Connect />
+        <Button
+          onClick={() => {
+            if (write) {
+              write();
+            }
+          }}
+        >
+          Test
+        </Button>
       </Stack>
     </div>
   );
