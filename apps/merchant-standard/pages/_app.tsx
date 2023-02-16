@@ -25,7 +25,6 @@ import {
   avalancheFuji,
   avalanche,
 } from 'wagmi/chains';
-import { authService } from '../src/services/auth.services';
 
 const chains = [
   mainnet,
@@ -35,20 +34,25 @@ const chains = [
   avalancheFuji,
   avalanche,
 ];
+import '@rainbow-me/rainbowkit/styles.css';
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
 
 // Wagmi client
-const { provider } = configureChains(chains, [
-  walletConnectProvider({
-    projectId: process.env.WALLETCONNECT_PROJECTID as string,
-  }),
+const { provider, chains: myChains } = configureChains(chains, [
+  alchemyProvider({ apiKey: process.env.ALCHEMY_ID as string }),
+  publicProvider(),
 ]);
+
+const { connectors } = getDefaultWallets({
+  appName: 'My RainbowKit App',
+  chains,
+});
+
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: modalConnectors({
-    appName: 'Bloom',
-    chains,
-    projectId: process.env.WALLETCONNECT_PROJECTID as string,
-  }),
+  connectors,
   provider,
 });
 
@@ -76,7 +80,9 @@ export default function MyApp(props: MyAppProps) {
       <ThemeProvider theme={DefaultTheme}>
         <CssBaseline />
         <WagmiConfig client={wagmiClient}>
-          <Component {...pageProps} />
+          <RainbowKitProvider chains={chains}>
+            <Component {...pageProps} />
+          </RainbowKitProvider>
         </WagmiConfig>
         <Web3Modal
           ethereumClient={ethereumClient}

@@ -24,5 +24,6 @@ module.exports = {
     WALLETCONNECT_PROJECTID: process.env.WALLETCONNECT_PROJECTID,
     INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID,
     INFURA_SECRET: process.env.INFURA_SECRET,
+    ALCHEMY_ID: process.env.ALCHEMY_ID,
   },
 };

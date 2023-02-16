@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import type { NextPage } from 'next';
 import { Button, Stack } from '@mui/material';
 import { useBloom } from '@bloom-trade/react-sdk';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useAccount, useContractWrite } from 'wagmi';
 import { erc20ABI } from 'wagmi';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 const SwapPage: NextPage = () => {
-  const { Connect } = useBloom();
   const { writeAsync } = useContractWrite({
     mode: 'recklesslyUnprepared',
     address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
@@ -19,7 +19,7 @@ const SwapPage: NextPage = () => {
   return (
     <div>
       <Stack direction='row' spacing={2}>
-        <Connect />
+        <ConnectButton />
         <Button
           onClick={async () => {
             if (writeAsync) {
