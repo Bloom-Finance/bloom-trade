@@ -8,7 +8,6 @@ import { DefaultTheme } from '@bloom-trade/themes';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../src/styles/global.css';
-import { BloomReact } from '@bloom-trade/react-sdk';
 import createEmotionCache from '../src/createEmotionCache';
 import {
   EthereumClient,
@@ -34,25 +33,20 @@ const chains = [
   avalancheFuji,
   avalanche,
 ];
-import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
 
 // Wagmi client
-const { provider, chains: myChains } = configureChains(chains, [
-  alchemyProvider({ apiKey: process.env.ALCHEMY_ID as string }),
-  publicProvider(),
+const { provider } = configureChains(chains, [
+  walletConnectProvider({
+    projectId: process.env.WALLETCONNECT_PROJECTID as string,
+  }),
 ]);
-
-const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
-  chains,
-});
-
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors,
+  connectors: modalConnectors({
+    appName: 'Bloom',
+    chains,
+    projectId: process.env.WALLETCONNECT_PROJECTID as string,
+  }),
   provider,
 });
 
@@ -80,9 +74,7 @@ export default function MyApp(props: MyAppProps) {
       <ThemeProvider theme={DefaultTheme}>
         <CssBaseline />
         <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains}>
-            <Component {...pageProps} />
-          </RainbowKitProvider>
+          <Component {...pageProps} />
         </WagmiConfig>
         <Web3Modal
           ethereumClient={ethereumClient}

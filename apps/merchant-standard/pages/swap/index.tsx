@@ -1,8 +1,9 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useBloom } from '@bloom-trade/react-sdk';
 import { NextPage } from 'next';
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 import { erc20ABI } from 'wagmi';
 const swap: NextPage = () => {
+  const { Connect } = useBloom();
   const { config, error, isError } = usePrepareContractWrite({
     address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     abi: erc20ABI,
@@ -14,7 +15,7 @@ const swap: NextPage = () => {
 
   return (
     <div>
-      <ConnectButton />
+      <Connect />
       <button disabled={!write} onClick={() => write && write()}>
         Test
       </button>
