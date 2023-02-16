@@ -2,25 +2,37 @@ import React, { useEffect } from 'react';
 import type { NextPage } from 'next';
 import { Button, Stack } from '@mui/material';
 import { useBloom } from '@bloom-trade/react-sdk';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { erc20ABI } from 'wagmi';
 const SwapPage: NextPage = () => {
   const { Connect } = useBloom();
-  const config = usePrepareContractWrite({
+  const { writeAsync } = useContractWrite({
+    mode: 'recklesslyUnprepared',
     address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    chainId: 137,
     abi: erc20ABI,
     functionName: 'approve',
-    args: ['0xf07e49801ef7ae4e7DEcF260Cb1F9FD258169dF4', '1000000' as any],
+    args: ['0x034D2685049c4B04AF0e5cb3b196331D8Aa80931', '1000000' as any],
   });
-  const { write } = useContractWrite(config as any);
+  const { address } = useAccount();
+  console.log(address);
   return (
     <div>
       <Stack direction='row' spacing={2}>
         <Connect />
         <Button
-          onClick={() => {
-            if (write) {
-              write();
+          onClick={async () => {
+            if (writeAsync) {
+              try {
+                await writeAsync({
+                  recklesslySetUnpreparedArgs: [
+                    '0x034D2685049c4B04AF0e5cb3b196331D8Aa80931',
+                    '1000000' as any,
+                  ],
+                });
+              } catch (error) {
+                console.log(error);
+              }
             }
           }}
         >
