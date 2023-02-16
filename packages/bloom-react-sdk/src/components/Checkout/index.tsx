@@ -25,8 +25,17 @@ export interface CheckoutProps {
 }
 
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
-  const { requestTokenAccess, transfer, checkChain, waitingForUserResponse, waitingForBlockchain, error, data } =
-    useBloom()
+  const {
+    requestTokenAccess,
+    prepareRequesTokenAccess,
+    transfer,
+    checkChain,
+    prepareTransfer,
+    waitingForUserResponse,
+    waitingForBlockchain,
+    error,
+    data,
+  } = useBloom()
   const [hasRetried, setHasRetried] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const mdUp = useResponsive('up', 'md')
@@ -88,7 +97,22 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitingForUserResponse, waitingForBlockchain])
-  console.log(error)
+  useEffect(() => {
+    if (activeStep === 2 && !waitingForUserResponse && !waitingForBlockchain && !error && order.from) {
+      prepareTransfer(
+        {
+          token: order.from?.token,
+        },
+        {
+          chain: order.destination.chain,
+          address: order.destination.address,
+          token: order.destination.token,
+        },
+        order.total.amount.toString(),
+      )
+    }
+  }, [activeStep])
+
   const steps = [
     {
       label: !order.total.amount ? 'You are going to send USD' : `Please, Confirm send $${order.total.amount}`,
@@ -162,13 +186,16 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
           <CurrencySelector
             amountLimit={order.total.amount.toString()}
             balances={balances}
+            onApprove={async () => {
+              await requestTokenAccess()
+            }}
             onSelect={async (selectedToken) => {
               try {
                 const { isChainCorrect, change, chains } = checkChain(order.destination.chain)
-                console.log(isChainCorrect)
                 if (!isChainCorrect) {
+                  console.log('Incorrect chain, requesting change')
                   change()
-                  return
+                  return false
                 }
                 OrderStore.update((s) => {
                   s.order = {
@@ -181,14 +208,16 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                   }
                 })
                 //Request access to token
-                await requestTokenAccess(
+                await prepareRequesTokenAccess(
                   selectedToken,
                   chains.to.name,
                   order.total.amount.toString(),
                   selectedToken === order.destination.token ? 'transfers' : 'swapper',
                 )
+                return true
               } catch (error) {
                 setHasRetried(false)
+                return
               }
             }}
           />
@@ -228,15 +257,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                 variant='contained'
                 onClick={async () => {
                   try {
-                    const txReceipt = await transfer(
-                      { token: order.from?.token as StableCoin },
-                      {
-                        chain: order.destination.chain,
-                        address: order.destination.address,
-                        token: order.destination.token,
-                      },
-                      order.total.amount.toString(),
-                    )
+                    const txReceipt = await transfer()
                     if (txReceipt) {
                       OrderStore.update((s) => {
                         s.order.txHash = txReceipt.transactionHash as `0x${string}`

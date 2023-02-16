@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:https": "yarn local-ssl-proxy --key 192.168.0.226-key.pem --cert 192.168.0.226.pem --source 3001 --target 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

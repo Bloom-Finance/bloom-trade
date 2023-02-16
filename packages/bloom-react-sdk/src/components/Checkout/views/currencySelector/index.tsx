@@ -9,13 +9,12 @@ import {
   Typography,
   useTheme,
   Card,
-  Checkbox,
+  Button,
 } from '@mui/material'
 import React from 'react'
 import { getTokenDescriptionBySymbol, getTokenIconBySymbol } from '@bloom-trade/utilities'
 import useResponsive from '../../../../hooks/useResponsive'
 import NoCreditsSVG from '../../../../assets/no_credits'
-import Iconify from '../../../Iconify'
 
 export interface CurrencySelectorProps {
   amountLimit?: string
@@ -23,15 +22,15 @@ export interface CurrencySelectorProps {
     currency: StableCoin
     amount: string
   }[]
-  onSelect: (selectedToken: StableCoin) => void
+  onSelect: (selectedToken: StableCoin) => Promise<boolean | void>
+  onApprove: () => void
 }
 
 const CurrencySelectorComponent = (props: CurrencySelectorProps): JSX.Element => {
   const { amountLimit } = props
+  const [selectedToken, setSelectedToken] = React.useState<StableCoin | undefined>(undefined)
   const mdUp = useResponsive('up', 'md')
   const theme = useTheme()
-
-  const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
   if (props.balances.length === 0)
     return (
@@ -56,37 +55,49 @@ const CurrencySelectorComponent = (props: CurrencySelectorProps): JSX.Element =>
       }}
     >
       {props.balances.length > 0 ? (
-        props.balances.map((balance) => {
-          return (
-            <Card
-              key={balance.currency}
-              sx={{
-                my: 2,
-              }}
-            >
-              <ListItem
-                secondaryAction={`$ ${balance.amount}`}
-                onClick={() => {
-                  if (!amountLimit || Number(amountLimit) <= Number(balance.amount)) {
-                    props.onSelect(balance.currency)
-                  }
-                }}
+        <>
+          {props.balances.map((balance) => {
+            return (
+              <Card
+                key={balance.currency}
                 sx={{
-                  background:
-                    amountLimit && Number(amountLimit) > Number(balance.amount) ? 'rgba(162, 0, 29, 0.2)' : 'none',
+                  my: 2,
                 }}
               >
-                <ListItemIcon>
-                  <Avatar src={getTokenIconBySymbol(balance.currency)} alt={balance.currency} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={balance.currency.toUpperCase()}
-                  secondary={getTokenDescriptionBySymbol(balance.currency)}
-                />
-              </ListItem>
-            </Card>
-          )
-        })
+                <ListItem
+                  secondaryAction={`$ ${balance.amount}`}
+                  onClick={async () => {
+                    if (!amountLimit || Number(amountLimit) <= Number(balance.amount)) {
+                      const shouldSetToken = await props.onSelect(balance.currency)
+                      if (shouldSetToken) setSelectedToken(balance.currency)
+                    }
+                  }}
+                  sx={{
+                    background:
+                      amountLimit && Number(amountLimit) > Number(balance.amount) ? 'rgba(162, 0, 29, 0.2)' : 'none',
+                  }}
+                >
+                  <ListItemIcon>
+                    <Avatar src={getTokenIconBySymbol(balance.currency)} alt={balance.currency} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={balance.currency.toUpperCase()}
+                    secondary={getTokenDescriptionBySymbol(balance.currency)}
+                  />
+                </ListItem>
+              </Card>
+            )
+          })}
+          <Button
+            disabled={!selectedToken}
+            variant='contained'
+            onClick={() => {
+              selectedToken && props.onApprove()
+            }}
+          >
+            Approve {selectedToken?.toUpperCase()}
+          </Button>
+        </>
       ) : (
         <Stack sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography variant='h6'>No balances</Typography>

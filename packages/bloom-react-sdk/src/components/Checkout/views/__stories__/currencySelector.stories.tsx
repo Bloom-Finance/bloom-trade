@@ -12,6 +12,9 @@ export const currencyBalancesData = {
     console.log('selected', selected)
   },
   amountLimit: '1000',
+  onApprove: () => {
+    console.log('approve')
+  },
 }
 
 export default {
@@ -30,5 +33,14 @@ export const CurrencySelectorWithDataVariation: StoryFn<CurrencySelectorProps> =
 }
 
 export const CurrencySelectorWithNoDataVariation: StoryFn<CurrencySelectorProps> = (args) => {
-  return <CurrencySelector balances={[]} amountLimit={'100'} onSelect={() => console.log('empty')} />
+  return (
+    <CurrencySelector
+      balances={[]}
+      amountLimit={'100'}
+      onSelect={() => Promise.resolve(console.log('selected'))}
+      onApprove={function (): void {
+        throw new Error('Function not implemented.')
+      }}
+    />
+  )
 }

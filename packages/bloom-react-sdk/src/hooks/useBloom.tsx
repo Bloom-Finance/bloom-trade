@@ -2,7 +2,16 @@
 import { Button } from '@mui/material'
 import { useWeb3Modal } from '@web3modal/react'
 import React, { useEffect, useState } from 'react'
-import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
+import {
+  useAccount,
+  useNetwork,
+  usePrepareContractWrite,
+  useSigner,
+  useSwitchNetwork,
+  useContractWrite,
+  useContractRead,
+  useProvider,
+} from 'wagmi'
 import { Connector, disconnect } from '@wagmi/core'
 import { Stack } from '@mui/system'
 import { Chain, StableCoin, Testnet } from '@bloom-trade/types'
@@ -34,8 +43,7 @@ export default function useBloom(params?: {
     setHasMounted(true)
   }, [])
 
-  const { data: signer } = useSigner()
-
+  const provider = useProvider()
   const [lastTxData, setLastTxData] = useState<{
     txHash: string
     transactionReceipt?: ethers.providers.TransactionReceipt
@@ -46,15 +54,199 @@ export default function useBloom(params?: {
     message: string
   }>()
   const store = BloomStore.useState((s) => s)
+
   const { switchNetwork } = useSwitchNetwork()
+
   const [waitingForBlockchain, setWaitingForBlockchain] = useState(false)
+
   const { chain: selectedChain } = useNetwork()
+
   const { open, isOpen } = useWeb3Modal()
+
   const { isConnected, address } = useAccount({
     onConnect({ address, connector, isReconnected }) {
       params?.onWalletConnect?.(address, connector, isReconnected)
     },
   })
+  /*Hooks and functions regarding ERC20 Token interactions*/
+  const [erc20Token, setTokenApproval] = useState<
+    | {
+        address: `0x${string}`
+        args: {
+          spender: `0x${string}`
+          amount: BigNumber
+        }
+      }
+    | undefined
+  >()
+
+  const { config: tokenApprovalConfig } = usePrepareContractWrite({
+    address: erc20Token?.address,
+    abi: erc20ABI,
+    functionName: 'approve',
+    args: [erc20Token?.args.spender as `0x${string}`, erc20Token?.args.amount as BigNumber],
+    enabled: erc20Token !== undefined,
+  })
+
+  const { writeAsync: requestTokenApproval } = useContractWrite(tokenApprovalConfig)
+
+  const prepareRequesTokenAccess = (
+    token: StableCoin,
+    chain: Chain | Testnet,
+    amount: string,
+    type: 'transfers' | 'swapper',
+  ) => {
+    const retrievedToken = getTokenContractMetadataBySymbolAndChain(token, chain)
+    if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
+    if (!retrievedToken) throw new Error('No token found')
+    setTokenApproval({
+      address: retrievedToken.address as `0x${string}`,
+      args: {
+        spender: getBloomContractsByChain(chain, type) as `0x${string}`,
+        amount: ethers.BigNumber.from(convertDecimalsUnitToToken(amount, retrievedToken.decimals)),
+      },
+    })
+  }
+
+  const requestTokenAccess = async () => {
+    try {
+      if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
+      if (!requestTokenApproval) return
+      setWaitingForUserResponse(true)
+      const tx = await requestTokenApproval()
+      setLastTxData({
+        ...lastTxData,
+        txHash: tx.hash,
+      })
+      setWaitingForUserResponse(false)
+      setWaitingForBlockchain(true)
+      const transactionReceipt = (await tx.wait(2)) as ethers.providers.TransactionReceipt
+      setWaitingForBlockchain(false)
+      setLastTxData({
+        txHash: tx.hash,
+        transactionReceipt,
+      })
+      return transactionReceipt
+    } catch (error: any) {
+      setWaitingForUserResponse(false)
+      setError({
+        type: error.code === 'ACTION_REJECTED' ? 'UserRejectedError' : 'common',
+        message: error.message,
+      })
+      throw new Error('Error requesting token access')
+    }
+  }
+
+  /*Hooks and function for transfering or swapping tokens*/
+  const [transferData, setTransferData] = useState<
+    | {
+        address: `0x${string}`
+        abi: any[]
+        functionName: string
+        args: [`0x${string}`, string]
+      }
+    | undefined
+  >()
+  const { config: transferConfig } = usePrepareContractWrite({
+    address: transferData?.address,
+    abi: transferData?.abi,
+    functionName: transferData?.functionName,
+    args: transferData?.args,
+    enabled: transferData !== undefined,
+  })
+  const { writeAsync } = useContractWrite(transferConfig)
+  const prepareTransfer = async (
+    from: { token: StableCoin },
+    to: { chain: Chain; token: StableCoin; address: string },
+    amount: string,
+  ) => {
+    try {
+      const allowanceContract = new ethers.Contract(
+        getTokenContractMetadataBySymbolAndChain(
+          from.token,
+          store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+        )?.address as string,
+        erc20ABI,
+        provider,
+      )
+      const type = from.token === to.token ? 'transfers' : 'swapper'
+      const bloomContractAddress = getBloomContractsByChain(
+        store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+        type,
+      ) as `0x${string}`
+      const allowanceOfToken = (await allowanceContract.allowance(address, bloomContractAddress)) as BigNumber
+      if (
+        parseInt(
+          convertTokenToDecimalsUnit(
+            allowanceOfToken.toString(),
+            getTokenContractMetadataBySymbolAndChain(
+              from.token,
+              store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+            )?.decimals as number,
+          ),
+        ) < parseInt(amount)
+      ) {
+        throw new Error('We do not have enough allowance to transfer this amount of tokens')
+      }
+
+      // Here we know that we have enough allowance
+
+      const abi = type === 'transfers' ? getTransfersAbi() : getSwapperAbi()
+      const args = {
+        to: to.address,
+        amount: convertDecimalsUnitToToken(
+          amount,
+          getTokenContractMetadataBySymbolAndChain(from.token, to.chain)?.decimals as number,
+        ),
+      }
+
+      const functionName =
+        type === 'transfers'
+          ? `send${from.token.toUpperCase()}ToAddress`
+          : `send${from.token.toUpperCase()}To${to.token.toUpperCase()}Address`
+      setTransferData({
+        address: bloomContractAddress,
+        abi,
+        functionName,
+        args: [args.to as `0x${string}`, args.amount as string],
+      })
+    } catch (error: any) {
+      setWaitingForUserResponse(false)
+      setError({
+        type: error.code === 'ACTION_REJECTED' ? 'UserRejectedError' : 'common',
+        message: error.message,
+      })
+      throw new Error('Error requesting setting transfer data')
+    }
+  }
+
+  const transfer = async () => {
+    try {
+      if (!writeAsync) return
+      setWaitingForUserResponse(true)
+      const tx = await writeAsync()
+      setLastTxData({
+        ...lastTxData,
+        txHash: tx.hash,
+      })
+      setWaitingForUserResponse(false)
+      setWaitingForBlockchain(true)
+      const transactionReceipt = (await tx.wait(2)) as ethers.providers.TransactionReceipt
+      setWaitingForBlockchain(false)
+      setLastTxData({
+        txHash: tx.hash,
+        transactionReceipt,
+      })
+      return transactionReceipt
+    } catch (error: any) {
+      setWaitingForUserResponse(false)
+      setError({
+        type: error.code === 'ACTION_REJECTED' ? 'UserRejectedError' : 'common',
+        message: error.message,
+      })
+      throw new Error('Error requesting tx access')
+    }
+  }
 
   /* A function that returns a button that connects to a wallet. */
   const walletConnectButton = (params: { icon?: 'show' | 'hide'; label?: string; disabled?: boolean }) => {
@@ -85,144 +277,6 @@ export default function useBloom(params?: {
         )}
       </Button>
     )
-  }
-  //In order to correctly request token access, you must first be signed in to a wallet
-  /**
-   * Request token access by passing in the token, chain, amount, and type of request
-   * @param {StableCoin} token - StableCoin - The token you want to request access to.
-   * @param {Chain | Testnet} chain - Chain | Testnet
-   * @param {string} amount - The amount of the token you want to request access to.
-   * @param {'transfers' | 'swapper'} type - 'transfers' | 'swapper'
-   * @returns The txReceipt
-   */
-  const requestTokenAccess = async (
-    token: StableCoin,
-    chain: Chain | Testnet,
-    amount: string,
-    type: 'transfers' | 'swapper',
-  ) => {
-    try {
-      const retrievedToken = getTokenContractMetadataBySymbolAndChain(token, chain)
-      if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
-      if (!retrievedToken) throw new Error('No token found')
-      if (!signer) throw new Error('No detected signer')
-
-      const requestContract = new ethers.Contract(retrievedToken.address as `0x${string}`, erc20ABI, signer)
-      setWaitingForUserResponse(true)
-      const populatedApprove = await requestContract.populateTransaction.approve(
-        getBloomContractsByChain(chain, type) as `0x${string}`,
-        convertDecimalsUnitToToken(amount, retrievedToken.decimals),
-      )
-      const tx = await signer.sendTransaction(populatedApprove)
-      setLastTxData({
-        txHash: tx.hash,
-      })
-      setWaitingForUserResponse(false)
-      setWaitingForBlockchain(true)
-      const transactionReceipt = (await tx.wait(2)) as ethers.providers.TransactionReceipt
-      setWaitingForBlockchain(false)
-      setLastTxData({
-        txHash: tx.hash,
-        transactionReceipt,
-      })
-      return transactionReceipt
-    } catch (error: any) {
-      setWaitingForUserResponse(false)
-      setError({
-        type: error.code === 'ACTION_REJECTED' ? 'UserRejectedError' : 'common',
-        message: error.message,
-      })
-      throw new Error('Error requesting token access')
-    }
-  }
-  /**
-   * It takes in a from object, a to object, and an amount, and then it checks if the chain is correct,
-   * and if it is, it sets the transfer contract, and then it transfers the tokens
-   * @param from - { token: StableCoin }
-   * @param to - { chain: Chain; token: StableCoin; address: string }
-   * @param {string} amount - The amount of tokens to transfer.
-   * @returns A transaction receipt
-   */
-  const transfer = async (
-    from: { token: StableCoin },
-    to: { chain: Chain; token: StableCoin; address: string },
-    amount: string,
-  ) => {
-    try {
-      const { isChainCorrect, change } = checkChain(to.chain)
-      if (!isChainCorrect) {
-        change()
-        return
-      }
-      if (!signer) throw new Error('No detected signer')
-      console.log(getTokenContractMetadataBySymbolAndChain(from.token, to.chain)?.address as string)
-      const allowanceContract = new ethers.Contract(
-        getTokenContractMetadataBySymbolAndChain(
-          from.token,
-          store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
-        )?.address as string,
-        erc20ABI,
-        signer,
-      )
-      const type = from.token === to.token ? 'transfers' : 'swapper'
-      const bloomContractAddress = getBloomContractsByChain(
-        store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
-        type,
-      )
-      const allowanceOfToken = (await allowanceContract.allowance(address, bloomContractAddress)) as BigNumber
-
-      console.log(parseInt(amount))
-      if (
-        parseInt(
-          convertTokenToDecimalsUnit(
-            allowanceOfToken.toString(),
-            getTokenContractMetadataBySymbolAndChain(
-              from.token,
-              store.testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
-            )?.decimals as number,
-          ),
-        ) < parseInt(amount)
-      ) {
-        throw new Error('We do not have enough allowance to transfer this amount of tokens')
-      }
-
-      const abi = type === 'transfers' ? getTransfersAbi() : getSwapperAbi()
-      const args = {
-        to: to.address,
-        amount: convertDecimalsUnitToToken(
-          amount,
-          getTokenContractMetadataBySymbolAndChain(from.token, to.chain)?.decimals as number,
-        ),
-      }
-
-      const functionName =
-        type === 'transfers'
-          ? `send${from.token.toUpperCase()}ToAddress`
-          : `send${from.token.toUpperCase()}To${to.token.toUpperCase()}Address`
-      const bloomContract = new ethers.Contract(bloomContractAddress as `0x${string}`, abi, signer)
-
-      setWaitingForUserResponse(true)
-      const tx = await bloomContract[functionName](args.to, args.amount)
-      setLastTxData({
-        txHash: tx.hash,
-      })
-      setWaitingForUserResponse(false)
-      setWaitingForBlockchain(true)
-      const transactionReceipt = (await tx.wait(2)) as ethers.providers.TransactionReceipt
-      setWaitingForBlockchain(false)
-      setLastTxData({
-        txHash: tx.hash,
-        transactionReceipt,
-      })
-      return transactionReceipt
-    } catch (error: any) {
-      setWaitingForUserResponse(false)
-      setError({
-        type: error.code === 'ACTION_REJECTED' ? 'UserRejectedError' : 'common',
-        message: error.message,
-      })
-      throw new Error('Error requesting token access')
-    }
   }
 
   /**
@@ -307,6 +361,8 @@ export default function useBloom(params?: {
     requestTokenAccess,
     checkChain,
     transfer,
+    prepareRequesTokenAccess,
+    prepareTransfer,
     waitingForUserResponse,
     waitingForBlockchain,
     error,

@@ -1,6 +1,6 @@
 import { useBloom } from '@bloom-trade/react-sdk';
 import { NextPage } from 'next';
-import { usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { usePrepareContractWrite, useContractWrite, useSigner } from 'wagmi';
 import { erc20ABI } from 'wagmi';
 const swap: NextPage = () => {
   const { Connect } = useBloom();
@@ -12,7 +12,6 @@ const swap: NextPage = () => {
     args: ['0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', '1000000' as any],
   });
   const { data, write } = useContractWrite(config);
-
   return (
     <div>
       <Connect />

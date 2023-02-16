@@ -12,7 +12,8 @@
     "dev:merchant-standard": "npx lerna run dev --scope=merchant-standard",
     "upgrade:packages": "npx lerna version --no-private",
     "release": "cross-env HUSKY_BYPASS=true HUSKY=0 lerna publish --no-private",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "dev:https:merchant-standard": "npx lerna run dev:https --scope=merchant-standard"
   },
   "license": "MIT",
   "private": true,

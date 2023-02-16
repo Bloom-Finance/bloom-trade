@@ -88,56 +88,14 @@ export const MyTemplatePage = (props: MyTemplatePageProps) => {
   const _currencySelectorData = {
     ...currencyBalancesData,
     amountLimit,
-    onSelect: (currency: any) => setCurrencySelected(currency),
+    onAprove: () => {
+      console.log('approved')
+    },
+    onSelect: async (currency: any) => {
+      setCurrencySelected(currency)
+      return true
+    },
   }
-
-  if (!mdUp)
-    return (
-      <Box sx={{ maxWidth: 400 }}>
-        <Stepper activeStep={activeStep} orientation='vertical'>
-          {steps.map((step, index) => (
-            <Step key={step.label} sx={cssStepsProperties}>
-              <StepLabel optional={index === 3 ? <Typography variant='caption'>Last step</Typography> : null}>
-                {step.label}
-              </StepLabel>
-              <StepContent>
-                {activeStep === 0 && <PreviewComponent type='payout' {...previewInfo} />}
-                {activeStep === 1 && currencySelected && <WaitingForApproval type='tokenApproval' />}
-                {activeStep === 1 && !currencySelected && (
-                  <Stack
-                    spacing={3}
-                    direction='row'
-                    justifyContent={'center'}
-                    p={mdUp ? 4 : 0}
-                    sx={{
-                      boxShadow: mdUp
-                        ? '0px 0px 2px rgba(145, 158, 171, 0.24), 0px 16px 32px -4px rgba(145, 158, 171, 0.24);'
-                        : 'none',
-                      borderRadius: mdUp ? '8px' : 'none',
-                    }}
-                  >
-                    <CurrencySelectorComponent {..._currencySelectorData} />{' '}
-                  </Stack>
-                )}
-                {activeStep === 2 && (
-                  <WaitingForBlockchain
-                    txHash='0x6e9286dd5957142b0deb0ae1cabcc15d07384c7dd4a57e2d56369a865b347453'
-                    chain='goerli'
-                  />
-                )}
-                {activeStep === 3 && <div>Success --- TODO</div>}
-              </StepContent>
-            </Step>
-          ))}
-        </Stepper>
-        {activeStep + 1 === steps.length && (
-          <Paper square elevation={0} sx={{ p: 3 }}>
-            <Typography>All steps completed - you&apos;re finished</Typography>
-            <Button sx={{ mt: 1, mr: 1 }}>Reset</Button>
-          </Paper>
-        )}
-      </Box>
-    )
 
   return (
     <Box sx={{ maxWidth: '100%' }}>
