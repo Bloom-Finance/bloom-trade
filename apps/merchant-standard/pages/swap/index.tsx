@@ -1,46 +1,26 @@
-import React, { useEffect } from 'react';
-import type { NextPage } from 'next';
-import { Button, Stack } from '@mui/material';
-import { useBloom } from '@bloom-trade/react-sdk';
-import { useAccount, useContractWrite } from 'wagmi';
-import { erc20ABI } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-const SwapPage: NextPage = () => {
-  const { writeAsync } = useContractWrite({
-    mode: 'recklesslyUnprepared',
+import { NextPage } from 'next';
+import { usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { erc20ABI } from 'wagmi';
+const swap: NextPage = () => {
+  const { config, error, isError } = usePrepareContractWrite({
     address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-    chainId: 137,
     abi: erc20ABI,
+    chainId: 137,
     functionName: 'approve',
-    args: ['0x034D2685049c4B04AF0e5cb3b196331D8Aa80931', '1000000' as any],
+    args: ['0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', '1000000' as any],
   });
-  const { address } = useAccount();
-  console.log(address);
+  const { data, write } = useContractWrite(config);
+
   return (
     <div>
-      <Stack direction='row' spacing={2}>
-        <ConnectButton />
-        <Button
-          onClick={async () => {
-            if (writeAsync) {
-              try {
-                await writeAsync({
-                  recklesslySetUnpreparedArgs: [
-                    '0x034D2685049c4B04AF0e5cb3b196331D8Aa80931',
-                    '1000000' as any,
-                  ],
-                });
-              } catch (error) {
-                console.log(error);
-              }
-            }
-          }}
-        >
-          Test
-        </Button>
-      </Stack>
+      <ConnectButton />
+      <button disabled={!write} onClick={() => write && write()}>
+        Test
+      </button>
+      {isError && error && <div>Error: {error.message}</div>}
     </div>
   );
 };
 
-export default SwapPage;
+export default swap;
