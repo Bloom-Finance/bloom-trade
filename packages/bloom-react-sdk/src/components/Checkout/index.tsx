@@ -25,17 +25,7 @@ export interface CheckoutProps {
 }
 
 const BloomCheckout = (props: CheckoutProps): JSX.Element => {
-  const {
-    requestTokenAccess,
-    prepareRequesTokenAccess,
-    transfer,
-    checkChain,
-    prepareTransfer,
-    waitingForUserResponse,
-    waitingForBlockchain,
-    error,
-    data,
-  } = useBloom()
+  const { checkChain, transfer, token } = useBloom()
   const [hasRetried, setHasRetried] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const mdUp = useResponsive('up', 'md')
@@ -92,14 +82,20 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     }
   }, [])
   useEffect(() => {
-    if (activeStep === 1 && !waitingForUserResponse && !waitingForBlockchain && !error) {
+    if (activeStep === 1 && !token.waitingForUserResponse && !token.waitingForBlockchain && !token.error) {
       setActiveStep(2)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [waitingForUserResponse, waitingForBlockchain])
+  }, [token.waitingForUserResponse, token.waitingForBlockchain])
   useEffect(() => {
-    if (activeStep === 2 && !waitingForUserResponse && !waitingForBlockchain && !error && order.from) {
-      prepareTransfer(
+    if (
+      activeStep === 2 &&
+      !transfer.waitingForUserResponse &&
+      !transfer.waitingForBlockchain &&
+      !transfer.error &&
+      order.from
+    ) {
+      transfer.prepareTransfer(
         {
           token: order.from?.token,
         },
@@ -112,6 +108,12 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
       )
     }
   }, [activeStep])
+
+  useEffect(() => {
+    if (transfer.receipt) {
+      setShowSuccess(true)
+    }
+  }, [transfer.receipt])
 
   const steps = [
     {
@@ -155,14 +157,14 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     {
       label: 'Please, select the token you want to use',
       labelCompleted: `You choose ${order.from?.token}`,
-      component: waitingForUserResponse ? (
+      component: token.waitingForUserResponse ? (
         <WaitingForApproval type='tokenApproval' amount={order.total.amount} />
-      ) : waitingForBlockchain && data?.txHash ? (
+      ) : token.waitingForBlockchain && token.txHash ? (
         <WaitingForBlockchain
-          txHash={data.txHash}
+          txHash={token.txHash}
           chain={store.testnet ? (getTestnetFromMainnet(order.destination.chain) as Testnet) : order.destination.chain}
         />
-      ) : error && !hasRetried ? (
+      ) : token.error && !hasRetried ? (
         <ErrorComponent
           text='Error while approving token'
           onRetry={() => {
@@ -186,14 +188,14 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
           <CurrencySelector
             amountLimit={order.total.amount.toString()}
             balances={balances}
-            onApprove={async () => {
-              await requestTokenAccess()
+            onApprove={() => {
+              token.approve()
             }}
             onSelect={async (selectedToken) => {
               try {
                 const { isChainCorrect, change, chains } = checkChain(order.destination.chain)
                 if (!isChainCorrect) {
-                  console.log('Incorrect chain, requesting change')
+                  alert('Incorrect chain, requesting change')
                   change()
                   return false
                 }
@@ -207,8 +209,9 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                     },
                   }
                 })
+
                 //Request access to token
-                await prepareRequesTokenAccess(
+                token.prepareApprove(
                   selectedToken,
                   chains.to.name,
                   order.total.amount.toString(),
@@ -227,14 +230,14 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
     {
       label: 'Summary and confirmation',
       labelCompleted: 'Transaction approved',
-      component: waitingForUserResponse ? (
+      component: transfer.waitingForUserResponse ? (
         <WaitingForApproval type='tx' />
-      ) : waitingForBlockchain && data?.txHash ? (
+      ) : transfer.waitingForBlockchain && transfer.txHash ? (
         <WaitingForBlockchain
-          txHash={data.txHash}
+          txHash={transfer.txHash}
           chain={store.testnet ? (getTestnetFromMainnet(order.destination.chain) as Testnet) : order.destination.chain}
         />
-      ) : error && !hasRetried ? (
+      ) : transfer.error && !hasRetried ? (
         <ErrorComponent
           text='Error while processing tx'
           onRetry={() => {
@@ -246,7 +249,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
           onContinue={() => {
             setShowSuccess(false)
           }}
-          txHash={data?.txHash}
+          txHash={transfer?.txHash}
         />
       ) : (
         <SummaryComponent
@@ -255,18 +258,8 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             button: (
               <Button
                 variant='contained'
-                onClick={async () => {
-                  try {
-                    const txReceipt = await transfer()
-                    if (txReceipt) {
-                      OrderStore.update((s) => {
-                        s.order.txHash = txReceipt.transactionHash as `0x${string}`
-                      })
-                      setShowSuccess(true)
-                    }
-                  } catch (error) {
-                    setHasRetried(false)
-                  }
+                onClick={() => {
+                  transfer.transfer()
                 }}
               >
                 Pay
