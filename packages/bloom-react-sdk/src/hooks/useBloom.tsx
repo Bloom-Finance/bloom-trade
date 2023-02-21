@@ -124,6 +124,7 @@ export default function useBloom(params?: {
 
   /* A function that returns a button that connects to a wallet. */
   const walletConnectButton = (params: { icon?: 'show' | 'hide'; label?: string; disabled?: boolean }) => {
+    console.log(hasMounted)
     if (!hasMounted) return null
     return (
       <Button

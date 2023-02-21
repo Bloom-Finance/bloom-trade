@@ -9,9 +9,8 @@
   "description": "Bloom React SDK",
   "repository": "https://github.com/Bloom-Finance/bloom-trade.git",
   "scripts": {
-    "build": "yarn build:esm && yarn build:cjs",
+    "build": "yarn build:esm ",
     "build:esm": "tsc",
-    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
     "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\"",
     "prepare": "npm run build",
@@ -63,13 +62,19 @@
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "dependencies": {
+    "@bloom-trade/ipfs": "*",
     "@bloom-trade/services": "0.0.19",
     "@bloom-trade/themes": "^0.0.19",
     "@bloom-trade/utilities": "^0.0.19",
-    "@bloom-trade/ipfs": "*",
+    "@safe-global/safe-core-sdk": "^3.3.1",
+    "@safe-global/safe-core-sdk-types": "^1.9.0",
+    "@safe-global/safe-ethers-lib": "^1.9.1",
+    "@safe-global/safe-service-client": "^1.5.1",
+    "@types/react-blockies": "^1.4.1",
     "ethers": "^5.7.2",
     "framer-motion": "^9.0.1",
-    "pullstate": "^1.25.0"
+    "pullstate": "^1.25.0",
+    "react-blockies": "^1.4.1"
   },
   "peerDependencies": {
     "@emotion/react": "latest",

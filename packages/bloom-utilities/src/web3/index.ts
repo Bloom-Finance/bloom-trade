@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import {
+import Bloom, {
   StableCoin,
   Testnet,
   Chain,
@@ -346,6 +346,21 @@ const getTxDetailsBlockchainExplorer = (
   }
 };
 
+const getGnosisService = (chain: Chain | 'goerli') => {
+  switch (chain) {
+    case 'goerli':
+      return Bloom.Safe.SafeService.testnet;
+    case 'eth':
+      return Bloom.Safe.SafeService.ethereum;
+    case 'polygon':
+      return Bloom.Safe.SafeService.polygon;
+    case 'avax':
+      return Bloom.Safe.SafeService.avalanche;
+    default:
+      return Bloom.Safe.SafeService.ethereum;
+  }
+};
+
 export {
   isWeb3WalletByAddress,
   formatWalletAddress,
@@ -364,4 +379,5 @@ export {
   getSwapperAbi,
   getBlockchainExplorerName,
   getTxDetailsBlockchainExplorer,
+  getGnosisService,
 };

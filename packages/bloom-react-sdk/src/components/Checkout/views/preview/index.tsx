@@ -16,7 +16,6 @@ import { getTokenIconBySymbol, getWagmiInstanceByChainName, isWeb3WalletByAddres
 import { Chain, StableCoin } from '@bloom-trade/types'
 import useResponsive from '../../../../hooks/useResponsive'
 import { OrderStore } from '../../../../store/Order'
-import { useWeb3Modal } from '@web3modal/react'
 export interface PreviewProps {
   onContinue?: () => void
   type: 'payout' | 'paymentRequest'
@@ -26,7 +25,6 @@ export interface PreviewProps {
 
 const PreviewComponent = (props: PreviewProps): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
-  const { setDefaultChain } = useWeb3Modal()
   const order = OrderStore.useState((s) => s.order)
   const [tokenSelected, setTokenSelectd] = useState(order.destination.token)
   const theme = useTheme()
@@ -35,11 +33,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
   useEffect(() => {
     setHasMounted(true)
   }, [])
-  useEffect(() => {
-    if (order.destination.chain) {
-      setDefaultChain(getWagmiInstanceByChainName(order.destination.chain))
-    }
-  }, [order.destination.chain])
+
   return (
     <Stack
       spacing={3}

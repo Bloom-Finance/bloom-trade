@@ -12,11 +12,14 @@ import { Logo } from './components/Logo'
 import WalletCard from './components/Wallets'
 import ScreenLoader from './components/Loaders/screen'
 import Card from './components/Surfaces/Card'
+import useSafe from './hooks/useSafe'
+import Vault from './components/Vault'
 export {
   Table,
   Scrollbar,
   CardSurfaces,
   useBloom,
+  useSafe,
   Checkout,
   FindLoader,
   GearsLoader,
@@ -27,4 +30,5 @@ export {
   WalletCard,
   ScreenLoader,
   Card,
+  Vault,
 }

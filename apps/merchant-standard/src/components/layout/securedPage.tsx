@@ -111,6 +111,12 @@ const Component = (props: Props): JSX.Element => {
       navigate: () => router.push('/wallets'),
     },
     {
+      id: 'vault',
+      icon: 'ph:vault',
+      text: 'Vaults',
+      navigate: () => router.push('/vault'),
+    },
+    {
       id: 'payment-request',
       icon: 'ph:rocket',
       text: 'Payment Request',

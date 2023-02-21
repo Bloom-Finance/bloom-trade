@@ -3,6 +3,16 @@ export = Bloom;
 export as namespace Bloom;
 
 declare namespace Bloom {
+  /* This alias is referred to all the Bloom Gnosis Safe */
+  namespace Safe {
+    const enum SafeService {
+      ethereum = 'https://safe-transaction.mainnet.gnosis.io/',
+      avalanche = 'https://safe-transaction.avalanche.gnosis.io/',
+      polygon = 'https://safe-transaction.polygon.gnosis.io/',
+      testnet = 'https://safe-transaction.goerli.gnosis.io/',
+    }
+  }
+
   /* This alias is referred to all the Bloom Firebase Types */
   namespace Firebase {
     type wallets = {
@@ -185,5 +195,13 @@ declare namespace Bloom {
         currency: string;
       }[];
     };
+  };
+  type Vault = {
+    id: string;
+    user: string;
+    chain: Chain | 'goerli';
+    address: string;
+    owners?: string[];
+    threshold: number;
   };
 }
