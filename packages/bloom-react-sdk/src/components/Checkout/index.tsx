@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-key */
-import { Order, StableCoin, Testnet } from '@bloom-trade/types'
+import { Order, Testnet } from '@bloom-trade/types'
 import React, { useEffect, useState } from 'react'
 import PreviewComponent from './views/preview'
 import { BloomStore } from '../../store/BloomReact'

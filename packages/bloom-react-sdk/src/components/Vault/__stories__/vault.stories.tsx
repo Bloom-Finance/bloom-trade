@@ -25,4 +25,25 @@ Primary.args = {
     '0x460ebc43280F9a256a94145DA36778e83E09Fc98',
   ],
   chain: 'goerli',
+  qrCodeLogoImage: 'https://merchant.bloom.trade/apple-touch-icon.png',
+  balance: [
+    {
+      asset: 'usdt',
+      amount: '3',
+    },
+    {
+      asset: 'dai',
+      amount: '4',
+    },
+    {
+      asset: 'usdc',
+      amount: '300',
+    },
+  ],
+  walletConnectButton: (
+    <Typography variant='body1' color='primary'>
+      Connect Wallet
+    </Typography>
+  ),
+  isConnected: true,
 }

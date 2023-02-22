@@ -203,5 +203,9 @@ declare namespace Bloom {
     address: string;
     owners?: string[];
     threshold: number;
+    balance: {
+      asset: Asset;
+      amount: string;
+    }[];
   };
 }

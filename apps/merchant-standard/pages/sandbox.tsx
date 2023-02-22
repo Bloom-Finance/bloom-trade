@@ -1,8 +1,6 @@
 import { BloomReact, useBloom } from '@bloom-trade/react-sdk';
-import { Button } from '@mui/material';
 import type { NextPage } from 'next';
 import { authService } from '../src/services/auth.services';
-import useSafe from '../../../packages/bloom-react-sdk/dist/esm/hooks/useSafe';
 
 const SandboxPage: NextPage = () => {
   const { Connect } = useBloom();
