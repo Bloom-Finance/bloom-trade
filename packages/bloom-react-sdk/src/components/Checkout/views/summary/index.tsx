@@ -9,6 +9,7 @@ import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, Lis
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import React from 'react'
 import { BloomStore } from '../../../../store/BloomReact'
+import AddressInformation from '../../../AddressInformation'
 
 export interface Props {
   order: Order
@@ -51,21 +52,12 @@ const SummaryComponent = (props: Props): JSX.Element => {
     <List sx={{ width: '100%' }}>
       <ListItem
         secondaryAction={
-          <IconButton
-            onClick={() => {
-              window.open(
-                getWalletBlockchainExplorer(
-                  props.order.destination.address,
-                  isTestnet || props.testnet
-                    ? (getTestnetFromMainnet(props.order.destination.chain) as Testnet)
-                    : props.order.destination.chain,
-                ),
-              )
-            }}
-            aria-label='address-info'
-          >
-            <OpenInNewIcon />
-          </IconButton>
+          <AddressInformation
+            address={props.order.destination.address}
+            chain={props.order.destination.chain}
+            qr={{ enabled: false }}
+            copyToClipBoard={{ enabled: false }}
+          />
         }
       >
         <ListItemAvatar>

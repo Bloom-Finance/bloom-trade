@@ -40,10 +40,4 @@ Primary.args = {
       amount: '300',
     },
   ],
-  walletConnectButton: (
-    <Typography variant='body1' color='primary'>
-      Connect Wallet
-    </Typography>
-  ),
-  isConnected: true,
 }

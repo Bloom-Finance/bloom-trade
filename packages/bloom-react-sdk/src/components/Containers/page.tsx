@@ -83,7 +83,7 @@ export const Page: FC<PageProps> = (props) => {
               {props.header.subTitle}
             </Typography>
           </Stack>
-          {props.header.actions}
+          <Stack direction='row'>{props.header.actions}</Stack>
         </Stack>
         <Stack pt={mdUp ? 6 : 3} pl={mdUp ? 2 : 0}>
           {props.children}

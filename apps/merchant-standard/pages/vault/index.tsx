@@ -4,30 +4,18 @@ import { useEffect, useState } from 'react';
 import Bloom from '@bloom-trade/types';
 import { vaultsServices } from '../../src/services/vaults.services';
 import { authService } from '../../src/services/auth.services';
-import { useBloom, useSafe, Vault } from '@bloom-trade/react-sdk';
+import { useSafe, Vault, FindLoader } from '@bloom-trade/react-sdk';
 import BloomServices from '@bloom-trade/services';
-import { useAccount, useSignMessage } from 'wagmi';
-import { ethers } from 'ethers';
+import { useRouter } from 'next/router';
+import { Stack } from '@mui/system';
+import { Typography } from '@mui/material';
+
 const VaultPage: NextPage = () => {
   const [vaults, setVaults] = useState<Bloom.Vault[]>([]);
-  const [lastOwners, setLastOwners] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
   const { getSafeInfo } = useSafe();
-  const { Connect } = useBloom();
-  const { isConnected } = useAccount();
-  const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage({
-    message: 'Bloom Vault challenge',
-    onSuccess(data) {
-      const actualAddress = ethers.utils.verifyMessage(
-        'Bloom Vault challenge',
-        data
-      );
-      if (!lastOwners.includes(actualAddress)) {
-        alert('You are not an owner of this vault');
-      } else {
-        alert('Wohoo!! You are an owner');
-      }
-    },
-  });
+
   useEffect(() => {
     (async () => {
       const user = await authService.getUserSession();
@@ -64,30 +52,60 @@ const VaultPage: NextPage = () => {
         })
       );
       setVaults(processedVaults);
+      setLoading(false);
     })();
   }, []);
+
   return (
-    <SecuredPage title='My Vaults' currentLink='vault'>
-      {vaults.map((vault, index) => {
-        return (
-          <Vault
-            isConnected={isConnected}
-            onRequestSign={(owners) => {
-              setLastOwners(owners);
-              signMessage();
-            }}
-            walletConnectButton={<Connect />}
-            key={index}
-            qrCodeLogoImage={
-              'https://merchant.bloom.trade/apple-touch-icon.png'
-            }
-            address={vault.address as `0x${string}`}
-            chain={vault.chain}
-            owners={vault.owners as string[]}
-            balance={vault.balance}
-          />
-        );
-      })}
+    <SecuredPage title='My Vaults' currentLink='vaults'>
+      <>
+        {loading && (
+          <Stack
+            justifyContent='center'
+            alignItems={'center'}
+            spacing={2}
+            direction={'column'}
+          >
+            <FindLoader color='#FF0083' />
+            <Typography>Searching your vaults...</Typography>
+          </Stack>
+        )}
+        {vaults.length === 0 && !loading && (
+          <div className='flex flex-col items-center justify-center h-full'>
+            <div className='text-2xl font-bold text-center'>
+              You don't have any vaults yet
+            </div>
+            <div className='text-lg text-center'>
+              Create a vault to start trading
+            </div>
+            <button
+              onClick={() => {
+                router.push('/vault/create');
+              }}
+              className='px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75'
+            >
+              Create Vault
+            </button>
+          </div>
+        )}
+        {vaults.map((vault, index) => {
+          return (
+            <Vault
+              onSeeVault={() => {
+                router.push(`/vault/${vault.id}`);
+              }}
+              key={index}
+              qrCodeLogoImage={
+                'https://merchant.bloom.trade/apple-touch-icon.png'
+              }
+              address={vault.address as `0x${string}`}
+              chain={vault.chain}
+              owners={vault.owners as string[]}
+              balance={vault.balance}
+            />
+          );
+        })}
+      </>
     </SecuredPage>
   );
 };

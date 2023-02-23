@@ -93,7 +93,7 @@ const LogoSmall = () => {
   );
 };
 
-const Component = (props: Props): JSX.Element => {
+const SecuredPage = (props: Props): JSX.Element => {
   const mdUp = useResponsive('up', 'md');
   const { getUserLoggedIn } = useAuth();
   const router = useRouter();
@@ -111,7 +111,7 @@ const Component = (props: Props): JSX.Element => {
       navigate: () => router.push('/wallets'),
     },
     {
-      id: 'vault',
+      id: 'vaults',
       icon: 'ph:vault',
       text: 'Vaults',
       navigate: () => router.push('/vault'),
@@ -183,4 +183,4 @@ const Component = (props: Props): JSX.Element => {
   );
 };
 
-export default WithPreckSession(Component);
+export default WithPreckSession(SecuredPage);

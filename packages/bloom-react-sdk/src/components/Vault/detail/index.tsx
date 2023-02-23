@@ -6,6 +6,7 @@ export interface Props {
   owners: Array<string>
   chain: Chain | Testnet
   qrCodeLogoImage: string
+  walletConnectButton: JSX.Element
   balance: {
     asset: Asset
     amount: string

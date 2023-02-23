@@ -14,6 +14,7 @@ import ScreenLoader from './components/Loaders/screen'
 import Card from './components/Surfaces/Card'
 import useSafe from './hooks/useSafe'
 import Vault from './components/Vault'
+import AddressInformation from './components/AddressInformation/index'
 export {
   Table,
   Scrollbar,
@@ -31,4 +32,5 @@ export {
   ScreenLoader,
   Card,
   Vault,
+  AddressInformation,
 }
