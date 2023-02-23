@@ -1,13 +1,10 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
-
-import Table from '../index'
-import { Typography } from '@mui/material'
 import VaultComponent from '../index'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Molecule/Vault',
+  title: 'Organism/Vault',
   component: VaultComponent,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 } as ComponentMeta<typeof VaultComponent>

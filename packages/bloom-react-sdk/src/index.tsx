@@ -15,6 +15,7 @@ import Card from './components/Surfaces/Card'
 import useSafe from './hooks/useSafe'
 import Vault from './components/Vault'
 import AddressInformation from './components/AddressInformation/index'
+import VaultDetail from './components/Vault/detail/index'
 export {
   Table,
   Scrollbar,
@@ -33,4 +34,5 @@ export {
   Card,
   Vault,
   AddressInformation,
+  VaultDetail,
 }

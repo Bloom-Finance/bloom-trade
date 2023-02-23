@@ -1,11 +1,11 @@
 import { ethers } from 'ethers'
-import Safe, { SafeFactory } from '@safe-global/safe-core-sdk'
-import EthersAdapter, { EthersAdapterConfig } from '@safe-global/safe-ethers-lib'
+import Safe from '@safe-global/safe-core-sdk'
+import EthersAdapter from '@safe-global/safe-ethers-lib'
 import { useAccount, useProvider } from 'wagmi'
 import { Chain } from '@bloom-trade/types'
 import { getGnosisService } from '@bloom-trade/utilities'
 import SafeServiceClient, { SafeInfoResponse } from '@safe-global/safe-service-client'
-import { MetaTransactionData, SafeTransactionData } from '@safe-global/safe-core-sdk-types'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 export default function useSafe() {
   const provider = useProvider()
   const { address } = useAccount()
@@ -52,9 +52,17 @@ export default function useSafe() {
     const safeInfo: SafeInfoResponse = await safeService.getSafeInfo(address)
     return safeInfo
   }
-
+  const getAllTransactions = async (address: string, chain: Chain | 'goerli') => {
+    if (!provider) throw new Error('No provider found')
+    if (!address) throw new Error('No address found')
+    const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: provider })
+    const txServiceUrl = getGnosisService(chain)
+    const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+    const { results } = await safeService.getAllTransactions(address)
+    return results
+  }
   const executeTransaction = async () => {
     //staff
   }
-  return { getSafes, createTransaction, getSafeInfo }
+  return { getSafes, createTransaction, getSafeInfo, getAllTransactions }
 }
