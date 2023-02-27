@@ -1,7 +1,9 @@
-import Bloom from '@bloom-trade/types';
+import Bloom, { StableCoin } from '@bloom-trade/types';
 import {
+  convertDecimalsUnitToToken,
   formatWalletAddress,
   getBlockchainExplorerName,
+  getTokenContractMetadataBySymbolAndChain,
 } from '@bloom-trade/utilities';
 import { Button } from '@mui/material';
 import type { NextPage } from 'next';
@@ -18,6 +20,7 @@ import { useState } from 'react';
 import { useAccount, useSignMessage } from 'wagmi';
 import { ethers } from 'ethers';
 import { showAlert } from '../../src/components/alert/handler';
+import useSafe from '../../../../packages/bloom-react-sdk/dist/esm/hooks/useSafe';
 
 interface Props {
   vault: Bloom.Vault;
@@ -29,7 +32,8 @@ const VaultDetailPage: NextPage<Props> = ({ vault, transactions }) => {
   const { isConnected } = useAccount();
   const router = useRouter();
   const { Connect } = useBloom();
-  const { signMessage, data } = useSignMessage({
+  const { sendToken } = useSafe();
+  const { signMessage } = useSignMessage({
     message: 'Bloom Trade Verification',
     onSuccess: (data) => {
       const verifiedAddress = ethers.utils.verifyMessage(
@@ -67,6 +71,27 @@ const VaultDetailPage: NextPage<Props> = ({ vault, transactions }) => {
       )} in ${getBlockchainExplorerName(vault.chain)}`}
     >
       <VaultDetail
+        onCreateTx={async (params) => {
+          const safeTx = await sendToken(
+            {
+              to: params.to,
+              amount: convertDecimalsUnitToToken(
+                params.amount.toString(),
+                getTokenContractMetadataBySymbolAndChain(
+                  params.token as StableCoin,
+                  vault.chain as Bloom.Chain
+                )?.decimals as number
+              ),
+              token: getTokenContractMetadataBySymbolAndChain(
+                params.token as StableCoin,
+                vault.chain as Bloom.Chain
+              )?.address as `0x${string}`,
+            },
+            vault.address,
+            'goerli'
+          );
+          console.log(safeTx);
+        }}
         vaultTransactions={transactions}
         vault={vault}
         chain={vault.chain}

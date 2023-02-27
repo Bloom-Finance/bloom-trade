@@ -1,5 +1,15 @@
 import Bloom, { Chain } from '@bloom-trade/types'
-import { List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material'
+import {
+  Button,
+  Input,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  MenuItem,
+  Select,
+  Typography,
+} from '@mui/material'
 import { Stack } from '@mui/system'
 import {
   EthereumTxWithTransfersResponse,
@@ -12,10 +22,16 @@ import Iconify from '../../Iconify'
 import VaultDetailLocked from './locked'
 import moment from 'moment'
 import AddressInformation from '../../AddressInformation'
-import { formatWalletAddress, getBlockchainExplorerName } from '@bloom-trade/utilities'
+import { formatWalletAddress, getBlockchainExplorerName, isWeb3WalletByAddress } from '@bloom-trade/utilities'
 import Blockies from 'react-blockies'
+import { Asset } from '@bloom-trade/types'
 
 export interface Props {
+  pendingTransactions?: (
+    | SafeModuleTransactionWithTransfersResponse
+    | SafeMultisigTransactionWithTransfersResponse
+    | EthereumTxWithTransfersResponse
+  )[]
   vault: Bloom.Vault
   vaultTransactions: (
     | SafeModuleTransactionWithTransfersResponse
@@ -27,9 +43,17 @@ export interface Props {
   walletConnectButton: JSX.Element
   isWalletVerified: boolean
   onSign: () => void
+  onCreateTx: (params: { token: Asset; amount: number; to: `0x${string}` }) => void
 }
 
 const VaultDetail = (props: Props): JSX.Element => {
+  const [tx, setTx] = React.useState<{ token: Asset; amount: number; to: `0x${string}` }>({
+    token: props.vault.balance[0].asset,
+    amount: 0,
+    to: '' as `0x${string}`,
+  })
+  const [pendingTxs, setPendingTxs] = React.useState<any>()
+
   if (!props.isWalletVerified) return <VaultDetailLocked {...props} />
   return (
     <Stack direction='column'>
@@ -44,7 +68,7 @@ const VaultDetail = (props: Props): JSX.Element => {
         )
       })}
       <List>
-        <ListItemText>Transactions</ListItemText>
+        <ListItemText primary={<Typography variant='h4'>Transactions</Typography>} />
         {props.vaultTransactions.map((tx, index) => {
           return (
             <ListItem
@@ -69,7 +93,7 @@ const VaultDetail = (props: Props): JSX.Element => {
             </ListItem>
           )
         })}
-        <ListItemText>Owners</ListItemText>
+        <ListItemText primary={<Typography variant='h4'>Owners</Typography>} />
         {props.vault.owners?.map((owner, index) => (
           <ListItem
             key={index}
@@ -91,6 +115,45 @@ const VaultDetail = (props: Props): JSX.Element => {
             ></ListItemText>
           </ListItem>
         ))}
+        <ListItemText primary={<Typography variant='h4'>Create a transaction</Typography>} />
+        <ListItemText primary={<Typography variant='body1'>Select token</Typography>} />
+        <Select
+          value={props.vault.balance[0].asset}
+          onChange={(e) => {
+            setTx({ ...tx, token: e.target.value as Asset })
+          }}
+        >
+          {props.vault.balance.map((v) => {
+            return (
+              <MenuItem key={v.asset} value={v.asset}>
+                {v.asset.toUpperCase()}
+              </MenuItem>
+            )
+          })}
+        </Select>
+        <ListItemText primary={<Typography variant='body1'>Select amount</Typography>} />
+        <Input
+          type='number'
+          onChange={(e) => {
+            setTx({ ...tx, amount: Number(e.target.value) })
+          }}
+        />
+        <ListItemText primary={<Typography variant='body1'>Select destination</Typography>} />
+        <Input
+          type='string'
+          onChange={(e) => {
+            setTx({ ...tx, to: e.target.value as `0x${string}` })
+          }}
+        />
+        <Button
+          onClick={() => {
+            props.onCreateTx(tx)
+          }}
+          variant='contained'
+          disabled={!tx.token || tx.amount === 0 || !isWeb3WalletByAddress(tx.to)}
+        >
+          Create tx
+        </Button>
       </List>
     </Stack>
   )

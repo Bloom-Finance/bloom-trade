@@ -14,7 +14,8 @@ const withPreCheckVaultDetail = <P extends object>(
     const [loading, setLoading] = useState(true);
     const [vault, setVault] = useState<Bloom.Vault>();
     const [transactions, setTransactions] = useState<any[]>([]);
-    const { getSafeInfo, getAllTransactions } = useSafe();
+    const { getSafeInfo, getAllTransactions, getPendingTransactions } =
+      useSafe();
     const {
       query: { id },
     } = useRouter();
@@ -30,6 +31,13 @@ const withPreCheckVaultDetail = <P extends object>(
         );
         const safeInfo = await getSafeInfo(vault.address, vault.chain);
         const txs = await getAllTransactions(vault.address, vault.chain);
+        console.log('called');
+
+        const pendingTxs = await getPendingTransactions(
+          vault.address,
+          vault.chain
+        );
+        console.log('Pendings', pendingTxs);
         setTransactions(txs);
         const balances = await bloomServices.getBalance({
           dex: {
