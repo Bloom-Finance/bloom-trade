@@ -1,7 +1,11 @@
 import Bloom, { Chain } from '@bloom-trade/types'
 import {
   Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
   Input,
+  InputLabel,
   List,
   ListItem,
   ListItemAvatar,
@@ -25,13 +29,11 @@ import AddressInformation from '../../AddressInformation'
 import { formatWalletAddress, getBlockchainExplorerName, isWeb3WalletByAddress } from '@bloom-trade/utilities'
 import Blockies from 'react-blockies'
 import { Asset } from '@bloom-trade/types'
+import { SafeTransaction, SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
+import useSafe from '../../../hooks/useSafe'
 
 export interface Props {
-  pendingTransactions?: (
-    | SafeModuleTransactionWithTransfersResponse
-    | SafeMultisigTransactionWithTransfersResponse
-    | EthereumTxWithTransfersResponse
-  )[]
+  pendingTransactions?: SafeMultisigTransactionResponse[]
   vault: Bloom.Vault
   vaultTransactions: (
     | SafeModuleTransactionWithTransfersResponse
@@ -43,18 +45,20 @@ export interface Props {
   walletConnectButton: JSX.Element
   isWalletVerified: boolean
   onSign: () => void
-  onCreateTx: (params: { token: Asset; amount: number; to: `0x${string}` }) => void
+  onCreateTx: (params: { token: Asset; amount: number; to: `0x${string}`; executeTx: boolean }) => void
+  onExecuteTx: (tx: SafeMultisigTransactionResponse) => void
 }
 
 const VaultDetail = (props: Props): JSX.Element => {
-  const [tx, setTx] = React.useState<{ token: Asset; amount: number; to: `0x${string}` }>({
+  const [tx, setTx] = React.useState<{ token: Asset; amount: number; to: `0x${string}`; executeTx: boolean }>({
     token: props.vault.balance[0].asset,
     amount: 0,
     to: '' as `0x${string}`,
+    executeTx: false,
   })
-  const [pendingTxs, setPendingTxs] = React.useState<any>()
 
   if (!props.isWalletVerified) return <VaultDetailLocked {...props} />
+
   return (
     <Stack direction='column'>
       {props.vault.balance.map((balance) => {
@@ -68,8 +72,27 @@ const VaultDetail = (props: Props): JSX.Element => {
         )
       })}
       <List>
+        <ListItemText primary={<Typography variant='h4'>Queue</Typography>} />
+        {props.pendingTransactions && props.pendingTransactions.length === 0 ? (
+          <Typography>No pending transactions</Typography>
+        ) : (
+          props.pendingTransactions?.map((tx, index) => (
+            <ListItem key={index}>
+              <Typography>{tx.confirmationsRequired} confirmations need to be required</Typography>
+              <Typography>You have {tx.confirmations?.length || '0'}</Typography>
+              <Button
+                onClick={() => {
+                  props.onExecuteTx(tx)
+                }}
+              >
+                Execute
+              </Button>
+            </ListItem>
+          ))
+        )}
         <ListItemText primary={<Typography variant='h4'>Transactions</Typography>} />
         {props.vaultTransactions.map((tx, index) => {
+          if (tx.transfers.length === 0) return
           return (
             <ListItem
               secondaryAction={
@@ -145,8 +168,22 @@ const VaultDetail = (props: Props): JSX.Element => {
             setTx({ ...tx, to: e.target.value as `0x${string}` })
           }}
         />
+
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                defaultChecked={tx.executeTx}
+                onChange={() => {
+                  setTx({ ...tx, executeTx: !tx.executeTx })
+                }}
+              />
+            }
+            label='Execute transaction'
+          />
+        </FormGroup>
         <Button
-          onClick={() => {
+          onClick={async () => {
             props.onCreateTx(tx)
           }}
           variant='contained'

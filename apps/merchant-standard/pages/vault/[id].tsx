@@ -24,15 +24,21 @@ import useSafe from '../../../../packages/bloom-react-sdk/dist/esm/hooks/useSafe
 
 interface Props {
   vault: Bloom.Vault;
+  pendingTxs: any[];
   transactions: any[];
 }
-const VaultDetailPage: NextPage<Props> = ({ vault, transactions }) => {
-  console.log(transactions);
+const VaultDetailPage: NextPage<Props> = ({
+  vault,
+  transactions,
+  pendingTxs,
+}) => {
   const [isWalletVerified, setIsWalletVerified] = useState(false);
+  const [pendingTransactions, setPendingTransactions] =
+    useState<any[]>(pendingTxs);
   const { isConnected } = useAccount();
   const router = useRouter();
   const { Connect } = useBloom();
-  const { sendToken } = useSafe();
+  const { sendToken, executeTransaction, getTransactionInfo } = useSafe();
   const { signMessage } = useSignMessage({
     message: 'Bloom Trade Verification',
     onSuccess: (data) => {
@@ -71,8 +77,20 @@ const VaultDetailPage: NextPage<Props> = ({ vault, transactions }) => {
       )} in ${getBlockchainExplorerName(vault.chain)}`}
     >
       <VaultDetail
+        pendingTransactions={pendingTransactions}
+        onExecuteTx={async (tx) => {
+          try {
+            await executeTransaction(vault.address, tx);
+            setPendingTransactions((prev) =>
+              prev.filter((item) => item.transactionHash !== tx.transactionHash)
+            );
+          } catch (error) {
+            console.log(error);
+          }
+          //Update array of pending transactions
+        }}
         onCreateTx={async (params) => {
-          const safeTx = await sendToken(
+          const { safeTransaction, txHash } = await sendToken(
             {
               to: params.to,
               amount: convertDecimalsUnitToToken(
@@ -88,9 +106,13 @@ const VaultDetailPage: NextPage<Props> = ({ vault, transactions }) => {
               )?.address as `0x${string}`,
             },
             vault.address,
-            'goerli'
+            vault.chain
           );
-          console.log(safeTx);
+          if (params.executeTx) {
+            await executeTransaction(vault.address, safeTransaction);
+          }
+          const txInfo = await getTransactionInfo(txHash, vault.chain);
+          setPendingTransactions((prev) => [...prev, txInfo]);
         }}
         vaultTransactions={transactions}
         vault={vault}

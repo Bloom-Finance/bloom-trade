@@ -4,8 +4,8 @@ import EthersAdapter from '@safe-global/safe-ethers-lib'
 import { useAccount, useProvider, erc20ABI, useSigner } from 'wagmi'
 import { Chain, Asset } from '@bloom-trade/types'
 import { getGnosisService } from '@bloom-trade/utilities'
-import SafeServiceClient, { SafeInfoResponse } from '@safe-global/safe-service-client'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import SafeServiceClient, { AllTransactionsOptions, SafeInfoResponse } from '@safe-global/safe-service-client'
+import { MetaTransactionData, SafeMultisigTransactionResponse, SafeTransaction } from '@safe-global/safe-core-sdk-types'
 export default function useSafe() {
   const provider = useProvider()
   const { data: signer } = useSigner()
@@ -41,7 +41,7 @@ export default function useSafe() {
     const data = contractToken.interface.encodeFunctionData('transfer', [params.to, params.amount])
     const safeTransactionData: MetaTransactionData = {
       to: params.token,
-      value: params.amount,
+      value: '0',
       data: data,
     }
     const safeTransaction = await safeSdk.createTransaction({ safeTransactionData })
@@ -57,6 +57,7 @@ export default function useSafe() {
     return {
       txHash,
       signedSafeTransaction,
+      safeTransaction,
     }
   }
   // This function retrieves the information for a Safe
@@ -71,26 +72,64 @@ export default function useSafe() {
     const safeInfo: SafeInfoResponse = await safeService.getSafeInfo(address)
     return safeInfo
   }
-  const getAllTransactions = async (address: string, chain: Chain | 'goerli') => {
+  /**
+   * It takes a transaction hash and a chain, and returns the transaction details
+   * @param {string} txHash - The transaction hash of the transaction you want to get info about
+   * @param {Chain | 'goerli'} chain - The chain you want to get the transaction info from.
+   * @returns The transaction info
+   */
+  const getTransactionInfo = async (txHash: string, chain: Chain | 'goerli') => {
     if (!provider) throw new Error('No provider found')
     if (!address) throw new Error('No address found')
     const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: provider })
     const txServiceUrl = getGnosisService(chain)
     const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
-    const { results } = await safeService.getAllTransactions(address)
+    const tx: SafeMultisigTransactionResponse = await safeService.getTransaction(txHash)
+    return tx
+  }
+
+  const getAllTransactions = async (address: string, chain: Chain | 'goerli', options: AllTransactionsOptions) => {
+    if (!provider) throw new Error('No provider found')
+    if (!address) throw new Error('No address found')
+    const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: provider })
+    const txServiceUrl = getGnosisService(chain)
+    const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+    const { results } = await safeService.getAllTransactions(address, options)
     return results
   }
-  const executeTransaction = async () => {
+
+  const executeTransaction = async (
+    safeAddress: string,
+    safeTransaction: SafeTransaction | SafeMultisigTransactionResponse,
+  ) => {
     //staff
+    if (!signer) throw new Error('No signer found')
+    const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: signer })
+    const safeSdk: Safe = await Safe.create({ ethAdapter, safeAddress: safeAddress })
+    const executeTxResponse = await safeSdk.executeTransaction(safeTransaction)
+    await executeTxResponse.transactionResponse?.wait()
+    return safeTransaction
   }
   const getPendingTransactions = async (safeAddress: string, chain: Chain | 'goerli') => {
-    if (!provider) throw new Error('No provider found')
-    if (!address) throw new Error('No address found')
-    const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: provider })
-    const txServiceUrl = getGnosisService(chain)
-    const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
-    const { results } = await safeService.getPendingTransactions(safeAddress)
-    return results
+    try {
+      if (!provider) throw new Error('No provider found')
+      if (!address) throw new Error('No address found')
+      const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: provider })
+      const txServiceUrl = getGnosisService(chain)
+      const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+      const { results } = await safeService.getPendingTransactions(safeAddress)
+      return results
+    } catch (error) {
+      throw new Error('Error getting pending transactions')
+    }
   }
-  return { getSafes, sendToken, getSafeInfo, getAllTransactions, getPendingTransactions }
+  return {
+    getSafes,
+    sendToken,
+    getSafeInfo,
+    getAllTransactions,
+    getPendingTransactions,
+    executeTransaction,
+    getTransactionInfo,
+  }
 }
