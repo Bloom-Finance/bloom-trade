@@ -3,6 +3,7 @@ import {
   convertDecimalsUnitToToken,
   formatWalletAddress,
   getBlockchainExplorerName,
+  getChainIdByName,
   getTokenContractMetadataBySymbolAndChain,
 } from '@bloom-trade/utilities';
 import { Button } from '@mui/material';
@@ -17,7 +18,12 @@ import {
 import Iconify from '../../src/components/Iconify';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useAccount, useSignMessage } from 'wagmi';
+import {
+  useAccount,
+  useNetwork,
+  useSignMessage,
+  useSwitchNetwork,
+} from 'wagmi';
 import { ethers } from 'ethers';
 import { showAlert } from '../../src/components/alert/handler';
 import useSafe from '../../../../packages/bloom-react-sdk/dist/esm/hooks/useSafe';
@@ -33,6 +39,8 @@ const VaultDetailPage: NextPage<Props> = ({
   pendingTxs,
 }) => {
   const [isWalletVerified, setIsWalletVerified] = useState(false);
+  const { switchNetwork } = useSwitchNetwork();
+  const { chain } = useNetwork();
   const [pendingTransactions, setPendingTransactions] =
     useState<any[]>(pendingTxs);
   const { isConnected } = useAccount();
@@ -90,6 +98,13 @@ const VaultDetailPage: NextPage<Props> = ({
           //Update array of pending transactions
         }}
         onCreateTx={async (params) => {
+          if (chain?.id !== getChainIdByName(vault.chain)) {
+            if (!switchNetwork) {
+              return;
+            }
+            switchNetwork(getChainIdByName(vault.chain));
+            return;
+          }
           const { safeTransaction, txHash } = await sendToken(
             {
               to: params.to,
@@ -111,7 +126,11 @@ const VaultDetailPage: NextPage<Props> = ({
           if (params.executeTx) {
             await executeTransaction(vault.address, safeTransaction);
           }
-          const txInfo = await getTransactionInfo(txHash, vault.chain);
+          const txInfo = await getTransactionInfo(txHash, vault.chain, {
+            infura: {
+              projectId: process.env.INFURA_PROJECT_ID as string,
+            },
+          });
           setPendingTransactions((prev) => [...prev, txInfo]);
         }}
         vaultTransactions={transactions}

@@ -5,7 +5,6 @@ import {
   FormControlLabel,
   FormGroup,
   Input,
-  InputLabel,
   List,
   ListItem,
   ListItemAvatar,
@@ -29,8 +28,9 @@ import AddressInformation from '../../AddressInformation'
 import { formatWalletAddress, getBlockchainExplorerName, isWeb3WalletByAddress } from '@bloom-trade/utilities'
 import Blockies from 'react-blockies'
 import { Asset } from '@bloom-trade/types'
-import { SafeTransaction, SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
-import useSafe from '../../../hooks/useSafe'
+import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
+import TabsComponent from '../../Tabs'
+import AccordionComponent from '../../Accordion'
 
 export interface Props {
   pendingTransactions?: SafeMultisigTransactionResponse[]
@@ -42,6 +42,7 @@ export interface Props {
   )[]
   chain: Chain | 'goerli'
   isConnected?: boolean
+  connectedWalletAddress?: string
   walletConnectButton: JSX.Element
   isWalletVerified: boolean
   onSign: () => void
@@ -58,7 +59,64 @@ const VaultDetail = (props: Props): JSX.Element => {
   })
 
   if (!props.isWalletVerified) return <VaultDetailLocked {...props} />
-
+  const onGenerateUrl = (tx: SafeMultisigTransactionResponse) => {
+    console.log(tx)
+    navigator.clipboard.writeText(location.origin + '/vault/sign?tx=' + tx.safeTxHash + '&vault=' + props.vault.id)
+  }
+  const pendingTransactionsComponent = () => {
+    return (
+      <>
+        {props.pendingTransactions && props.pendingTransactions.length === 0 ? (
+          <Typography>No pending transactions</Typography>
+        ) : (
+          props.pendingTransactions?.map((tx, index) => (
+            <AccordionComponent
+              key={index}
+              accordion={{
+                summary: (
+                  <Stack direction={'row'} spacing={2}>
+                    <Blockies seed={tx.to} />
+                    <Typography>{formatWalletAddress(tx.to)}</Typography>
+                  </Stack>
+                ),
+                details: (
+                  <>
+                    <Typography>{tx.confirmationsRequired} confirmations need to be required</Typography>
+                    <Typography>You have {tx.confirmations?.length || '0'}</Typography>
+                    {!tx.confirmations ||
+                      (tx.confirmationsRequired > tx.confirmations.length && (
+                        <Button
+                          onClick={() => {
+                            onGenerateUrl(tx)
+                          }}
+                        >
+                          Generate url
+                        </Button>
+                      ))}
+                    {!tx.confirmations ||
+                      !props.connectedWalletAddress ||
+                      tx.confirmations.filter((confirmation) => confirmation.owner === props.connectedWalletAddress)
+                        .length !== 0 ||
+                      (tx.confirmationsRequired > tx.confirmations?.length && (
+                        <Button onClick={() => props.onSign()}>Sign</Button>
+                      ))}
+                    <Button
+                      disabled={!tx.confirmations || tx.confirmationsRequired > tx.confirmations?.length}
+                      onClick={() => {
+                        props.onExecuteTx(tx)
+                      }}
+                    >
+                      Execute
+                    </Button>
+                  </>
+                ),
+              }}
+            />
+          ))
+        )}
+      </>
+    )
+  }
   return (
     <Stack direction='column'>
       {props.vault.balance.map((balance) => {
@@ -72,51 +130,48 @@ const VaultDetail = (props: Props): JSX.Element => {
         )
       })}
       <List>
-        <ListItemText primary={<Typography variant='h4'>Queue</Typography>} />
-        {props.pendingTransactions && props.pendingTransactions.length === 0 ? (
-          <Typography>No pending transactions</Typography>
-        ) : (
-          props.pendingTransactions?.map((tx, index) => (
-            <ListItem key={index}>
-              <Typography>{tx.confirmationsRequired} confirmations need to be required</Typography>
-              <Typography>You have {tx.confirmations?.length || '0'}</Typography>
-              <Button
-                onClick={() => {
-                  props.onExecuteTx(tx)
-                }}
-              >
-                Execute
-              </Button>
-            </ListItem>
-          ))
-        )}
-        <ListItemText primary={<Typography variant='h4'>Transactions</Typography>} />
-        {props.vaultTransactions.map((tx, index) => {
-          if (tx.transfers.length === 0) return
-          return (
-            <ListItem
-              secondaryAction={
+        <TabsComponent
+          tabs={[
+            {
+              component: <>{pendingTransactionsComponent()}</>,
+              label: 'Queue',
+            },
+            {
+              component: (
                 <>
-                  {tx.transfers[0].to === props.vault.address ? (
-                    <Stack direction='row' alignItems='center'>
-                      <Iconify color='green' icon='mdi:arrow-down' />
-                      <Typography>Received</Typography>
-                    </Stack>
-                  ) : (
-                    <Stack direction='row' alignItems='center'>
-                      <Iconify color='red' icon='mdi:arrow-up' />
-                      <Typography>Sent</Typography>
-                    </Stack>
-                  )}
+                  {props.vaultTransactions.map((tx, index) => {
+                    if (tx.transfers.length === 0) return
+                    return (
+                      <ListItem
+                        secondaryAction={
+                          <>
+                            {tx.transfers[0].to === props.vault.address ? (
+                              <Stack direction='row' alignItems='center'>
+                                <Iconify color='green' icon='mdi:arrow-down' />
+                                <Typography>Received</Typography>
+                              </Stack>
+                            ) : (
+                              <Stack direction='row' alignItems='center'>
+                                <Iconify color='red' icon='mdi:arrow-up' />
+                                <Typography>Sent</Typography>
+                              </Stack>
+                            )}
+                          </>
+                        }
+                        key={index}
+                      >
+                        {moment(tx.executionDate).format('DD/MM/YYYY HH:mm:ss')}
+                      </ListItem>
+                    )
+                  })}
                 </>
-              }
-              key={index}
-            >
-              {moment(tx.executionDate).format('DD/MM/YYYY HH:mm:ss')}
-            </ListItem>
-          )
-        })}
-        <ListItemText primary={<Typography variant='h4'>Owners</Typography>} />
+              ),
+              label: 'Transactions',
+            },
+          ]}
+        />
+
+        <ListItemText primary={<Typography variant='subtitle1'>Owners</Typography>} />
         {props.vault.owners?.map((owner, index) => (
           <ListItem
             key={index}
@@ -138,7 +193,7 @@ const VaultDetail = (props: Props): JSX.Element => {
             ></ListItemText>
           </ListItem>
         ))}
-        <ListItemText primary={<Typography variant='h4'>Create a transaction</Typography>} />
+        <ListItemText primary={<Typography variant='subtitle1'>Create a transaction</Typography>} />
         <ListItemText primary={<Typography variant='body1'>Select token</Typography>} />
         <Select
           value={props.vault.balance[0].asset}
@@ -168,9 +223,10 @@ const VaultDetail = (props: Props): JSX.Element => {
             setTx({ ...tx, to: e.target.value as `0x${string}` })
           }}
         />
-
+        {/* Se puede ejecutar la transaccion si y solo si el owner es unico */}
         <FormGroup>
           <FormControlLabel
+            disabled={props.vault.owners?.length !== 1}
             control={
               <Checkbox
                 defaultChecked={tx.executeTx}

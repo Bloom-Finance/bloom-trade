@@ -29,7 +29,11 @@ const VaultPage: NextPage = () => {
       );
       const processedVaults = await Promise.all(
         vaults.map(async (vault) => {
-          const safeInfo = await getSafeInfo(vault.address, vault.chain);
+          const safeInfo = await getSafeInfo(vault.chain, vault.address, {
+            infura: {
+              projectId: process.env.INFURA_PROJECT_ID as string,
+            },
+          });
           const balances = await bloomServices.getBalance({
             dex: {
               chains: [vault.chain === 'goerli' ? 'eth' : vault.chain],

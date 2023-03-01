@@ -4,7 +4,7 @@ import VaultDetail from '../detail'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Organism/Vault detail',
+  title: 'Organism/Vault/Detail',
   component: VaultDetail,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 } as ComponentMeta<typeof VaultDetail>
@@ -16,6 +16,7 @@ export const Primary = Template.bind({})
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
   isConnected: true,
+  connectedWalletAddress: '0xF274800E82717D38d2e2ffe18A4C6489a50C5Add',
   isWalletVerified: true,
   vault: {
     id: '2323sdw2',
@@ -119,6 +120,38 @@ Primary.args = {
       submissionDate: '2023-02-21T17:04:44.868821Z',
       to: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
       transactionHash: '0x379c9a65c325fad695e9ade932b350f8a90bf82bd6ea2d3cc96117b0d2fd2ea6',
+    },
+  ],
+  pendingTransactions: [
+    {
+      safeTxHash: '0x5b23339f69d2dfdb7f88cc3a694c7e5d5d81bb7c91f2a55c7f794d5af5a5a5a5',
+      isExecuted: true,
+      safe: '0xF274800E82717D38d2e2ffe18A4C6489a50C5Add',
+      to: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
+      value: '0',
+      data: '0xa9059cbb000000000000000000000000f274800e82717d38d2e2ffe18a4c6489a50c5add00000000',
+      baseGas: 0,
+      gasPrice: '0',
+      safeTxGas: 0,
+      executionDate: '2023-02-21T17:06:00Z',
+      modified: '2023-02-21T17:06:05.054796Z',
+      nonce: 1,
+      transactionHash: '0x379c9a65c325fad695e9ade932b350f8a90bf82bd6ea2d3cc96117b0d2fd2ea6',
+      origin: '',
+      confirmations: [
+        {
+          owner: '0x8bf01d2940b23697a2300e4f4f7b0be054d62c61',
+          submissionDate: '2023-02-21T17:05:09.180913Z',
+          signature: '0x0000000000000000000000008bf01d2940b23697a2300e4f4f7b0be054d62c610',
+        },
+      ],
+      confirmationsRequired: 3,
+      signatures: '0x0000000000000000000000008bf01d2940b23697a2300e4f4f7b0be054d62c610',
+      submissionDate: '2023-02-21T17:05:09.180913Z',
+      executor: '0x9c9e1d04b8a604a1d880bef6d2f6a372b6e786c6',
+      gasToken: '0x55d3942d137606e7',
+      refundReceiver: '0xa1c3e1596d3d8e8f30b59f69d2dfdb7f88cc3a69',
+      operation: 0,
     },
   ],
 }
