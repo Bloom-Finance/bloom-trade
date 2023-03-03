@@ -52,7 +52,7 @@ export interface Props {
 
 const VaultDetail = (props: Props): JSX.Element => {
   const [tx, setTx] = React.useState<{ token: Asset; amount: number; to: `0x${string}`; executeTx: boolean }>({
-    token: props.vault.balance[0].asset || 'dai',
+    token: props.vault.balance && props.vault.balance.length > 0 ? props.vault.balance[0].asset : 'dai',
     amount: 0,
     to: '' as `0x${string}`,
     executeTx: false,
@@ -197,7 +197,7 @@ const VaultDetail = (props: Props): JSX.Element => {
         <ListItemText primary={<Typography variant='subtitle1'>Create a transaction</Typography>} />
         <ListItemText primary={<Typography variant='body1'>Select token</Typography>} />
         <Select
-          value={props.vault.balance[0].asset}
+          value={props.vault.balance && props.vault.balance.length > 0 ? props.vault.balance[0].asset : 'dai'}
           onChange={(e) => {
             setTx({ ...tx, token: e.target.value as Asset })
           }}
