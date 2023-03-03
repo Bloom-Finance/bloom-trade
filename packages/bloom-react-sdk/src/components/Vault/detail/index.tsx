@@ -52,7 +52,7 @@ export interface Props {
 
 const VaultDetail = (props: Props): JSX.Element => {
   const [tx, setTx] = React.useState<{ token: Asset; amount: number; to: `0x${string}`; executeTx: boolean }>({
-    token: props.vault.balance[0].asset,
+    token: props.vault.balance[0].asset || 'dai',
     amount: 0,
     to: '' as `0x${string}`,
     executeTx: false,
