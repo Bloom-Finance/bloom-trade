@@ -3,7 +3,6 @@ import { IconButton, Stack } from '@mui/material'
 import React, { FC } from 'react'
 import useResponsive from '../../hooks/useResponsive'
 import Iconify from '../Iconify'
-import { UserComponent } from '../User'
 
 export interface HeaderProps {
   logo: React.ReactNode

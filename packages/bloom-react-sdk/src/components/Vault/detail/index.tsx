@@ -60,8 +60,9 @@ const VaultDetail = (props: Props): JSX.Element => {
 
   if (!props.isWalletVerified) return <VaultDetailLocked {...props} />
   const onGenerateUrl = (tx: SafeMultisigTransactionResponse) => {
-    console.log(tx)
-    navigator.clipboard.writeText(location.origin + '/vault/sign?tx=' + tx.safeTxHash + '&vault=' + props.vault.id)
+    navigator.clipboard.writeText(
+      location.origin + '/vault/sign?tx=' + tx.safeTxHash + '&address=' + props.vault.address + '&chain=' + props.chain,
+    )
   }
   const pendingTransactionsComponent = () => {
     return (

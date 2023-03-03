@@ -4,8 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import LoadingScreen from '../../../components/loadingScreen';
 import { authService } from '../../../services/auth.services';
-import { vaultsServices } from '../../../services/vaults.services';
-import Bloom from '@bloom-trade/types';
+import Bloom, { Chain } from '@bloom-trade/types';
 import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types';
 
 const withPreCheckSignVault = <P extends object>(
@@ -13,19 +12,26 @@ const withPreCheckSignVault = <P extends object>(
 ) => {
   const PreFetch = (props: any) => {
     const [loading, setLoading] = useState(true);
-    const [vault, setVault] = useState<Bloom.Vault>();
+    const [vault, setVault] = useState<{
+      address: string;
+      chain: Chain | 'goerli';
+      owners: string[];
+      threshold: number;
+      balance: { asset: string; amount: string }[];
+    }>();
     const [transaction, setTransaction] =
       useState<SafeMultisigTransactionResponse>();
     const { getSafeInfo, getTransactionInfo } = useSafe();
     const {
-      query: { tx, vault: vaultQuery },
+      query: { tx, address, chain: queryChain },
     } = useRouter();
     useEffect(() => {
       (async () => {
         if (!tx || tx instanceof Array) return;
-        if (!vaultQuery || vaultQuery instanceof Array) return;
-        const vault = await vaultsServices.getVault(vaultQuery);
-        const txInfo = await getTransactionInfo(tx, vault.chain, {
+        if (!address || address instanceof Array) return;
+        if (!queryChain || queryChain instanceof Array) return;
+        const chain = queryChain as Chain | 'goerli';
+        const txInfo = await getTransactionInfo(tx, chain, {
           infura: {
             projectId: process.env.INFURA_PROJECT_ID as string,
           },
@@ -36,7 +42,7 @@ const withPreCheckSignVault = <P extends object>(
             test: process.env.MODE === 'DEV' ? true : false,
           }
         );
-        const safeInfo = await getSafeInfo(vault.chain, vault.address, {
+        const safeInfo = await getSafeInfo(chain, address, {
           infura: {
             projectId: process.env.INFURA_PROJECT_ID as string,
           },
@@ -44,18 +50,25 @@ const withPreCheckSignVault = <P extends object>(
 
         const balances = await bloomServices.getBalance({
           dex: {
-            chains: [vault.chain === 'goerli' ? 'eth' : vault.chain],
-            addresses: [vault.address],
+            chains: [chain === 'goerli' ? 'eth' : chain],
+            addresses: [address],
           },
         });
-        let processedVault: Bloom.Vault = {
-          ...vault,
+        let processedVault: {
+          address: string;
+          chain: Chain | 'goerli';
+          owners: string[];
+          threshold: number;
+          balance: { asset: string; amount: string }[];
+        } = {
+          address,
+          chain,
           owners: safeInfo.owners,
           threshold: safeInfo.threshold,
           balance: [],
         };
         balances.forEach((balance) => {
-          processedVault.balance.push({
+          processedVault.balance?.push({
             asset: balance.asset,
             amount: balance.balance,
           });
@@ -64,7 +77,7 @@ const withPreCheckSignVault = <P extends object>(
         setTransaction(txInfo);
         setLoading(false);
       })();
-    }, [tx, vaultQuery]);
+    }, [tx, address, queryChain]);
     return loading ? (
       <LoadingScreen />
     ) : (

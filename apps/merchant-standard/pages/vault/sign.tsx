@@ -8,9 +8,17 @@ import { ethers } from 'ethers';
 import { useState } from 'react';
 import { showAlert } from '../../src/components/alert/handler';
 import { Button } from '@mui/material';
+import { Chain } from '@bloom-trade/types';
+
 interface Props {
   tx: SafeMultisigTransactionResponse;
-  vault: Bloom.Vault;
+  vault: {
+    address: string;
+    chain: Chain | 'goerli';
+    owners: string[];
+    threshold: number;
+    balance: { asset: string; amount: string }[];
+  };
 }
 
 const VaultSign: NextPage<Props> = ({ tx, vault }) => {
@@ -18,6 +26,7 @@ const VaultSign: NextPage<Props> = ({ tx, vault }) => {
   const { isConnected } = useAccount();
   const [isWalletVerified, setIsWalletVerified] = useState(false);
   const { signTransaction } = useSafe();
+
   const { signMessage } = useSignMessage({
     message: 'Bloom Trade Verification',
     onSuccess: (data) => {
@@ -32,6 +41,7 @@ const VaultSign: NextPage<Props> = ({ tx, vault }) => {
       }
     },
   });
+
   const previewTransaction = () => {
     return (
       <>
@@ -52,7 +62,7 @@ const VaultSign: NextPage<Props> = ({ tx, vault }) => {
     >
       <>
         {!isConnected ? (
-          <Connect />
+          <Connect chain={vault.chain} />
         ) : isWalletVerified ? (
           <>{previewTransaction()}</>
         ) : (

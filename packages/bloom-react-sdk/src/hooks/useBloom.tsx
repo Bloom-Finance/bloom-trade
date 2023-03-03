@@ -27,6 +27,7 @@ import {
   getTestnetFromMainnet,
   getTokenContractMetadataBySymbolAndChain,
   getTransfersAbi,
+  getWagmiInstanceByChainName,
 } from '@bloom-trade/utilities'
 
 export default function useBloom(params?: {
@@ -38,6 +39,7 @@ export default function useBloom(params?: {
 }) {
   /*WAGMI  and WalletConnect Hooks*/
   const { switchNetwork } = useSwitchNetwork()
+  const { setDefaultChain } = useWeb3Modal()
 
   const { chain: selectedChain } = useNetwork()
 
@@ -122,8 +124,16 @@ export default function useBloom(params?: {
   })
 
   /* A function that returns a button that connects to a wallet. */
-  const walletConnectButton = (params: { icon?: 'show' | 'hide'; label?: string; disabled?: boolean }) => {
+  const walletConnectButton = (params: {
+    icon?: 'show' | 'hide'
+    label?: string
+    disabled?: boolean
+    chain?: Chain | Testnet
+  }) => {
     if (!hasMounted) return null
+    if (params.chain) {
+      setDefaultChain(getWagmiInstanceByChainName(params.chain))
+    }
     return (
       <Button
         disabled={params.disabled}
