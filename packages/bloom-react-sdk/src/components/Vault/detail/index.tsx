@@ -101,14 +101,18 @@ const VaultDetail = (props: Props): JSX.Element => {
                       (tx.confirmationsRequired > tx.confirmations?.length && (
                         <Button onClick={() => props.onSign()}>Sign</Button>
                       ))}
-                    <Button
-                      disabled={!tx.confirmations || tx.confirmationsRequired > tx.confirmations?.length}
-                      onClick={() => {
-                        props.onExecuteTx(tx)
-                      }}
-                    >
-                      Execute
-                    </Button>
+                    {tx.isExecuted ? (
+                      <>Tx has been executed</>
+                    ) : (
+                      <Button
+                        disabled={!tx.confirmations || tx.confirmationsRequired > tx.confirmations?.length}
+                        onClick={() => {
+                          props.onExecuteTx(tx)
+                        }}
+                      >
+                        Execute
+                      </Button>
+                    )}
                   </>
                 ),
               }}
