@@ -1,4 +1,4 @@
-import { useSafe } from '@bloom-trade/react-sdk';
+import { useSafe } from '@bloom-trade/ui';
 import BloomServices from '@bloom-trade/services';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';

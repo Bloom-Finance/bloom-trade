@@ -3,12 +3,9 @@ import moment from 'moment';
 import React from 'react';
 import Label from '../../components/label';
 import QuickTransfer from '../../components/quickTransfer';
-import TableComponent, {
-  TableHeadProps,
-  TableRowProps,
-} from '../../components/table';
+import TableComponent, { TableHeadProps } from '../../components/table';
 import { fCurrency } from '@bloom-trade/utilities';
-import { Checkout, useBloom } from '@bloom-trade/react-sdk';
+import { Checkout, useBloom } from '@bloom-trade/ui';
 
 export interface PayOutsRowsProps {
   id: string;

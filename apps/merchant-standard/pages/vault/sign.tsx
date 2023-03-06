@@ -1,4 +1,4 @@
-import { BloomReact, useBloom, useSafe } from '@bloom-trade/react-sdk';
+import { BloomReact, useBloom, useSafe } from '@bloom-trade/ui';
 import type { NextPage } from 'next';
 import { useAccount, useSignMessage } from 'wagmi';
 import { authService } from '../../src/services/auth.services';

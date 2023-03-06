@@ -1,4 +1,4 @@
-import { BloomReact, useBloom } from '@bloom-trade/react-sdk';
+import { BloomReact, useBloom } from '@bloom-trade/ui';
 import type { NextPage } from 'next';
 import { authService } from '../src/services/auth.services';
 

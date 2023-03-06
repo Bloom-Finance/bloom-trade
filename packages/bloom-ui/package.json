@@ -1,5 +1,5 @@
 {
-  "name": "@bloom-trade/react-sdk",
+  "name": "@bloom-trade/ui",
   "version": "0.0.19",
   "author": "Bloom Trade",
   "private": "true",
@@ -62,7 +62,6 @@
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "dependencies": {
-    "@bloom-trade/ipfs": "*",
     "@bloom-trade/services": "0.0.19",
     "@bloom-trade/themes": "^0.0.19",
     "@bloom-trade/utilities": "^0.0.19",

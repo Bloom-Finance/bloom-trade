@@ -1,4 +1,4 @@
-import { ScreenLoader } from "@bloom-trade/react-sdk";
+import { ScreenLoader } from '@bloom-trade/ui';
 
 interface Props {}
 

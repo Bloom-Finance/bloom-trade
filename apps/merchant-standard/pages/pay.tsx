@@ -2,7 +2,7 @@ import { Order } from '@bloom-trade/types';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import withPreCheckOrder from '../src/controls/hoc/Order/index';
-import { BloomReact, Checkout, useBloom } from '@bloom-trade/react-sdk';
+import { BloomReact, Checkout, useBloom } from '@bloom-trade/ui';
 import { authService } from '../src/services/auth.services';
 interface Props {
   order: Order;

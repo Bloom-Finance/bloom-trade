@@ -1,4 +1,4 @@
-import { useBloom } from '@bloom-trade/react-sdk';
+import { useBloom } from '@bloom-trade/ui';
 import { NextPage } from 'next';
 import { usePrepareContractWrite, useContractWrite, useSigner } from 'wagmi';
 import { erc20ABI } from 'wagmi';

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Bloom from '@bloom-trade/types';
 import { vaultsServices } from '../../src/services/vaults.services';
 import { authService } from '../../src/services/auth.services';
-import { useSafe, Vault, FindLoader } from '@bloom-trade/react-sdk';
+import { useSafe, Vault, FindLoader } from '@bloom-trade/ui';
 import BloomServices from '@bloom-trade/services';
 import { useRouter } from 'next/router';
 import { Stack } from '@mui/system';

@@ -14,7 +14,8 @@ import {
   AddressInformation,
   VaultDetail,
   useBloom,
-} from '@bloom-trade/react-sdk';
+  useSafe,
+} from '@bloom-trade/ui';
 import Iconify from '../../src/components/Iconify';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -26,7 +27,6 @@ import {
 } from 'wagmi';
 import { ethers } from 'ethers';
 import { showAlert } from '../../src/components/alert/handler';
-import useSafe from '../../../../packages/bloom-react-sdk/dist/esm/hooks/useSafe';
 
 interface Props {
   vault: Bloom.Vault;

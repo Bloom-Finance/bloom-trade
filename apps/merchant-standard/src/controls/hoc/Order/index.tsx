@@ -2,7 +2,7 @@ import { Order } from '@bloom-trade/types';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FindLoader } from '@bloom-trade/react-sdk';
+import { FindLoader } from '@bloom-trade/ui';
 const withPreCheckOrder = <P extends object>(
   Component: React.ComponentType<P>
 ) => {

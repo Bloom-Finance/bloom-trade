@@ -4,7 +4,7 @@ import useResponsive from "../../hooks/useResponsive";
 import Iconify from "../Iconify";
 import NoItemsCard from "../noItemsCard";
 import WalletInfo from "../walletCard/walletInfoForm";
-import { WalletCard } from "@bloom-trade/react-sdk";
+import { WalletCard } from "@bloom-trade/ui";
 
 import _ from "lodash";
 import { UserStore } from "../../store/user.store";

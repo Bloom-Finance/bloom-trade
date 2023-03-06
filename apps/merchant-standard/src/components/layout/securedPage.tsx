@@ -5,7 +5,7 @@ import Menu from '../appMenu';
 import SecureHeader from '../secureHeader';
 import WithPreckSession from '../../controls/hoc/Session';
 import Alert from '../alert';
-import { BloomReact, Logo, Page } from '@bloom-trade/react-sdk';
+import { BloomReact, Logo, Page } from '@bloom-trade/ui';
 import { authService } from '../../services/auth.services';
 import { User } from '@bloom-trade/types';
 import useAuth from '../../hooks/useAuth';
