@@ -1,19 +1,10 @@
-import { BloomReact, useBloom } from '@bloom-trade/ui';
 import type { NextPage } from 'next';
-import { authService } from '../src/services/auth.services';
-
+import { Checkout, BloomSdk } from '@bloom-trade/sdk';
 const SandboxPage: NextPage = () => {
-  const { Connect } = useBloom();
-
   return (
-    <BloomReact
-      credentials={authService.getToken() as string}
-      useTestnet={process.env.MODE === 'DEV' ? true : false}
-    >
-      <>
-        <Connect />
-      </>
-    </BloomReact>
+    <BloomSdk testnet={true} apiKey='14308be4f5'>
+      <Checkout />
+    </BloomSdk>
   );
 };
 

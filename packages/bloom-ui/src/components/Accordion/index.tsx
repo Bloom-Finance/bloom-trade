@@ -1,7 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
 import React from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-
 export interface Props {
   accordion: {
     summary: JSX.Element

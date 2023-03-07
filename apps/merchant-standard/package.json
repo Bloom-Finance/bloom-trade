@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@bloom-trade/finance-connector": "*",
+    "@bloom-trade/sdk": "*",
     "@bloom-trade/ui": "*",
     "@bloom-trade/services": "*",
     "@bloom-trade/themes": "*",

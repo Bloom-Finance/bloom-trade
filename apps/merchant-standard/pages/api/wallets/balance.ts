@@ -8,6 +8,7 @@ import {
 } from '@bloom-trade/finance-connector/dist/@types';
 import jwt from 'jsonwebtoken';
 import { Chain } from '@bloom-trade/types';
+import { verifyApiKey } from '../../../src/utils/api';
 interface IProvidersRequest {
   type: 'circle' | 'binance' | 'coinbase';
   auth: {
@@ -25,9 +26,28 @@ export default async function handler(
     const connector = new Connector();
     const { addresses, providers, chains } = req.body;
     const providersRequest = providers as IProvidersRequest[];
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(400).json({ isValid: false, payload: null });
-    const decoded = jwt.verify(token, secret);
+    if (req.headers.authorization) {
+      const token = req.headers.authorization?.split(' ')[1];
+      if (!token)
+        return res.status(400).json({
+          error: 'Unauthorized',
+          message: 'You must provide a token',
+        });
+      jwt.verify(token, secret);
+    } else {
+      const apiKey = req.headers.apiKey;
+      if (!apiKey || apiKey === '' || apiKey instanceof Array)
+        return res.status(401).json({
+          error: 'Unauthorized',
+          message: 'You must provide an API key',
+        });
+      const { error, valid } = verifyApiKey(apiKey);
+      if (!valid || error)
+        return res.status(401).json({
+          error: 'Unauthorized',
+          message: 'Invalid API key',
+        });
+    }
     //For now, we are only supporting Circle
     const circleCreds = providersRequest
       ? providersRequest.find((provider) => provider.type === 'circle')

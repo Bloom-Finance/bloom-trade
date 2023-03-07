@@ -32,9 +32,11 @@ declare namespace Bloom {
       get(cid: CID): Promise<Record<string, any>>;
     };
   }
+
   const enum Environment {
-    production = '/api',
-    sandbox = '/api',
+    production = 'https://merchant.bloom.trade/api',
+    sandbox = 'https://test.bloom.trade/api',
+    local = 'http://localhost:3000/api',
   }
 
   const enum Scanners {
@@ -69,9 +71,6 @@ declare namespace Bloom {
         onlyStableCoins: boolean;
       }
     ): Promise<Balance>;
-    isTokenValid<T>(
-      token: string
-    ): Promise<{ isValid: boolean; payload: any | T }>;
   };
   type Balance = {
     asset: Asset;
@@ -167,7 +166,6 @@ declare namespace Bloom {
   type CHAINS = ['eth', 'avax', 'polygon'];
   type CustodialProvider = 'binance' | 'coinbase' | 'circle';
   type CUSTODIALPROVIDERS = ['binance', 'coinbase', 'circle'];
-  type BLOOM_URL = 'https://api.bloom.com' | 'https://localhost:3000/api';
   type Transaction = {
     asset: Asset;
     amount: string;

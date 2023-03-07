@@ -1,5 +1,4 @@
 import { Button, Grid, Stack, Typography } from '@mui/material';
-import moment from 'moment';
 import React from 'react';
 import Label from '../../components/label';
 import QuickTransfer from '../../components/quickTransfer';

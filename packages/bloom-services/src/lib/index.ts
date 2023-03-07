@@ -17,33 +17,26 @@ interface IProvidersRequest {
 
 class BloomServices implements IBloomServices {
   private url: string;
-  private token: string;
+  private apiKey: string;
+  private apiSecret: string;
   private isTestnet: boolean = false;
-  constructor(apiToken: string, params?: { test?: boolean }) {
-    this.token = apiToken;
+  constructor(
+    apiKey: string,
+    apiSecret: string,
+    params?: { test?: boolean; local?: boolean }
+  ) {
+    this.apiKey = apiKey;
+    this.apiSecret = apiSecret;
     if (params?.test) {
       this.url = Environment.sandbox;
       this.isTestnet = true;
+    } else if (params?.local) {
+      this.url = Environment.local;
     } else {
       this.url = Environment.production;
     }
   }
-  async isTokenValid<T>(
-    token: string
-  ): Promise<{ isValid: boolean; payload: T | any }> {
-    const { data } = await axios.get<{ isValid: boolean; payload: T }>(
-      `${this.url}/verifyToken?bloom=true`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return {
-      isValid: data.isValid,
-      payload: data.payload,
-    };
-  }
+
   async getBalance(
     config: {
       dex?: { addresses: string[]; chains?: Chain[] } | undefined;
@@ -92,7 +85,7 @@ class BloomServices implements IBloomServices {
       },
       {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          apiKey: this.apiKey,
         },
       }
     );

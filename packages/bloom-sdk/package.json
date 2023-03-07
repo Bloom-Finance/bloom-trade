@@ -1,0 +1,34 @@
+{
+  "name": "@bloom-trade/sdk",
+  "version": "0.0.1",
+  "description": "Software development kit of bloom trade",
+  "main": "./dist/esm/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "repository": "https://github.com/Bloom-Finance/bloom-trade ",
+  "author": "Bloom Trade",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
+    "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\""
+  },
+  "license": "MIT",
+  "private": false,
+  "peerDependencies": {
+    "@web3modal/ethereum": "*",
+    "@web3modal/react": "*",
+    "wagmi": "^0.10.11"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "pullstate": "^1.25.0"
+  }
+}
