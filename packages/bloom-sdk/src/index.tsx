@@ -1,3 +1,3 @@
-import Checkout from './components/checkout'
+import Collector from './components/collector'
 import BloomSdk from './wrapper'
-export { Checkout, BloomSdk }
+export { Collector, BloomSdk }

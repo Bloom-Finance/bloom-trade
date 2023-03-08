@@ -26,6 +26,7 @@ const withPreCheckVaultDetail = <P extends object>(
         const vault = await vaultsServices.getVault(id);
         const bloomServices = new BloomServices(
           authService.getToken() as string,
+          '',
           {
             test: process.env.MODE === 'DEV' ? true : false,
           }

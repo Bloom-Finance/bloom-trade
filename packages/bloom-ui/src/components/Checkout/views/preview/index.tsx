@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { getTokenIconBySymbol, getWagmiInstanceByChainName, isWeb3WalletByAddress } from '@bloom-trade/utilities'
+import { getTokenIconBySymbol, isWeb3WalletByAddress } from '@bloom-trade/utilities'
 import { Chain, StableCoin } from '@bloom-trade/types'
 import useResponsive from '../../../../hooks/useResponsive'
 import { OrderStore } from '../../../../store/Order'

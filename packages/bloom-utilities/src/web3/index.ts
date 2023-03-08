@@ -361,6 +361,19 @@ const getGnosisService = (chain: Chain | 'goerli') => {
   }
 };
 
+const getMainnetFromTestnet = (chain: Testnet) => {
+  switch (chain) {
+    case 'goerli':
+      return 'eth';
+    case 'mumbai':
+      return 'polygon';
+    case 'fuji':
+      return 'avax';
+    default:
+      return 'eth';
+  }
+};
+
 export {
   isWeb3WalletByAddress,
   formatWalletAddress,
@@ -380,4 +393,5 @@ export {
   getBlockchainExplorerName,
   getTxDetailsBlockchainExplorer,
   getGnosisService,
+  getMainnetFromTestnet,
 };

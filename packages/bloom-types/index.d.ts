@@ -51,6 +51,18 @@ declare namespace Bloom {
     userid: string;
     displayName: string;
     email: string;
+    plugins: Array<Plugin>;
+  };
+  const enum PaymentMethods {
+    creditCard = 'credit card',
+    bankAccount = 'bank account',
+    crypto = 'crypto',
+  }
+  type Plugin = {
+    id:
+      | PaymentMethods.bankAccount
+      | PaymentMethods.creditCard
+      | PaymentMethods.crypto;
   };
   type IBloomServices = {
     getBalance(

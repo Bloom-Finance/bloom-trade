@@ -1,9 +1,6 @@
 {
   "include": ["src"],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ],
+  "exclude": ["dist", "node_modules"],
   "compilerOptions": {
     "module": "esnext",
     "lib": ["dom", "esnext"],
@@ -15,12 +12,10 @@
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "moduleResolution": "node",
     "jsx": "react",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

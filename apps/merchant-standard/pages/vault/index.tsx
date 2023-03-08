@@ -23,6 +23,7 @@ const VaultPage: NextPage = () => {
       const vaults = await vaultsServices.getVaultsByUserId(user.userId);
       const bloomServices = new BloomServices(
         authService.getToken() as string,
+        '',
         {
           test: process.env.MODE === 'DEV' ? true : false,
         }

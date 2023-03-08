@@ -35,7 +35,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
   const [loading, setLoading] = useState(false)
   const [balances, setBalances] = useState<any[]>([])
   const theme = useTheme()
-  const bloomServices = new BloomServices(store.credentials, {
+  const bloomServices = new BloomServices(store.credentials, '', {
     test: store.testnet || false,
   })
   const order = OrderStore.useState((s) => s.order)

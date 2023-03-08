@@ -38,6 +38,7 @@ const withPreCheckSignVault = <P extends object>(
         });
         const bloomServices = new BloomServices(
           authService.getToken() as string,
+          '',
           {
             test: process.env.MODE === 'DEV' ? true : false,
           }
