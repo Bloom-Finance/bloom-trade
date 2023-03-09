@@ -13,7 +13,7 @@ import { SDKContext } from '../wrapper/context'
 import BloomServices from '@bloom-trade/services'
 import { useWeb3Modal } from '@web3modal/react'
 import React from 'react'
-export default function useWallet() {
+export default function useWallet(params?: { preFetchBalance: boolean }) {
   /*WAGMI  and WalletConnect Hooks*/
   const { switchNetwork } = useSwitchNetwork()
   const { setDefaultChain } = useWeb3Modal()
@@ -67,9 +67,10 @@ export default function useWallet() {
 
   useEffect(() => {
     setHasMounted(true)
-    if (!isConnected || !address || !selectedChain?.id) return
+    if (!params?.preFetchBalance || !params) return
     ;(async () => {
       try {
+        if (!address || !isConnected || !selectedChain) return
         const balance = await bloomServices.getBalance(
           {
             dex: {
@@ -99,7 +100,7 @@ export default function useWallet() {
         console.log(error)
       }
     })()
-  }, [])
+  }, [isConnected])
 
   /**
    * It checks if the current chain is the same as the desired chain, and if not, it returns an object
@@ -135,10 +136,44 @@ export default function useWallet() {
     }
   }
 
+  const getBalance = async () => {
+    try {
+      if (!address || !isConnected || !selectedChain) return
+      const balance = await bloomServices.getBalance(
+        {
+          dex: {
+            addresses: [address as string],
+            chains: [
+              testnet
+                ? getMainnetFromTestnet(getChainNameById(selectedChain.id) as Testnet)
+                : (getChainNameById(selectedChain.id) as Chain),
+            ],
+          },
+        },
+        {
+          onlyStableCoins: true,
+        },
+      )
+      const newBalances: React.SetStateAction<any[]> = []
+      balance.forEach((b) => {
+        if (parseFloat(b.balance).toFixed(2).toString() !== '0.00') {
+          newBalances.push({
+            amount: parseFloat(b.balance).toFixed(2),
+            currency: b.asset,
+          })
+        }
+      })
+      setBalance(newBalances)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return {
     checkChain,
     Connect: walletConnectButton,
     balance,
+    getBalance,
     chain: {
       name: selectedChain?.id ? getChainNameById(selectedChain?.id) : undefined,
       id: selectedChain?.id,

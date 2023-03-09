@@ -12,11 +12,6 @@ const SandboxPage: NextPage = () => {
           total: {
             amount: 1500,
           },
-          destination: {
-            chain: 'eth',
-            address: '0x123123123',
-            token: 'dai',
-          },
         }}
         onSuccess={() => {
           console.log('success');

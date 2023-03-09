@@ -44,6 +44,7 @@ const CurrencySelector = (props: Props): JSX.Element => {
                   <div>
                     <label>{balance.currency.toUpperCase()}</label>
                     <label>{getTokenDescriptionBySymbol(balance.currency)}</label>
+                    <label>${balance.amount}</label>
                   </div>
                 </div>
               </div>

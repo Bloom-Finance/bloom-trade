@@ -374,6 +374,22 @@ const getMainnetFromTestnet = (chain: Testnet) => {
   }
 };
 
+const isTestnet = (chain: number | Chain | Testnet) => {
+  let chainName = chain;
+  if ((chain as any) instanceof Number) {
+    chainName = getChainNameById(chain as number);
+  }
+  if (
+    chainName === 'fuji' ||
+    chainName === 'mumbai' ||
+    chainName === 'goerli'
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export {
   isWeb3WalletByAddress,
   formatWalletAddress,
@@ -394,4 +410,5 @@ export {
   getTxDetailsBlockchainExplorer,
   getGnosisService,
   getMainnetFromTestnet,
+  isTestnet,
 };

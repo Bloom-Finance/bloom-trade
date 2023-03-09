@@ -1,10 +1,8 @@
-import { Testnet } from '@bloom-trade/types'
-import { getWagmiInstanceByChainName, getTestnetFromMainnet } from '@bloom-trade/utilities'
+import { getChainNameById, isTestnet } from '@bloom-trade/utilities'
 import { useWeb3Modal } from '@web3modal/react'
 import React, { useContext, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import useWallet from '../../../../hooks/useWallet'
-import { OrderStore } from '../../../../store/order'
 import { SDKContext } from '../../../../wrapper/context'
 
 //In this component we are in charged of selecting which type of payment he is going to perform
@@ -13,22 +11,15 @@ interface Props {
 }
 const PreviewPage = (props: Props): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
-  const { checkChain, Connect } = useWallet()
+  const { Connect } = useWallet()
   const [paymentMethod, setPaymentMethod] = useState<string>('crypto')
-  const { setDefaultChain } = useWeb3Modal()
   const [hasChosenPaymentMethod, setHasChosenPaymentMethod] = useState(false)
   const { isConnected } = useAccount()
-  const order = OrderStore.useState((s) => s.order)
-  const { testnet } = useContext(SDKContext)
+  const { switchNetwork } = useSwitchNetwork()
+  const { chain } = useNetwork()
   const plugins = [{ id: 'crypto' }, { id: 'credit card' }]
+  const { testnet } = useContext(SDKContext)
   useEffect(() => {
-    if (order.destination.chain) {
-      setDefaultChain(
-        getWagmiInstanceByChainName(
-          testnet ? (getTestnetFromMainnet(order.destination.chain) as Testnet) : order.destination.chain,
-        ),
-      )
-    }
     setHasMounted(true)
   }, [])
   return (
@@ -61,17 +52,17 @@ const PreviewPage = (props: Props): JSX.Element => {
           {paymentMethod === 'crypto' && !isConnected && hasMounted ? (
             <Connect />
           ) : (
-            <button
-              onClick={() => {
-                if (paymentMethod === 'crypto') {
-                  const { isChainCorrect, change } = checkChain(order.destination.chain)
-                  if (!isChainCorrect) change()
-                }
-                props.onContinue(paymentMethod as 'crypto')
-              }}
-            >
-              Continue
-            </button>
+            <>
+              {paymentMethod === 'crypto' && isConnected && chain && <h3>Connected to {getChainNameById(chain.id)}</h3>}
+              <button
+                onClick={() => {
+                  !testnet && isTestnet(chain?.id as number) && switchNetwork && switchNetwork(1)
+                  props.onContinue(paymentMethod as 'crypto')
+                }}
+              >
+                Continue
+              </button>
+            </>
           )}
         </div>
       )}
