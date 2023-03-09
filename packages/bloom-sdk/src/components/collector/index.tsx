@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
 import { Order } from '@bloom-trade/types'
-import { useAccount } from 'wagmi'
-import { Web3Button } from '@web3modal/react'
-import useWallet from '../../hooks/useWallet'
 import PreviewPage from './views/preview'
 
 interface Props {

@@ -13,7 +13,7 @@ interface Props {
 }
 const PreviewPage = (props: Props): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
-  const { checkChain } = useWallet()
+  const { checkChain, Connect } = useWallet()
   const [paymentMethod, setPaymentMethod] = useState<string>('crypto')
   const { setDefaultChain } = useWeb3Modal()
   const [hasChosenPaymentMethod, setHasChosenPaymentMethod] = useState(false)
@@ -31,7 +31,6 @@ const PreviewPage = (props: Props): JSX.Element => {
     }
     setHasMounted(true)
   }, [])
-  const { Connect } = useWallet()
   return (
     <>
       {!hasChosenPaymentMethod || !paymentMethod ? (

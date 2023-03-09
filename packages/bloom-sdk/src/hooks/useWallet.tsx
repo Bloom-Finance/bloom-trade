@@ -69,31 +69,35 @@ export default function useWallet() {
     setHasMounted(true)
     if (!isConnected || !address || !selectedChain?.id) return
     ;(async () => {
-      const balance = await bloomServices.getBalance(
-        {
-          dex: {
-            addresses: [address as string],
-            chains: [
-              testnet
-                ? getMainnetFromTestnet(getChainNameById(selectedChain.id) as Testnet)
-                : (getChainNameById(selectedChain.id) as Chain),
-            ],
+      try {
+        const balance = await bloomServices.getBalance(
+          {
+            dex: {
+              addresses: [address as string],
+              chains: [
+                testnet
+                  ? getMainnetFromTestnet(getChainNameById(selectedChain.id) as Testnet)
+                  : (getChainNameById(selectedChain.id) as Chain),
+              ],
+            },
           },
-        },
-        {
-          onlyStableCoins: true,
-        },
-      )
-      const newBalances: React.SetStateAction<any[]> = []
-      balance.forEach((b) => {
-        if (parseFloat(b.balance).toFixed(2).toString() !== '0.00') {
-          newBalances.push({
-            amount: parseFloat(b.balance).toFixed(2),
-            currency: b.asset,
-          })
-        }
-      })
-      setBalance(newBalances)
+          {
+            onlyStableCoins: true,
+          },
+        )
+        const newBalances: React.SetStateAction<any[]> = []
+        balance.forEach((b) => {
+          if (parseFloat(b.balance).toFixed(2).toString() !== '0.00') {
+            newBalances.push({
+              amount: parseFloat(b.balance).toFixed(2),
+              currency: b.asset,
+            })
+          }
+        })
+        setBalance(newBalances)
+      } catch (error) {
+        console.log(error)
+      }
     })()
   }, [])
 
