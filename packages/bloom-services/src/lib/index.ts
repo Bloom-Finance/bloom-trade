@@ -84,6 +84,7 @@ class BloomServices implements IBloomServices {
       {
         headers: {
           apiKey: this.apiKey,
+          'Content-Type': 'application/json',
         },
       }
     );
