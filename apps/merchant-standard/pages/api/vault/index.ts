@@ -15,6 +15,7 @@ export default async function handler(
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   });
   const apiKey = req.headers.apikey;
+
   if (!apiKey || apiKey instanceof Array)
     return res.status(401).json({
       error: 'Unauthorized',
