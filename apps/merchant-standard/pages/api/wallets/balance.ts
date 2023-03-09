@@ -43,7 +43,7 @@ export default async function handler(
         });
       jwt.verify(token, secret);
     } else {
-      const apiKey = req.headers.apiKey;
+      const apiKey = req.headers.apikey;
       if (!apiKey || apiKey === '' || apiKey instanceof Array)
         return res.status(401).json({
           error: 'Unauthorized',

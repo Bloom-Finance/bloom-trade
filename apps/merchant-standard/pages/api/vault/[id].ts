@@ -15,8 +15,8 @@ export default async function handler(
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   });
   const { id } = req.query;
-  const apiKey = req.headers.authorization?.split(' ')[1];
-  if (!apiKey)
+  const apiKey = req.headers.apikey;
+  if (!apiKey || apiKey instanceof Array)
     return res.status(401).json({
       error: 'Unauthorized',
       message: 'You must provide an API key',
