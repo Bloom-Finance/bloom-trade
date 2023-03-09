@@ -9,6 +9,7 @@ import {
 import jwt from 'jsonwebtoken';
 import { Chain } from '@bloom-trade/types';
 import { verifyApiKey } from '../../../src/utils/api';
+import NextCors from 'nextjs-cors';
 interface IProvidersRequest {
   type: 'circle' | 'binance' | 'coinbase';
   auth: {
@@ -22,6 +23,13 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    await NextCors(req, res, {
+      // Options
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      origin: '*',
+      optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    });
+
     const secret = process.env.JWT_SECRET as string;
     const connector = new Connector();
     const { addresses, providers, chains } = req.body;

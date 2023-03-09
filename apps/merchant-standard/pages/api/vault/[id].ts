@@ -2,11 +2,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { vaultsServices } from '../../../src/services/vaults.services';
 import { verifyApiKey } from '../../../src/utils/api';
+import NextCors from 'nextjs-cors';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  await NextCors(req, res, {
+    // Options
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    origin: '*',
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  });
   const { id } = req.query;
   const apiKey = req.headers.authorization?.split(' ')[1];
   if (!apiKey)
