@@ -30,8 +30,6 @@ class BloomServices implements IBloomServices {
     if (params?.test) {
       this.url = Environment.sandbox;
       this.isTestnet = true;
-    } else if (params?.local) {
-      this.url = Environment.local;
     } else {
       this.url = Environment.production;
     }

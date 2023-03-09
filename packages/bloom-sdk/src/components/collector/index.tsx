@@ -12,7 +12,6 @@ interface Props {
 }
 
 const Collector = (props: Props): JSX.Element => {
-  console.log(props)
   // const { approve, transfer } = useToken()
   // console.log(balance)
   const [activeStep, setActiveStep] = useState(0)

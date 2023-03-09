@@ -51,7 +51,7 @@ declare namespace Bloom {
     userid: string;
     displayName: string;
     email: string;
-    plugins: Array<Plugin>;
+    plugins?: Array<Plugin>;
   };
   const enum PaymentMethods {
     creditCard = 'credit card',

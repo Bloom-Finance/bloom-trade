@@ -2,6 +2,7 @@ import { Chain, Testnet } from '@bloom-trade/types'
 import {
   getChainIdByName,
   getChainNameById,
+  getMainnetFromTestnet,
   getTestnetFromMainnet,
   getWagmiInstanceByChainName,
 } from '@bloom-trade/utilities'
@@ -18,7 +19,7 @@ export default function useWallet() {
   const { setDefaultChain } = useWeb3Modal()
   const { open, isOpen } = useWeb3Modal()
 
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const { apiKey } = useContext(SDKContext)
   const { chain: selectedChain } = useNetwork()
   const { testnet } = useContext(SDKContext)
@@ -66,35 +67,35 @@ export default function useWallet() {
 
   useEffect(() => {
     setHasMounted(true)
-    // if (!isConnected || !address || !selectedChain?.id) return
-    // ;(async () => {
-    //   const balance = await bloomServices.getBalance(
-    //     {
-    //       dex: {
-    //         addresses: [address as string],
-    //         chains: [
-    //           testnet
-    //             ? getMainnetFromTestnet(getChainNameById(selectedChain.id) as Testnet)
-    //             : (getChainNameById(selectedChain.id) as Chain),
-    //         ],
-    //       },
-    //     },
-    //     {
-    //       onlyStableCoins: true,
-    //     },
-    //   )
-    //   const newBalances: React.SetStateAction<any[]> = []
-    //   balance.forEach((b) => {
-    //     if (parseFloat(b.balance).toFixed(2).toString() !== '0.00') {
-    //       newBalances.push({
-    //         amount: parseFloat(b.balance).toFixed(2),
-    //         currency: b.asset,
-    //       })
-    //     }
-    //   })
-    //   setBalance(newBalances)
-    // })()
-  }, [isConnected])
+    if (!isConnected || !address || !selectedChain?.id) return
+    ;(async () => {
+      const balance = await bloomServices.getBalance(
+        {
+          dex: {
+            addresses: [address as string],
+            chains: [
+              testnet
+                ? getMainnetFromTestnet(getChainNameById(selectedChain.id) as Testnet)
+                : (getChainNameById(selectedChain.id) as Chain),
+            ],
+          },
+        },
+        {
+          onlyStableCoins: true,
+        },
+      )
+      const newBalances: React.SetStateAction<any[]> = []
+      balance.forEach((b) => {
+        if (parseFloat(b.balance).toFixed(2).toString() !== '0.00') {
+          newBalances.push({
+            amount: parseFloat(b.balance).toFixed(2),
+            currency: b.asset,
+          })
+        }
+      })
+      setBalance(newBalances)
+    })()
+  }, [])
 
   /**
    * It checks if the current chain is the same as the desired chain, and if not, it returns an object
