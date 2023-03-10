@@ -31,9 +31,9 @@ export default async function handler(
         message: error,
       });
     try {
-      const vault = await vaultsServices.getVaultsByUserId(session.userId);
+      const vaults = await vaultsServices.getVaultsByUserId(session.userId);
       return res.status(200).json({
-        ...vault,
+        vaults,
       });
     } catch (error) {
       return res.status(404).json({

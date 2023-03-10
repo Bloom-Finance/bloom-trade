@@ -3,6 +3,7 @@ import { SDKContext } from './context'
 export interface SDKProps {
   apiKey: string
   testnet: boolean
+  apiSecret: string
   children: React.ReactNode
 }
 
@@ -13,6 +14,7 @@ const BloomSdk = (props: SDKProps): JSX.Element => {
   return (
     <SDKContext.Provider
       value={{
+        apiSecret: props.apiSecret,
         apiKey: props.apiKey,
         testnet: props.testnet,
       }}

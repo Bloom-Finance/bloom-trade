@@ -4,6 +4,7 @@ import {
   CustodialProvider,
   Environment,
   IBloomServices,
+  Vault,
 } from '@bloom-trade/types';
 import axios from 'axios';
 
@@ -32,6 +33,22 @@ class BloomServices implements IBloomServices {
       this.isTestnet = true;
     } else {
       this.url = Environment.production;
+    }
+  }
+  async getVaults(): Promise<{ vaults: Vault[] }> {
+    try {
+      const { data } = await axios.get<{ vaults: Bloom.Vault[] }>(
+        `${this.url}/vault`,
+        {
+          headers: {
+            apiKey: this.apiKey,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      throw new Error(error as any);
     }
   }
 

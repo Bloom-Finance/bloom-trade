@@ -20,13 +20,12 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
   const { open, isOpen } = useWeb3Modal()
 
   const { isConnected, address } = useAccount()
-  const { apiKey } = useContext(SDKContext)
+  const { apiKey, apiSecret, testnet } = useContext(SDKContext)
   const { chain: selectedChain } = useNetwork()
-  const { testnet } = useContext(SDKContext)
   const [hasMounted, setHasMounted] = useState(false)
   /*Hooks and functions regarding useWallet*/
   const [balance, setBalance] = useState<{ currency: Bloom.StableCoin; amount: string }[]>([])
-  const bloomServices = new BloomServices(apiKey, '', {
+  const bloomServices = new BloomServices(apiKey, apiSecret, {
     test: testnet || false,
   })
 

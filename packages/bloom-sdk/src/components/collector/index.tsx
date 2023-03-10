@@ -8,6 +8,8 @@ import useToken from '../../hooks/useToken'
 import { useAccount, useNetwork } from 'wagmi'
 import { getChainNameById, getMainnetFromTestnet, getTestnetFromMainnet } from '@bloom-trade/utilities'
 import { SDKContext } from '../../wrapper/context'
+import SummaryComponent from './views/summary'
+import useMerchant from '../../hooks/useMerchant'
 interface Props {
   order: Omit<Order, 'from' | 'destination'>
   onSuccess: () => void
@@ -16,6 +18,8 @@ interface Props {
 
 const Collector = (props: Props): JSX.Element => {
   const { address } = useAccount()
+  const { vaults } = useMerchant()
+  const order = OrderStore.useState((s) => s.order)
   useEffect(() => {
     OrderStore.update((s) => {
       //Get vault from merchant
@@ -30,11 +34,37 @@ const Collector = (props: Props): JSX.Element => {
       }
     })
   }, [])
+
   const { approve, transfer } = useToken()
   const { getBalance, balance } = useWallet()
   const { chain } = useNetwork()
   const [activeStep, setActiveStep] = useState(0)
   const { testnet } = useContext(SDKContext)
+  useEffect(() => {
+    if (
+      activeStep === 2 &&
+      !transfer.waitingForUserResponse &&
+      !transfer.waitingForBlockchain &&
+      !transfer.error &&
+      order.from
+    ) {
+      if (!vaults) throw new Error('Merchant has no vaults configured.')
+      const addr = vaults.find((v) => v.chain === order.from?.chain)?.address
+      if (!addr) throw new Error('Vault not found.')
+      transfer.prepare(
+        {
+          token: order.from?.token,
+        },
+        {
+          chain: order.from.chain,
+          address: addr, //get vault
+          token: order.from.token,
+        },
+        order.total.amount.toString(),
+      )
+    }
+  }, [activeStep])
+
   const steps = [
     {
       label: 'Preview order',
@@ -71,9 +101,7 @@ const Collector = (props: Props): JSX.Element => {
               //Prepare contract and gas
               approve.prepare(
                 selectedToken,
-                testnet
-                  ? (getTestnetFromMainnet(getChainNameById(chain?.id as number) as Chain) as Testnet)
-                  : (getChainNameById(chain?.id as number) as Chain),
+                getChainNameById(chain?.id as number),
                 props.order.total.amount.toString(),
                 'transfers',
               )
@@ -92,7 +120,23 @@ const Collector = (props: Props): JSX.Element => {
     },
     {
       label: 'Transfer',
-      component: <>Time to pay</>,
+      component: (
+        <SummaryComponent
+          order={order}
+          actions={{
+            button: (
+              <button
+                onClick={async () => {
+                  await transfer.execute()
+                  props.onSuccess()
+                }}
+              >
+                Transfer
+              </button>
+            ),
+          }}
+        />
+      ),
     },
   ]
 

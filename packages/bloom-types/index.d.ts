@@ -83,6 +83,7 @@ declare namespace Bloom {
         onlyStableCoins: boolean;
       }
     ): Promise<Balance>;
+    getVaults(): Promise<{ vaults: Bloom.Vault[] }>;
   };
   type Balance = {
     asset: Asset;
