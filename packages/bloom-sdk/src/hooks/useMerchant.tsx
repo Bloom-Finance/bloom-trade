@@ -12,8 +12,7 @@ export default function useMerchant() {
   useEffect(() => {
     if (!apiKey) throw new Error('API Key not found.')
     ;(async () => {
-      const vaults = await bloomServices.getVaults()
-      console.log(vaults)
+      const { vaults } = await bloomServices.getVaults()
       setVaults(vaults)
     })()
   }, [])
