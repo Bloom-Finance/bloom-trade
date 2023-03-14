@@ -70,9 +70,10 @@ const LogoSmall = () => {
 }
 
 const user: User = {
-  userid: '1',
+  id: '1',
   displayName: 'John Doe',
   email: 'john@doe.com',
+  iat: 0,
 }
 
 interface MyPageProps {
