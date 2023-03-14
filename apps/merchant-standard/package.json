@@ -15,11 +15,9 @@
   "dependencies": {
     "@bloom-trade/finance-connector": "*",
     "@bloom-trade/sdk": "*",
-    "@bloom-trade/services": "*",
     "@bloom-trade/themes": "*",
     "@bloom-trade/types": "*",
     "@bloom-trade/ui": "*",
-    "@bloom-trade/utilities": "*",
     "@certusone/wormhole-sdk": "^0.9.3",
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
