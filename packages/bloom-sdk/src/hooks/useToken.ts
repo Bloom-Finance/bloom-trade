@@ -64,7 +64,11 @@ export default function useToken() {
     isLoading: waitingForUserResponseTokenApproval,
   } = useContractWrite(tokenApprovalConfig)
 
-  const { data: tokenApproveTxReceipt, isLoading: waitingForBlockChainTokenApprove } = useWaitForTransaction({
+  const {
+    data: tokenApproveTxReceipt,
+    isLoading: waitingForBlockChainTokenApprove,
+    status: tokenApproveStatus,
+  } = useWaitForTransaction({
     hash: tokenApprovalTxResult?.hash,
   })
 
@@ -83,10 +87,13 @@ export default function useToken() {
     isLoading: waitingForUserResponseTransfer,
     error: errorTransfer,
   } = useContractWrite(transferConfig)
-  const { data: transferTxReceipt, isLoading: waitingForBlockChainTransfer } = useWaitForTransaction({
+  const {
+    data: transferTxReceipt,
+    isLoading: waitingForBlockChainTransfer,
+    status: transferStatus,
+  } = useWaitForTransaction({
     hash: transferTxResult?.hash,
   })
-
   return {
     approve: {
       prepare: (token: StableCoin, chain: Chain | Testnet, amount: string, type: 'transfers' | 'swapper') => {
@@ -111,6 +118,7 @@ export default function useToken() {
       txHash: tokenApprovalTxResult?.hash,
       receipt: tokenApproveTxReceipt,
       error: errorTokenApproval,
+      status: tokenApproveStatus,
     },
     transfer: {
       prepare: async (
@@ -177,6 +185,7 @@ export default function useToken() {
       txHash: transferTxResult?.hash,
       receipt: transferTxReceipt,
       error: errorTransfer,
+      status: transferStatus,
     },
   }
 }

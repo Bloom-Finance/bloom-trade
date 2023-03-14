@@ -1,5 +1,5 @@
+import { Plugin } from '@bloom-trade/types'
 import { getChainNameById, isTestnet } from '@bloom-trade/utilities'
-import { useWeb3Modal } from '@web3modal/react'
 import React, { useContext, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import useWallet from '../../../../hooks/useWallet'
@@ -17,11 +17,12 @@ const PreviewPage = (props: Props): JSX.Element => {
   const { isConnected } = useAccount()
   const { switchNetwork } = useSwitchNetwork()
   const { chain } = useNetwork()
-  const plugins = [{ id: 'crypto' }, { id: 'credit card' }]
+  const [plugins, setPlugins] = useState<Array<Plugin>>()
   const { testnet } = useContext(SDKContext)
   useEffect(() => {
     setHasMounted(true)
   }, [])
+  if (!plugins) return <>Loading...</>
   return (
     <>
       {!hasChosenPaymentMethod || !paymentMethod ? (

@@ -48,14 +48,15 @@ declare namespace Bloom {
     avax = 'https://snowtrace.io',
   }
   type User = {
-    userid: string;
+    id: string;
     displayName: string;
     email: string;
     plugins?: Array<Plugin>;
+    iat: number;
   };
   const enum PaymentMethods {
-    creditCard = 'credit card',
-    bankAccount = 'bank account',
+    creditCard = 'creditCard',
+    bankAccount = 'bankAccount',
     crypto = 'crypto',
   }
   type Plugin = {
@@ -63,6 +64,7 @@ declare namespace Bloom {
       | PaymentMethods.bankAccount
       | PaymentMethods.creditCard
       | PaymentMethods.crypto;
+    enabled: boolean;
   };
   type IBloomServices = {
     getBalance(
@@ -84,6 +86,7 @@ declare namespace Bloom {
       }
     ): Promise<Balance>;
     getVaults(): Promise<{ vaults: Bloom.Vault[] }>;
+    getUser(): Promise<{ user: User }>;
   };
   type Balance = {
     asset: Asset;

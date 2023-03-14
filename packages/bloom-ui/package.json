@@ -33,7 +33,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.20.12",
-    "@bloom-trade/types": "^0.0.19",
+    "@bloom-trade/types": "*",
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@mui/material": "latest",
@@ -62,9 +62,9 @@
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "dependencies": {
-    "@bloom-trade/services": "0.0.19",
-    "@bloom-trade/themes": "^0.0.19",
-    "@bloom-trade/utilities": "^0.0.19",
+    "@bloom-trade/services": "*",
+    "@bloom-trade/themes": "*",
+    "@bloom-trade/utilities": "*",
     "@safe-global/safe-core-sdk": "^3.3.1",
     "@safe-global/safe-core-sdk-types": "^1.9.0",
     "@safe-global/safe-ethers-lib": "^1.9.1",

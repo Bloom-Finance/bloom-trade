@@ -1,14 +1,18 @@
 {
   "name": "@bloom-trade/sdk",
-  "version": "0.0.1",
+  "version": "0.0.11",
   "description": "Software development kit of bloom trade",
-  "main": "./dist/esm/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "dist/*"
+  ],
+  "type": "module",
   "repository": "https://github.com/Bloom-Finance/bloom-trade ",
   "author": "Bloom Trade",
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.tsx ",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
     "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\""
   },
@@ -17,22 +21,29 @@
   "peerDependencies": {
     "@web3modal/ethereum": "*",
     "@web3modal/react": "*",
-    "wagmi": "^0.10.11",
-    "ethers": "^5.5.0"
+    "ethers": "^5.5.0",
+    "wagmi": "^0.10.11"
   },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "devDependencies": {
-    "@types/react": "^18.0.28",
     "@bloom-trade/types": "*",
-    "@bloom-trade/services": "*",
+    "@types/react": "^18.0.28",
     "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tsup": "^6.6.3",
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "@bloom-trade/services": "0.0.8-alpha",
+    "@bloom-trade/utilities": "0.1.7-alpha",
     "pullstate": "^1.25.0",
-    "@bloom-trade/utilities": "*"
+    "typescript": "^4.9.5"
   }
 }

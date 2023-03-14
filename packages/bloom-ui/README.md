@@ -1,4 +1,4 @@
-# Bloom react sdk
+# Bloom ui
 
 ### Installation 🧵
 

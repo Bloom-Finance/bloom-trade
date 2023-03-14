@@ -1,22 +1,29 @@
 {
   "name": "@bloom-trade/services",
-  "version": "0.0.19",
+  "version": "0.0.8-alpha",
   "description": "Layer of services to communicate with Bloom Trade API",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "type": "module",
   "repository": "https://github.com/Bloom-Finance/bloom-trade.git",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsup src/index.ts",
     "start:sandbox": "npx ts-node src/sandbox/test.ts"
   },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "author": "Bloom Trade",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.2.2"
   },
   "devDependencies": {
-    "@bloom-trade/types": "^0.0.19"
+    "@bloom-trade/types": "*",
+    "tsup": "^6.6.3"
   },
   "publishConfig": {
     "access": "public"

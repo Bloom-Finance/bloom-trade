@@ -1,14 +1,15 @@
 {
-  "include": ["src"],
+  "include": ["src", "src/styles.d.ts"],
   "exclude": ["dist", "node_modules"],
   "compilerOptions": {
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
     "rootDir": "./src",
-    "outDir": "./dist/esm",
+    "outDir": "./dist",
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

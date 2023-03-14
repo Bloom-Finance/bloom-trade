@@ -4,6 +4,7 @@ import {
   CustodialProvider,
   Environment,
   IBloomServices,
+  User,
   Vault,
 } from '@bloom-trade/types';
 import axios from 'axios';
@@ -29,10 +30,23 @@ class BloomServices implements IBloomServices {
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
     if (params?.test) {
-      this.url = Environment.sandbox;
+      this.url = 'https://test.bloom.trade/api';
       this.isTestnet = true;
     } else {
-      this.url = Environment.production;
+      this.url = 'https://merchant.bloom.trade/api';
+    }
+  }
+  async getUser(): Promise<{ user: User }> {
+    try {
+      const { data } = await axios.get<{ user: User }>(`${this.url}/user`, {
+        headers: {
+          apiKey: this.apiKey,
+          'Content-Type': 'application/json',
+        },
+      });
+      return data;
+    } catch (error) {
+      throw new Error(error as any);
     }
   }
   async getVaults(): Promise<{ vaults: Vault[] }> {

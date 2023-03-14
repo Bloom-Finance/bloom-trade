@@ -12,7 +12,7 @@ import SummaryComponent from './views/summary'
 import useMerchant from '../../hooks/useMerchant'
 interface Props {
   order: Omit<Order, 'from' | 'destination'>
-  onSuccess: () => void
+  onSuccess: (receipt: Order) => void
   onError: () => void
 }
 
@@ -49,8 +49,20 @@ const Collector = (props: Props): JSX.Element => {
       order.from
     ) {
       if (!vaults) throw new Error('Merchant has no vaults configured.')
-      const addr = vaults.find((v) => v.chain === order.from?.chain)?.address
+      const addr = vaults.find(
+        (v) => v.chain === (testnet ? getTestnetFromMainnet(order.from?.chain as Chain) : order.from?.chain),
+      )?.address
       if (!addr) throw new Error('Vault not found.')
+      OrderStore.update((s) => {
+        s.order = {
+          ...s.order,
+          destination: {
+            chain: order.from?.chain as Chain,
+            address: addr,
+            token: order.from?.token as StableCoin,
+          },
+        }
+      })
       transfer.prepare(
         {
           token: order.from?.token,
@@ -64,6 +76,16 @@ const Collector = (props: Props): JSX.Element => {
       )
     }
   }, [activeStep])
+
+  useEffect(() => {
+    if (activeStep === 1 && !approve.waitingForUserResponse && !approve.waitingForBlockchain && !approve.error) {
+      setActiveStep(2)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [approve.waitingForUserResponse, approve.waitingForBlockchain])
+
+  if (transfer.status === 'success' && transfer.receipt) props.onSuccess(order)
+  if (transfer.status === 'error') props.onError()
 
   const steps = [
     {
@@ -113,7 +135,6 @@ const Collector = (props: Props): JSX.Element => {
           }}
           onApprove={function (): void {
             approve.execute()
-            setActiveStep(2)
           }}
         />
       ),
@@ -128,7 +149,6 @@ const Collector = (props: Props): JSX.Element => {
               <button
                 onClick={async () => {
                   await transfer.execute()
-                  props.onSuccess()
                 }}
               >
                 Transfer

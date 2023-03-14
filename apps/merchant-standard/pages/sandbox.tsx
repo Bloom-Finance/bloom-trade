@@ -7,14 +7,13 @@ const SandboxPage: NextPage = () => {
         order={{
           id: '123',
           orderId: '123',
-          txHash: `0x123123123`,
           date: 12313123,
           total: {
             amount: 10,
           },
         }}
-        onSuccess={() => {
-          console.log('success');
+        onSuccess={(receipt) => {
+          console.log('success', receipt);
         }}
         onError={() => {
           console.log('error');
