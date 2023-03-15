@@ -50,6 +50,8 @@ declare namespace Bloom {
   type User = {
     id: string;
     displayName?: string;
+    transakApiKey?: string;
+    circleApiKey?: string;
     email?: string;
     plugins?: Array<Plugin>;
     iat: number;
