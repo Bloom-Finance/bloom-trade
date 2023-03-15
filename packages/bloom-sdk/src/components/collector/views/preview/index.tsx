@@ -1,28 +1,29 @@
-import { Plugin } from '@bloom-trade/types'
+import { PaymentMethod, PaymentMethods, User } from '@bloom-trade/types'
 import { getChainNameById, isTestnet } from '@bloom-trade/utilities'
 import React, { useContext, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import useWallet from '../../../../hooks/useWallet'
 import { SDKContext } from '../../../../wrapper/context'
-
 //In this component we are in charged of selecting which type of payment he is going to perform
 interface Props {
-  onContinue: (paymentMethod: 'crypto' | 'credit card') => void
+  onContinue: (paymentMethod: PaymentMethods) => void
+  merchant: User | undefined
 }
 const PreviewPage = (props: Props): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
   const { Connect } = useWallet()
-  const [paymentMethod, setPaymentMethod] = useState<string>('crypto')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethods>()
   const [hasChosenPaymentMethod, setHasChosenPaymentMethod] = useState(false)
   const { isConnected } = useAccount()
   const { switchNetwork } = useSwitchNetwork()
   const { chain } = useNetwork()
-  const [plugins, setPlugins] = useState<Array<Plugin>>()
   const { testnet } = useContext(SDKContext)
   useEffect(() => {
     setHasMounted(true)
   }, [])
-  if (!plugins) return <>Loading...</>
+
+  if (!props.merchant?.plugins) return <>Loading...</>
+
   return (
     <>
       {!hasChosenPaymentMethod || !paymentMethod ? (
@@ -30,14 +31,17 @@ const PreviewPage = (props: Props): JSX.Element => {
           <h2>Choose your payment method</h2>
           <select
             onChange={(e) => {
-              setPaymentMethod(e.target.value)
+              setPaymentMethod(e.target.value as PaymentMethod)
             }}
           >
-            {plugins.map((plugin) => (
-              <option key={plugin.id} value={plugin.id}>
-                {plugin.id}
-              </option>
-            ))}
+            {props.merchant.plugins.map((plugin) => {
+              if (!plugin.enabled || (plugin.id === 'creditCard' && !plugin.auth)) return
+              return (
+                <option key={plugin.id} value={plugin.id}>
+                  {plugin.id}
+                </option>
+              )
+            })}
           </select>
           <button
             onClick={() => {
@@ -58,7 +62,7 @@ const PreviewPage = (props: Props): JSX.Element => {
               <button
                 onClick={() => {
                   !testnet && isTestnet(chain?.id as number) && switchNetwork && switchNetwork(1)
-                  props.onContinue(paymentMethod as 'crypto')
+                  props.onContinue(paymentMethod)
                 }}
               >
                 Continue

@@ -49,22 +49,27 @@ declare namespace Bloom {
   }
   type User = {
     id: string;
-    displayName: string;
-    email: string;
+    displayName?: string;
+    email?: string;
     plugins?: Array<Plugin>;
     iat: number;
   };
-  const enum PaymentMethods {
+  const enum PaymentMethod {
     creditCard = 'creditCard',
     bankAccount = 'bankAccount',
     crypto = 'crypto',
   }
+  type PaymentMethods = 'bankAccount' | 'creditCard' | 'crypto';
+
   type Plugin = {
     id:
-      | PaymentMethods.bankAccount
-      | PaymentMethods.creditCard
-      | PaymentMethods.crypto;
+      | PaymentMethod.bankAccount
+      | PaymentMethod.creditCard
+      | PaymentMethod.crypto;
     enabled: boolean;
+    auth?: {
+      [key: string]: string;
+    };
   };
   type IBloomServices = {
     getBalance(

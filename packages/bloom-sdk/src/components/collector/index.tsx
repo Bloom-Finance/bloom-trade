@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Chain, Order, StableCoin, Testnet } from '@bloom-trade/types'
+import { Chain, Order, PaymentMethods, StableCoin, Testnet } from '@bloom-trade/types'
 import PreviewPage from './views/preview'
 import useWallet from '../../hooks/useWallet'
 import { OrderStore } from '../../store/order'
@@ -18,7 +18,7 @@ interface Props {
 
 const Collector = (props: Props): JSX.Element => {
   const { address } = useAccount()
-  const { vaults } = useMerchant()
+  const { vaults, merchant } = useMerchant()
   const order = OrderStore.useState((s) => s.order)
   useEffect(() => {
     OrderStore.update((s) => {
@@ -40,6 +40,7 @@ const Collector = (props: Props): JSX.Element => {
   const { chain } = useNetwork()
   const [activeStep, setActiveStep] = useState(0)
   const { testnet } = useContext(SDKContext)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethods>()
   useEffect(() => {
     if (
       activeStep === 2 &&
@@ -92,10 +93,12 @@ const Collector = (props: Props): JSX.Element => {
       label: 'Preview order',
       component: (
         <PreviewPage
+          merchant={merchant}
           onContinue={async (paymentMethod) => {
             if (paymentMethod === 'crypto') {
               await getBalance()
             }
+            setSelectedPaymentMethod(paymentMethod)
             setActiveStep(1)
           }}
         />

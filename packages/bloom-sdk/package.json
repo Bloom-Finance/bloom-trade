@@ -22,7 +22,9 @@
     "@web3modal/ethereum": "*",
     "@web3modal/react": "*",
     "ethers": "^5.5.0",
-    "wagmi": "^0.10.11"
+    "wagmi": "^0.10.11",
+    "@stripe/react-stripe-js": "^2.0.0",
+    "@stripe/stripe-js": "1.49.0"
   },
   "files": [
     "dist",

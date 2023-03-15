@@ -10,7 +10,8 @@ import {
   where,
 } from 'firebase/firestore';
 import { customAlphabet } from 'nanoid';
-import { User, WalletsUsers } from '../type';
+import { WalletsUsers } from '../type';
+import { User } from '@bloom-trade/types';
 import { isWeb3WalletByAddress } from '../utils/wallets';
 import { firebaseManager } from './firebase.manager';
 

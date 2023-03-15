@@ -32,6 +32,8 @@
     "@mui/x-date-pickers": "^5.0.12",
     "@rainbow-me/rainbowkit": "^0.11.0",
     "@stablelib/random": "^1.0.2",
+    "@stripe/react-stripe-js": "^2.0.0",
+    "@stripe/stripe-js": "^1.49.0",
     "@transak/transak-sdk": "^1.2.3",
     "@types/aos": "^3.0.4",
     "@web3modal/ethereum": "^2.0.0",
@@ -62,6 +64,7 @@
     "simplebar-react": "^3.0.0",
     "siwe": "^2.0.5",
     "storybook-addon-next-router": "^4.0.2",
+    "stripe": "^11.14.0",
     "uuid": "^9.0.0",
     "wagmi": "^0.10.11"
   },
