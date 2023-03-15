@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import React, { useContext, useEffect, useState } from 'react'
 import { Chain, Order, PaymentMethods, StableCoin, Testnet } from '@bloom-trade/types'
 import PreviewPage from './views/preview'
@@ -10,6 +11,7 @@ import { getChainNameById, getMainnetFromTestnet, getTestnetFromMainnet } from '
 import { SDKContext } from '../../wrapper/context'
 import SummaryComponent from './views/summary'
 import useMerchant from '../../hooks/useMerchant'
+import BloomServices from '@bloom-trade/services'
 interface Props {
   order: Omit<Order, 'from' | 'destination'>
   onSuccess: (receipt: Order) => void
@@ -39,7 +41,10 @@ const Collector = (props: Props): JSX.Element => {
   const { getBalance, balance } = useWallet()
   const { chain } = useNetwork()
   const [activeStep, setActiveStep] = useState(0)
-  const { testnet } = useContext(SDKContext)
+  const { testnet, apiKey, apiSecret } = useContext(SDKContext)
+  const bloomServices = new BloomServices(apiKey, apiSecret, {
+    test: testnet,
+  })
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethods>()
   useEffect(() => {
     if (
@@ -95,10 +100,18 @@ const Collector = (props: Props): JSX.Element => {
         <PreviewPage
           merchant={merchant}
           onContinue={async (paymentMethod) => {
-            if (paymentMethod === 'crypto') {
-              await getBalance()
+            switch (paymentMethod) {
+              case 'crypto':
+                await getBalance()
+                break
+              case 'creditCard':
+                console.log('called')
+                const { clientSecret } = await bloomServices.stripe.createPaymentIntent(order.total.amount, 'usd')
+                console.log(clientSecret)
+                break
+              default:
+                break
             }
-            setSelectedPaymentMethod(paymentMethod)
             setActiveStep(1)
           }}
         />

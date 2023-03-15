@@ -47,6 +47,7 @@ declare namespace Bloom {
     polygon = 'https://polygonscan.com',
     avax = 'https://snowtrace.io',
   }
+
   type User = {
     id: string;
     displayName?: string;
@@ -74,6 +75,12 @@ declare namespace Bloom {
     };
   };
   type IBloomServices = {
+    stripe: {
+      createPaymentIntent(
+        amount: number,
+        currency: string
+      ): Promise<{ clientSecret: string }>;
+    };
     getBalance(
       config: {
         dex?: {

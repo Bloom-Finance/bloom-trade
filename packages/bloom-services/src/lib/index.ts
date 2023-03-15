@@ -20,8 +20,38 @@ interface IProvidersRequest {
 class BloomServices implements IBloomServices {
   private url: string;
   private apiKey: string;
+
   private apiSecret: string;
   private isTestnet: boolean = false;
+
+  public stripe: {
+    createPaymentIntent(
+      amount: number,
+      currency: string
+    ): Promise<{ clientSecret: string }>;
+  } = {
+    createPaymentIntent: async (amount: number, currency: 'usd') => {
+      try {
+        const { data } = await axios.post<{ clientSecret: string }>(
+          `${this.url}/stripe/paymentIntent`,
+          {
+            amount: amount,
+            currency,
+          },
+          {
+            headers: {
+              apiKey: this.apiKey,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        return data;
+      } catch (error) {
+        throw new Error(error as any);
+      }
+    },
+  };
+
   constructor(
     apiKey: string,
     apiSecret: string,
@@ -36,6 +66,7 @@ class BloomServices implements IBloomServices {
       this.url = 'https://merchant.bloom.trade/api';
     }
   }
+
   async getUser(): Promise<{ user: User }> {
     try {
       const { data } = await axios.get<{ user: User }>(`${this.url}/user`, {
