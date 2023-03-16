@@ -12,6 +12,9 @@ import { SDKContext } from '../../wrapper/context'
 import SummaryComponent from './views/summary'
 import useMerchant from '../../hooks/useMerchant'
 import BloomServices from '@bloom-trade/services'
+import CreditCard from './views/creditCard'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe, Stripe } from '@stripe/stripe-js'
 interface Props {
   order: Omit<Order, 'from' | 'destination'>
   onSuccess: (receipt: Order) => void
@@ -22,6 +25,9 @@ const Collector = (props: Props): JSX.Element => {
   const { address } = useAccount()
   const { vaults, merchant } = useMerchant()
   const order = OrderStore.useState((s) => s.order)
+  const [disabledPaymentMethods, setDisabledPaymentMethods] = useState<PaymentMethods[]>([])
+  console.log(disabledPaymentMethods)
+  const [stripe, setStripe] = useState<Stripe | null>(null)
   useEffect(() => {
     OrderStore.update((s) => {
       //Get vault from merchant
@@ -35,7 +41,21 @@ const Collector = (props: Props): JSX.Element => {
         },
       }
     })
-  }, [])
+    if (!merchant) return
+    ;(async () => {
+      if (!merchant?.plugins) {
+        setDisabledPaymentMethods(['creditCard', 'bankAccount', 'crypto'])
+        return
+      }
+      const creditCard = merchant.plugins.find((p) => p.id === 'creditCard')
+      if (!creditCard || !creditCard.auth) {
+        setDisabledPaymentMethods(['creditCard'])
+        return
+      }
+      const stripeResolved = await loadStripe(creditCard.auth.apiKey)
+      setStripe(stripeResolved)
+    })()
+  }, [merchant])
 
   const { approve, transfer } = useToken()
   const { getBalance, balance } = useWallet()
@@ -46,6 +66,7 @@ const Collector = (props: Props): JSX.Element => {
     test: testnet,
   })
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethods>()
+  const [clientSecret, setClientSecret] = useState<string>()
   useEffect(() => {
     if (
       activeStep === 2 &&
@@ -98,20 +119,22 @@ const Collector = (props: Props): JSX.Element => {
       label: 'Preview order',
       component: (
         <PreviewPage
+          disabledPaymentMethods={disabledPaymentMethods}
           merchant={merchant}
           onContinue={async (paymentMethod) => {
+            setSelectedPaymentMethod(paymentMethod)
             switch (paymentMethod) {
               case 'crypto':
                 await getBalance()
                 break
               case 'creditCard':
-                console.log('called')
                 const { clientSecret } = await bloomServices.stripe.createPaymentIntent(order.total.amount, 'usd')
-                console.log(clientSecret)
+                setClientSecret(clientSecret)
                 break
               default:
                 break
             }
+            console.log('passed')
             setActiveStep(1)
           }}
         />
@@ -119,41 +142,61 @@ const Collector = (props: Props): JSX.Element => {
     },
     {
       label: 'Select your coins',
-      component: (
-        <CurrencySelector
-          balance={balance}
-          onSelect={async function (selectedToken: StableCoin): Promise<boolean | void> {
-            try {
-              OrderStore.update((s) => {
-                s.order = {
-                  ...s.order,
-                  from: {
-                    token: selectedToken,
-                    chain: testnet
-                      ? getMainnetFromTestnet(getChainNameById(chain?.id as number) as Testnet)
-                      : (getChainNameById(chain?.id as number) as Chain),
-                    address: address as string,
-                  },
-                }
-              })
-              //Prepare contract and gas
-              approve.prepare(
-                selectedToken,
-                getChainNameById(chain?.id as number),
-                props.order.total.amount.toString(),
-                'transfers',
-              )
-              return true
-            } catch (e) {
-              console.log(e)
-              throw new Error('Function not implemented.')
-            }
-          }}
-          onApprove={function (): void {
-            approve.execute()
-          }}
-        />
-      ),
+      component:
+        selectedPaymentMethod === 'crypto' ? (
+          <CurrencySelector
+            balance={balance}
+            onSelect={async function (selectedToken: StableCoin): Promise<boolean | void> {
+              try {
+                OrderStore.update((s) => {
+                  s.order = {
+                    ...s.order,
+                    from: {
+                      token: selectedToken,
+                      chain: testnet
+                        ? getMainnetFromTestnet(getChainNameById(chain?.id as number) as Testnet)
+                        : (getChainNameById(chain?.id as number) as Chain),
+                      address: address as string,
+                    },
+                  }
+                })
+                //Prepare contract and gas
+                approve.prepare(
+                  selectedToken,
+                  getChainNameById(chain?.id as number),
+                  props.order.total.amount.toString(),
+                  'transfers',
+                )
+                return true
+              } catch (e) {
+                console.log(e)
+                throw new Error('Function not implemented.')
+              }
+            }}
+            onApprove={function (): void {
+              approve.execute()
+            }}
+          />
+        ) : !clientSecret ? (
+          'Loading...'
+        ) : (
+          <Elements
+            options={{
+              clientSecret: clientSecret,
+              appearance: {
+                theme: 'stripe',
+              },
+            }}
+            stripe={stripe}
+          >
+            <CreditCard
+              clientSecret={clientSecret}
+              onContinue={() => {
+                //staff
+              }}
+            />
+          </Elements>
+        ),
     },
     {
       label: 'Transfer',

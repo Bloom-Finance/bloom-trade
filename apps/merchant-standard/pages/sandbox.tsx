@@ -9,7 +9,7 @@ const SandboxPage: NextPage = () => {
           orderId: '123',
           date: 12313123,
           total: {
-            amount: 10,
+            amount: 100,
           },
         }}
         onSuccess={(receipt) => {

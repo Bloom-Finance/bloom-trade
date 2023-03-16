@@ -7,12 +7,13 @@ import { SDKContext } from '../../../../wrapper/context'
 //In this component we are in charged of selecting which type of payment he is going to perform
 interface Props {
   onContinue: (paymentMethod: PaymentMethods) => void
+  disabledPaymentMethods?: PaymentMethods[]
   merchant: User | undefined
 }
 const PreviewPage = (props: Props): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
   const { Connect } = useWallet()
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethods>()
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethods>('crypto')
   const [hasChosenPaymentMethod, setHasChosenPaymentMethod] = useState(false)
   const { isConnected } = useAccount()
   const { switchNetwork } = useSwitchNetwork()
@@ -21,7 +22,6 @@ const PreviewPage = (props: Props): JSX.Element => {
   useEffect(() => {
     setHasMounted(true)
   }, [])
-
   if (!props.merchant?.plugins) return <>Loading...</>
 
   return (
@@ -35,7 +35,12 @@ const PreviewPage = (props: Props): JSX.Element => {
             }}
           >
             {props.merchant.plugins.map((plugin) => {
-              if (!plugin.enabled || (plugin.id === 'creditCard' && !plugin.auth)) return
+              if (
+                !plugin.enabled ||
+                (plugin.id === 'creditCard' && !plugin.auth) ||
+                props.disabledPaymentMethods?.includes(plugin.id)
+              )
+                return
               return (
                 <option key={plugin.id} value={plugin.id}>
                   {plugin.id}
