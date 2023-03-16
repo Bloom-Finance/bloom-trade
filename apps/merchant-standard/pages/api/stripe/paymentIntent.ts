@@ -4,7 +4,7 @@ import { vaultsServices } from '../../../src/services/vaults.services';
 import { verifyApiKey } from '../../../src/utils/api';
 import NextCors from 'nextjs-cors';
 import { userServices } from '../../../src/services/users.services';
-import Stripe from 'stripe';
+import { Stripe } from 'stripe';
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -41,23 +41,31 @@ export default async function handler(
           error: 'Bad request',
         });
       const { amount } = req.body;
-      const stripe = new Stripe(creditCard.auth.apiKey, {
+      const stripe = new Stripe(creditCard.auth.apiSecret, {
         apiVersion: '2022-11-15',
       });
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: amount,
+        amount: parseInt(amount),
         currency: 'usd',
-        automatic_payment_methods: {
-          enabled: true,
-        },
+        payment_method_types: ['card'],
       });
       res.status(200).send({
         clientSecret: paymentIntent.client_secret,
       });
     } catch (error) {
-      return res.status(404).json({
-        error: 'Not found',
-      });
+      if (
+        (error as any).type &&
+        (error as any).type === 'StripeInvalidRequestError'
+      ) {
+        let stripeError = error as Stripe.errors.StripeInvalidRequestError;
+        return res.status(400).json({
+          error: stripeError.message,
+        });
+      } else {
+        return res.status(404).json({
+          error,
+        });
+      }
     }
   }
 }
