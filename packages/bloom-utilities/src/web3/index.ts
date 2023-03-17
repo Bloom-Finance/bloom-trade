@@ -289,6 +289,12 @@ const getWalletBlockchainExplorer = (
       return `${Scanners.eth}/address/${address}`;
   }
 };
+
+/**
+ * It returns the name of the blockchain explorer for a given chain
+ * @param {Chain | Testnet} chain - The chain you want to use.
+ * @returns The name of the blockchain explorer
+ */
 const getBlockchainExplorerName = (chain: Chain | Testnet) => {
   switch (chain) {
     case 'avax':
@@ -307,6 +313,7 @@ const getBlockchainExplorerName = (chain: Chain | Testnet) => {
       return 'Etherscan';
   }
 };
+
 /**
  * It returns the ABI for the `Transfers` contract
  * @returns The Abis.transfers object.
@@ -324,6 +331,12 @@ const getSwapperAbi = () => {
   return Abis.swapper;
 };
 
+/**
+ * It returns a URL to a blockchain explorer for a given transaction hash and chain
+ * @param {string} txHash - The transaction hash of the transaction you want to view.
+ * @param {Chain | Testnet} chain - The blockchain network you want to use.
+ * @returns A URL
+ */
 const getTxDetailsBlockchainExplorer = (
   txHash: string,
   chain: Chain | Testnet
@@ -346,6 +359,11 @@ const getTxDetailsBlockchainExplorer = (
   }
 };
 
+/**
+ * It returns a Gnosis Safe service based on the chain passed in
+ * @param {Chain | 'goerli'} chain - The chain you want to connect to.
+ * @returns The gnosis service for the chain
+ */
 const getGnosisService = (chain: Chain | 'goerli') => {
   switch (chain) {
     case 'goerli':
@@ -361,6 +379,11 @@ const getGnosisService = (chain: Chain | 'goerli') => {
   }
 };
 
+/**
+ * Given a testnet, return the mainnet it's based on.
+ * @param {Testnet} chain - The blockchain you want to use.
+ * @returns The mainnet chain that corresponds to the testnet chain.
+ */
 const getMainnetFromTestnet = (chain: Testnet) => {
   switch (chain) {
     case 'goerli':
@@ -374,6 +397,11 @@ const getMainnetFromTestnet = (chain: Testnet) => {
   }
 };
 
+/**
+ * `isTestnet` returns `true` if the chain is a testnet, and `false` if it's not
+ * @param {number | Chain | Testnet} chain - The chain you want to check.
+ * @returns A boolean value
+ */
 const isTestnet = (chain: number | Chain | Testnet) => {
   let chainName = chain;
   if ((chain as any) instanceof Number) {

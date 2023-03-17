@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/sdk",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "Software development kit of bloom trade",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -19,12 +19,12 @@
   "license": "MIT",
   "private": false,
   "peerDependencies": {
+    "@stripe/react-stripe-js": "^2.0.0",
+    "@stripe/stripe-js": "1.49.0",
     "@web3modal/ethereum": "*",
     "@web3modal/react": "*",
     "ethers": "^5.5.0",
-    "wagmi": "^0.10.11",
-    "@stripe/react-stripe-js": "^2.0.0",
-    "@stripe/stripe-js": "1.49.0"
+    "wagmi": "^0.10.11"
   },
   "files": [
     "dist",
@@ -43,8 +43,9 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@bloom-trade/services": "0.0.8-alpha",
-    "@bloom-trade/utilities": "0.1.7-alpha",
+    "@bloom-trade/services": "0.0.8",
+    "@bloom-trade/utilities": "0.1.7",
+    "nanoid": "^4.0.1",
     "pullstate": "^1.25.0",
     "typescript": "^4.9.5"
   }

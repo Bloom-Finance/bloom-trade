@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useStripe, useElements, LinkAuthenticationElement, PaymentElement } from '@stripe/react-stripe-js'
-import { StripePaymentElementOptions } from '@stripe/stripe-js'
+import { PaymentIntent, StripePaymentElementOptions } from '@stripe/stripe-js'
 interface Props {
-  onContinue: () => void
+  onSuccess: (payment: PaymentIntent) => void
+  onError?: (error: string) => void
   clientSecret: string
 }
 
@@ -45,9 +46,10 @@ const CreditCard = (props: Props): JSX.Element => {
       redirect: 'if_required',
     })
     if ((error && error.type === 'card_error') || (error && error.type === 'validation_error')) {
+      props.onError && props.onError(error.message || error.type)
       setMessage(error.message)
     }
-    console.log(paymentIntent)
+    props.onSuccess(paymentIntent as PaymentIntent)
     setIsLoading(false)
   }
   const paymentElementOptions: StripePaymentElementOptions = {
@@ -60,8 +62,6 @@ const CreditCard = (props: Props): JSX.Element => {
       <button disabled={isLoading || !stripe || !elements} id='submit'>
         <span id='button-text'>{isLoading ? <div className='spinner' id='spinner'></div> : 'Pay now'}</span>
       </button>
-      {/* Show any error or success messages */}
-      {message && <div id='payment-message'>{message}</div>}
     </form>
   )
 }

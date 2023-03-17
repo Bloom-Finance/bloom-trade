@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 import React, { useContext, useEffect, useState } from 'react'
-import { Chain, Order, PaymentMethods, StableCoin, Testnet } from '@bloom-trade/types'
+import Bloom, { Asset, Chain, Order, PaymentMethods, Receipt, StableCoin, Testnet } from '@bloom-trade/types'
 import PreviewPage from './views/preview'
 import useWallet from '../../hooks/useWallet'
 import { OrderStore } from '../../store/order'
@@ -15,10 +15,11 @@ import BloomServices from '@bloom-trade/services'
 import CreditCard from './views/creditCard'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe, Stripe } from '@stripe/stripe-js'
+import { customAlphabet } from 'nanoid'
 interface Props {
   order: Omit<Order, 'from' | 'destination'>
-  onSuccess: (receipt: Order) => void
-  onError: () => void
+  onSuccess: (receipt: Receipt) => void
+  onError: (error: Bloom.BloomError<any>) => void
 }
 
 const Collector = (props: Props): JSX.Element => {
@@ -26,7 +27,6 @@ const Collector = (props: Props): JSX.Element => {
   const { vaults, merchant } = useMerchant()
   const order = OrderStore.useState((s) => s.order)
   const [disabledPaymentMethods, setDisabledPaymentMethods] = useState<PaymentMethods[]>([])
-  console.log(disabledPaymentMethods)
   const [stripe, setStripe] = useState<Stripe | null>(null)
   useEffect(() => {
     OrderStore.update((s) => {
@@ -111,8 +111,27 @@ const Collector = (props: Props): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [approve.waitingForUserResponse, approve.waitingForBlockchain])
 
-  if (transfer.status === 'success' && transfer.receipt) props.onSuccess(order)
-  if (transfer.status === 'error') props.onError()
+  if (transfer.status === 'success' && transfer.receipt) {
+    const receipt: Receipt = {
+      id: customAlphabet('1234567890abcdef', 10)(),
+      txHash: transfer.txHash,
+      createdAt: order.date,
+      chain: order.from?.chain as Chain,
+      type: 'crypto',
+      currency: order.from?.token as Asset,
+      status: 'completed',
+      total: {
+        ...order.total,
+      },
+    }
+    props.onSuccess(receipt)
+  }
+
+  if (transfer.status === 'error')
+    props.onError({
+      msg: transfer.error?.message || 'Unknown error',
+      isError: true,
+    })
 
   const steps = [
     {
@@ -191,8 +210,24 @@ const Collector = (props: Props): JSX.Element => {
           >
             <CreditCard
               clientSecret={clientSecret}
-              onContinue={() => {
-                //staff
+              onError={(error) => {
+                props.onError({
+                  msg: error,
+                  isError: true,
+                })
+              }}
+              onSuccess={(payment) => {
+                const receipt: Receipt = {
+                  id: customAlphabet('1234567890abcdef', 10)(),
+                  createdAt: order.date,
+                  type: 'creditCard',
+                  currency: payment.currency,
+                  status: payment.status === 'succeeded' ? 'completed' : 'failed',
+                  total: {
+                    ...order.total,
+                  },
+                }
+                props.onSuccess(receipt)
               }}
             />
           </Elements>

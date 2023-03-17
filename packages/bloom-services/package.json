@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/services",
-  "version": "0.0.8-alpha",
+  "version": "0.0.8",
   "description": "Layer of services to communicate with Bloom Trade API",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

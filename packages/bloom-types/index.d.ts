@@ -102,6 +102,28 @@ declare namespace Bloom {
     getVaults(): Promise<{ vaults: Bloom.Vault[] }>;
     getUser(): Promise<{ user: User }>;
   };
+  type Receipt = {
+    id: string;
+    type: PaymentMethods;
+    createdAt: number;
+    currency: Asset | string;
+    chain?: Chain;
+    status: 'pending' | 'completed' | 'failed';
+    txHash?: string;
+    total: {
+      details?: {
+        items?: {
+          description: string;
+          amount: number;
+        }[];
+        taxes?: {
+          description: string;
+          amount: number;
+        }[];
+      };
+      amount: number;
+    };
+  };
   type Balance = {
     asset: Asset;
     balance: string;

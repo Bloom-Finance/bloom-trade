@@ -5,7 +5,7 @@ Is a package entended to be used within your storefront to interact with the Blo
 ## Installation 🧵
 
 ```bash
-npm install @bloom-trade/sdk
+npm install @bloom-trade/sdk stripe  @stripe/stripe-js @stripe/react-stripe-js
 ```
 
 ## Get Started
@@ -17,27 +17,31 @@ Please refer to the [WalletConnect instalation](https://docs.walletconnect.com/2
 #### Inject BloomSDK to your app 🪡
 
 ```javascript
-import { BloomSDK } from '@bloom-trade/sdk'
+import { BloomSDK } from '@bloom-trade/sdk';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <WagmiConfig client={wagmiClient}>
-        <BloomSdk testnet={true} apiKey='YOUR_BLOOM_API_KEY' apiSecret='YOUR_BLOOM_API_SECRET'>
+        <BloomSdk
+          testnet={true}
+          apiKey='YOUR_BLOOM_API_KEY'
+          apiSecret='YOUR_BLOOM_API_SECRET'
+        >
           <Component {...pageProps} />;
         </BloomSdk>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </>
-  )
+  );
 }
 ```
 
 ## Usage 📒
 
 ```javascript
-import type { NextPage } from 'next'
-import { Collector } from '@bloom-trade/sdk'
+import type { NextPage } from 'next';
+import { Collector } from '@bloom-trade/sdk';
 const SandboxPage: NextPage = () => {
   return (
     <Collector
@@ -50,14 +54,14 @@ const SandboxPage: NextPage = () => {
         },
       }}
       onSuccess={(receipt) => {
-        console.log('success', receipt)
+        console.log('success', receipt);
       }}
       onError={() => {
-        console.log('error')
+        console.log('error');
       }}
     />
-  )
-}
+  );
+};
 
-export default SandboxPage
+export default SandboxPage;
 ```

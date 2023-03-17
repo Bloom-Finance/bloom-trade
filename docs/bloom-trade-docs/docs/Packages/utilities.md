@@ -61,13 +61,13 @@ const myChain = 'goerli';
 getWagmiInstanceByChainName(myChain); //returns goerli wagmi instance
 ```
 
-### getTokenContractAddressBySymbolAndChain
+### getTokenContractMetadataBySymbolAndChain
 
-- Returns the token contract address and decimals based on the symbol and chain name of an stablecoin token.
+- Returns the token contract metadata based on the symbol and chain name of an stablecoin token.
 - Works either with testnets or mainnets.
 
 ```typescript
-import { getTokenContractAddressBySymbolAndChain } from '@bloom-trade/utilities';
+import { getTokenContractMetadataBySymbolAndChain } from '@bloom-trade/utilities';
 
 getWagmiInstanceByChainName('usdc', 'goerli'); //returns goerli usdc contract address and decimals
 ```
@@ -93,6 +93,103 @@ import { getTokenDescriptionBySymbol } from '@bloom-trade/utilities';
 getTokenDescriptionBySymbol('usdc'); //USD coin
 ```
 
+### getBloomContractsByChain
+
+- It returns the bloom contract address for a given chain and type
+
+```typescript
+import { getBloomContractsByChain } from '@bloom-trade/utilities';
+
+getBloomContractsByChain('eth', 'transfers'); //returns the bloom transfers contract address
+```
+
+### convertTokenToDecimalsUnit
+
+- It takes a token value and the number of decimals and returns the token value in its smallest unit
+
+```typescript
+import { convertTokenToDecimalsUnit } from '@bloom-trade/utilities';
+
+convertTokenToDecimalsUnit('1000000000000000000', '18'); //1
+```
+
+### convertDecimalsUnitToToken
+
+- It converts a decimal value to a token value
+
+```typescript
+import { convertDecimalsUnitToToken } from '@bloom-trade/utilities';
+
+convertDecimalsUnitToToken('1', '18'); //1000000000000000000
+```
+
+### getWalletBlockchainExplorer
+
+- It returns a URL to a blockchain explorer for a given address and chain
+
+```typescript
+import { getWalletBlockchainExplorer } from '@bloom-trade/utilities';
+
+getWalletBlockchainExplorer(
+  '0xF274800E82717D38d2e2ffe18A4C6489a50C5Add',
+  'eth'
+); //https://etherscan.io/address/0xf274800e82717d38d2e2ffe18a4c6489a50c5add
+```
+
+### getBlockchainExplorerName
+
+- It returns the name of the blockchain explorer for a given chain
+
+```typescript
+import { getBlockchainExplorerName } from '@bloom-trade/utilities';
+
+getBlockchainExplorerName('eth'); //etherscan
+```
+
+### getTxDetailsBlockchainExplorer
+
+- It returns a URL to a blockchain explorer for a given transaction hash and chain
+
+```typescript
+import { getTxDetailsBlockchainExplorer } from '@bloom-trade/utilities';
+
+getTxDetailsBlockchainExplorer(
+  '0x31d2567558080cf0a4902e58fd56709bc5df35488d2c4289bd9fbff3afe70470',
+  'eth'
+); //https://etherscan.io/tx/0x31d2567558080cf0a4902e58fd56709bc5df35488d2c4289bd9fbff3afe70470
+```
+
+### getGnosisService
+
+- It returns a Gnosis Safe service based on the chain passed in
+
+```typescript
+import { getGnosisService } from '@bloom-trade/utilities';
+
+getGnosisService('eth'); //https://safe-transaction.mainnet.gnosis.io/
+```
+
+### getMainnetFromTestnet
+
+- Given a testnet, return the mainnet it's based on.
+
+```typescript
+import { getMainnetFromTestnet } from '@bloom-trade/utilities';
+
+getMainnetFromTestnet('goerli'); // returns eth
+```
+
+### isTestnet
+
+- `isTestnet` returns `true` if the chain is a testnet, and `false` if it's not
+
+```typescript
+import { isTestnet } from '@bloom-trade/utilities';
+
+isTestnet('goerli'); // returns true
+isTestnet('polygon'); // returns false
+```
+
 ## Strings module
 
 This set of functions are mainly intended to format strings, string numbers, currencies and other utilities such as dates with moment.
@@ -103,6 +200,16 @@ This set of functions are mainly intended to format strings, string numbers, cur
 import { isBase64 } from '@bloom-trade/utilities';
 
 isBase64('aGVsbG8gd29ybGQ'); //true
+```
+
+### fromBase64
+
+- It takes a base64 string and returns the decoded string
+
+```typescript
+import { fromBase64 } from '@bloom-trade/utilities';
+
+fromBase64('aGVsbG8gd29ybGQ'); // decoded data
 ```
 
 ### stringToMilisecondsDate
