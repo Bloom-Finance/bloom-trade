@@ -1335,30 +1335,10 @@
     axios "^0.21.4"
     ws "^7.5.0"
 
-"@bloom-trade/services@*":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@bloom-trade/services/-/services-0.0.7.tgz#cd43f33a92ecb35595ae574874473234637a87e6"
-  integrity sha512-dKuZ356t/vmo1Vei4vDxj/aHkpv5lruiyEOVfRYDs/fR803cgrAvFfF2pHhXL3y+4zapoBM1uo1i2cA3UGE3Ag==
-  dependencies:
-    axios "^1.2.2"
-
 "@bloom-trade/types@^0.0.19":
   version "0.0.19"
   resolved "https://registry.yarnpkg.com/@bloom-trade/types/-/types-0.0.19.tgz#62a2d9c70b8a4e7893f7f2c72197f03e0ebc92bf"
   integrity sha512-4pxu+63o5hVNPUwJ274DAO74OZ9WUw/xkvIPUrqgrgutkLAr9JqbyvwOYv5G3INGbKXgdwrBjuKdbr0XuEdnNg==
-
-"@bloom-trade/utilities@*":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@bloom-trade/utilities/-/utilities-0.1.6.tgz#f6ca4f608a9dfee842572e71a853c942e7500463"
-  integrity sha512-ZdExu4SGEZteKU3HuzEovdQ9pWoU9IbhA1dOaebOX5SiDdJz+QAV+rAIG6cwRHlliQpNimbr8G41qshlKLxVOQ==
-  dependencies:
-    axios "^1.2.2"
-    crypto "^1.0.1"
-    firebase "^9.15.0"
-    moment "^2.29.4"
-    numeral "^2.0.6"
-    wagmi "^0.10.11"
-    web3 "^1.8.2"
 
 "@certusone/wormhole-sdk-proto-web@0.0.6":
   version "0.0.6"
