@@ -1,4 +1,4 @@
-import { Order, Testnet } from '@bloom-trade/types'
+import { Chain, Order, Testnet } from '@bloom-trade/types'
 import {
   capitalize,
   formatWalletAddress,
@@ -53,24 +53,29 @@ const SummaryComponent = (props: Props): JSX.Element => {
       <ListItem
         secondaryAction={
           <AddressInformation
-            address={props.order.destination.address}
-            chain={props.order.destination.chain}
+            address={props.order.destination?.address as string}
+            chain={props.order.destination?.chain as Chain}
             qr={{ enabled: false }}
             copyToClipBoard={{ enabled: false }}
           />
         }
       >
         <ListItemAvatar>
-          {props.order.destination.description?.image && <Avatar src={props.order.destination.description.image} />}
-          {props.order.destination.description?.name && !props.order.destination.description.image && (
-            <Avatar {...stringAvatar(props.order.destination.description.name)} />
+          {props.order.destination?.description?.image && <Avatar src={props.order.destination?.description.image} />}
+          {props.order.destination?.description?.name && !props.order.destination?.description.image && (
+            <Avatar {...stringAvatar(props.order.destination?.description.name)} />
           )}
         </ListItemAvatar>
         <ListItemText
-          primary={props.order.destination.description?.name || formatWalletAddress(props.order.destination.address)}
-          secondary={`${capitalize(props.order.destination.chain)} ${
-            isTestnet || props.testnet ? `(${getTestnetFromMainnet(props.order.destination.chain) as Testnet})` : ''
-          }, ${props.order.destination.token.toUpperCase()}`}
+          primary={
+            props.order.destination?.description?.name ||
+            formatWalletAddress(props.order.destination?.address as string)
+          }
+          secondary={`${capitalize(props.order.destination?.chain as Chain)} ${
+            isTestnet || props.testnet
+              ? `(${getTestnetFromMainnet(props.order.destination?.chain as Chain) as Testnet})`
+              : ''
+          }, ${props.order.destination?.token.toUpperCase()}`}
         ></ListItemText>
       </ListItem>
       <ListItemButton>{props.actions.button}</ListItemButton>

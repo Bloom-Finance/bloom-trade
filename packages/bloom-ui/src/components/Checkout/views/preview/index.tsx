@@ -26,7 +26,7 @@ export interface PreviewProps {
 const PreviewComponent = (props: PreviewProps): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
   const order = OrderStore.useState((s) => s.order)
-  const [tokenSelected, setTokenSelectd] = useState(order.destination.token)
+  const [tokenSelected, setTokenSelectd] = useState(order.destination?.token)
   const theme = useTheme()
   const { isConnected } = props
   const mdUp = useResponsive('up', 'md')
@@ -99,7 +99,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
               disabled={props.type === 'paymentRequest'}
               id='displayName'
               label='Name or Display Name'
-              value={order.destination.description?.name}
+              value={order.destination?.description?.name}
               onChange={(e) => {
                 OrderStore.update((s) => {
                   s.order = {
@@ -107,10 +107,10 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
                     destination: {
                       ...s.order.destination,
                       description: {
-                        ...s.order.destination.description,
+                        ...s.order.destination?.description,
                         name: e.target.value,
                       },
-                    },
+                    } as any,
                   }
                 })
               }}
@@ -129,14 +129,14 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
                     destination: {
                       ...s.order.destination,
                       address: e.target.value,
-                    },
+                    } as any,
                   }
                 })
               }}
               label='Address'
               variant='outlined'
               fullWidth
-              value={order.destination.address}
+              value={order.destination?.address}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -164,7 +164,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
           <Grid item xs={12} sm={3}>
             <Select
               disabled={props.type === 'paymentRequest'}
-              value={order.destination.chain}
+              value={order.destination?.chain}
               onChange={(e) => {
                 OrderStore.update((s) => {
                   s.order = {
@@ -172,7 +172,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
                     destination: {
                       ...s.order.destination,
                       chain: e.target.value as Chain,
-                    },
+                    } as any,
                   }
                 })
               }}
@@ -195,7 +195,7 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
                       destination: {
                         ...s.order.destination,
                         token: value as StableCoin,
-                      },
+                      } as any,
                     }
                   })
                   setTokenSelectd(value)
@@ -219,8 +219,8 @@ const PreviewComponent = (props: PreviewProps): JSX.Element => {
             ) : (
               <Button
                 disabled={
-                  order.destination.address === '' ||
-                  !isWeb3WalletByAddress(order.destination.address) ||
+                  order.destination?.address === '' ||
+                  !isWeb3WalletByAddress(order.destination?.address as string) ||
                   order.total.amount <= 0
                 }
                 onClick={() => {

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-key */
-import { Order, Testnet } from '@bloom-trade/types'
+import { Asset, Chain, Order, StableCoin, Testnet } from '@bloom-trade/types'
 import React, { useEffect, useState } from 'react'
 import PreviewComponent from './views/preview'
 import { BloomStore } from '../../store/BloomReact'
@@ -69,12 +69,12 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             amount: props.order?.total.amount || 0,
           },
           destination: {
-            chain: props.order?.destination.chain || 'eth',
-            address: props.order?.destination.address || '',
-            token: props.order?.destination.token || 'dai',
+            chain: props.order?.destination?.chain || 'eth',
+            address: props.order?.destination?.address || '',
+            token: props.order?.destination?.token || 'dai',
             description: {
-              name: props.order?.destination.description?.name || '',
-              image: props.order?.destination.description?.image || '',
+              name: props.order?.destination?.description?.name || '',
+              image: props.order?.destination?.description?.image || '',
             },
           },
         }
@@ -100,9 +100,9 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
           token: order.from?.token,
         },
         {
-          chain: order.destination.chain,
-          address: order.destination.address,
-          token: order.destination.token,
+          chain: order.destination?.chain as Chain,
+          address: order.destination?.address as string,
+          token: order.destination?.token as StableCoin,
         },
         order.total.amount.toString(),
       )
@@ -118,7 +118,9 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
   const steps = [
     {
       label: !order.total.amount ? 'You are going to send USD' : `Please, Confirm send $${order.total.amount}`,
-      labelCompleted: `You will send to ${formatWalletAddress(order.destination.address)} $${order.total.amount}`,
+      labelCompleted: `You will send to ${formatWalletAddress(order.destination?.address as string)} $${
+        order.total.amount
+      }`,
       component: (
         <PreviewComponent
           type={props.type}
@@ -129,7 +131,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
               {
                 dex: {
                   addresses: [address as string],
-                  chains: [order.destination.chain],
+                  chains: [order.destination?.chain as Chain],
                 },
               },
               {
@@ -162,7 +164,11 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
       ) : token.waitingForBlockchain && token.txHash ? (
         <WaitingForBlockchain
           txHash={token.txHash}
-          chain={store.testnet ? (getTestnetFromMainnet(order.destination.chain) as Testnet) : order.destination.chain}
+          chain={
+            store.testnet
+              ? (getTestnetFromMainnet(order.destination?.chain as Chain) as Testnet)
+              : (order.destination?.chain as Chain)
+          }
         />
       ) : token.error && !hasRetried ? (
         <ErrorComponent
@@ -193,7 +199,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
             }}
             onSelect={async (selectedToken) => {
               try {
-                const { isChainCorrect, change, chains } = checkChain(order.destination.chain)
+                const { isChainCorrect, change, chains } = checkChain(order.destination?.chain as Chain)
                 if (!isChainCorrect) {
                   alert('Incorrect chain, requesting change')
                   change()
@@ -215,7 +221,7 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
                   selectedToken,
                   chains.to.name,
                   order.total.amount.toString(),
-                  selectedToken === order.destination.token ? 'transfers' : 'swapper',
+                  selectedToken === (order.destination?.token as StableCoin) ? 'transfers' : 'swapper',
                 )
                 return true
               } catch (error) {
@@ -235,7 +241,11 @@ const BloomCheckout = (props: CheckoutProps): JSX.Element => {
       ) : transfer.waitingForBlockchain && transfer.txHash ? (
         <WaitingForBlockchain
           txHash={transfer.txHash}
-          chain={store.testnet ? (getTestnetFromMainnet(order.destination.chain) as Testnet) : order.destination.chain}
+          chain={
+            store.testnet
+              ? (getTestnetFromMainnet(order.destination?.chain as Chain) as Testnet)
+              : (order.destination?.chain as Chain)
+          }
         />
       ) : transfer.error && !hasRetried ? (
         <ErrorComponent
