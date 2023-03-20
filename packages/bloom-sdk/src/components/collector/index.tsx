@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import Bloom, { Asset, Chain, Order, PaymentMethods, Receipt, StableCoin, Testnet } from '@bloom-trade/types'
 import PreviewPage from './views/preview'
 import useWallet from '../../hooks/useWallet'
-import { OrderStore } from '../../store/order'
 import CurrencySelector from './views/currencySelector'
 import useToken from '../../hooks/useToken'
 import { useAccount, useNetwork } from 'wagmi'
@@ -16,6 +15,8 @@ import CreditCard from './views/creditCard'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe, Stripe } from '@stripe/stripe-js'
 import { customAlphabet } from 'nanoid'
+import { OrderContext } from '../../order/context'
+
 interface Props {
   order: Omit<Order, 'from' | 'destination'>
   onSuccess: (receipt: Receipt) => void
@@ -25,22 +26,22 @@ interface Props {
 const Collector = (props: Props): JSX.Element => {
   const { address } = useAccount()
   const { vaults, merchant } = useMerchant()
-  const order = OrderStore.useState((s) => s.order)
   const [disabledPaymentMethods, setDisabledPaymentMethods] = useState<PaymentMethods[]>([])
   const [stripe, setStripe] = useState<Stripe | null>(null)
+  const [order, setOrder] = useState<Order>({
+    ...props.order,
+  })
+  const [collectorContext, setCollectorContext] = useState<{
+    type: 'crypto' | 'creditCard' | 'bankAccount'
+    status: 'processing' | 'completed' | 'failed' | 'cancelled' | 'idle'
+    txHash?: string
+    chain?: Chain
+    token?: Asset
+  }>({
+    type: 'crypto',
+    status: 'idle',
+  })
   useEffect(() => {
-    OrderStore.update((s) => {
-      //Get vault from merchant
-      s.order = {
-        ...s.order,
-        id: props.order?.id || '',
-        orderId: props.order?.orderId || '',
-        date: props.order?.date || Date.now(),
-        total: {
-          amount: props.order?.total.amount || 0,
-        },
-      }
-    })
     if (!merchant) return
     ;(async () => {
       if (!merchant?.plugins) {
@@ -80,15 +81,13 @@ const Collector = (props: Props): JSX.Element => {
         (v) => v.chain === (testnet ? getTestnetFromMainnet(order.from?.chain as Chain) : order.from?.chain),
       )?.address
       if (!addr) throw new Error('Vault not found.')
-      OrderStore.update((s) => {
-        s.order = {
-          ...s.order,
-          destination: {
-            chain: order.from?.chain as Chain,
-            address: addr,
-            token: order.from?.token as StableCoin,
-          },
-        }
+      setOrder({
+        ...order,
+        destination: {
+          chain: order.from?.chain as Chain,
+          address: addr,
+          token: order.from?.token as StableCoin,
+        },
       })
       transfer.prepare(
         {
@@ -153,7 +152,6 @@ const Collector = (props: Props): JSX.Element => {
               default:
                 break
             }
-            console.log('passed')
             setActiveStep(1)
           }}
         />
@@ -167,17 +165,15 @@ const Collector = (props: Props): JSX.Element => {
             balance={balance}
             onSelect={async function (selectedToken: StableCoin): Promise<boolean | void> {
               try {
-                OrderStore.update((s) => {
-                  s.order = {
-                    ...s.order,
-                    from: {
-                      token: selectedToken,
-                      chain: testnet
-                        ? getMainnetFromTestnet(getChainNameById(chain?.id as number) as Testnet)
-                        : (getChainNameById(chain?.id as number) as Chain),
-                      address: address as string,
-                    },
-                  }
+                setOrder({
+                  ...order,
+                  from: {
+                    token: selectedToken,
+                    chain: testnet
+                      ? getMainnetFromTestnet(getChainNameById(chain?.id as number) as Testnet)
+                      : (getChainNameById(chain?.id as number) as Chain),
+                    address: address as string,
+                  },
                 })
                 //Prepare contract and gas
                 approve.prepare(
@@ -254,7 +250,19 @@ const Collector = (props: Props): JSX.Element => {
     },
   ]
 
-  return <div>{steps[activeStep].component}</div>
+  return (
+    <OrderContext.Provider
+      value={{
+        status: collectorContext.status,
+        type: collectorContext.type,
+        txHash: collectorContext.txHash,
+        chain: collectorContext.chain,
+        token: collectorContext.token,
+      }}
+    >
+      {steps[activeStep].component}
+    </OrderContext.Provider>
+  )
 }
 
 export default Collector

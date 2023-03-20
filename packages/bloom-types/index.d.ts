@@ -192,7 +192,7 @@ declare namespace Bloom {
       };
       amount: number;
     };
-    destination: {
+    destination?: {
       chain: Chain;
       address: string;
       token: StableCoin;
