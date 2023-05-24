@@ -21,6 +21,11 @@ const config: HardhatUserConfig = {
             accounts: [process.env.PRIVATE_KEY as string],
             chainId: 5,
         },
+        sepolia: {
+            url: process.env.RPC_SEPOLIA,
+            accounts: [process.env.PRIVATE_KEY as string],
+            chainId: 11155111,
+        },
         ethereum: {
             url: process.env.RPC_ETHMAINNET,
             accounts: [process.env.PRIVATE_KEY as string],
@@ -40,6 +45,7 @@ const config: HardhatUserConfig = {
     etherscan: {
         apiKey: {
             mainnet: process.env.ETHERSCAN_API_KEY as string,
+            sepolia: process.env.ETHERSCAN_API_KEY as string,
             goerli: process.env.ETHERSCAN_API_KEY as string,
             polygon: process.env.POLYGONSCAN_API_KEY as string,
             polygonMumbai: process.env.POLYGONSCAN_API_KEY as string,

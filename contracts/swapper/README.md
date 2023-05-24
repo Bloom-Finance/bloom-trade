@@ -16,6 +16,12 @@ For more information visit [Uniswap docs 🦄](https://docs.uniswap.org/)
 
 All testing is done using [Goerli Testnet 🔗](https://goerli.etherscan.io/)
 
+### Last stable testnet contracts for SEPOLIA ⚙️
+
+-   [SWAPPER 🔄](https://sepolia.etherscan.io/address/0x02B40c15024EE30D4A390671438c2BcF7dA7Dfa1): 0x02B40c15024EE30D4A390671438c2BcF7dA7Dfa1
+-   [TREASURE 🤑](https://sepolia.etherscan.io/address/0x5e5B5109AdBF940317e2a782dc2934f149408F0c): 0x5e5B5109AdBF940317e2a782dc2934f149408F0c
+-   [TRANSFERS 💸](https://sepolia.etherscan.io/address/0x0BB38d7E6dbD85432F27330f03A8311B3E8Ded32): 0x0BB38d7E6dbD85432F27330f03A8311B3E8Ded32
+
 ### Last stable testnet contracts for GOERLI ⚙️
 
 -   [SWAPPER 🔄](https://goerli.etherscan.io/address/0x067e55e43dFc70515e622035675f48A11C2BB031): 0x067e55e43dFc70515e622035675f48A11C2BB031

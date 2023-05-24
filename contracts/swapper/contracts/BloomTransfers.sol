@@ -13,6 +13,7 @@ contract BloomTransfers {
     IERC20 private dai;
     IERC20 private usdt;
     IERC20 private usdc;
+    event Transfer(string text);
 
     constructor(address _dai, address _usdc, address _usdt, address _treasure) {
         dai = IERC20(_dai);
@@ -37,6 +38,7 @@ contract BloomTransfers {
     /// @param to The address to send ETHS to
     function sendNativeToAddress(address to) external payable {
         uint256 fee = treasure.calculateFee(msg.value);
+        string memory helloWorld = "Hello World from BloomTransfers";
         require(
             address(this).balance > fee,
             "Fee is greater than the amount sent"
@@ -44,6 +46,7 @@ contract BloomTransfers {
         treasure.fundTreasureWithNativeCurrency{value: fee}();
         uint256 newAmount = msg.value - fee;
         payable(to).transfer(newAmount);
+        emit Transfer(helloWorld);
     }
 
     /// @notice Sends DAI to another address
