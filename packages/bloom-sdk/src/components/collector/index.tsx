@@ -18,7 +18,7 @@ import { customAlphabet } from 'nanoid'
 import { OrderContext } from '../../order/context'
 
 interface Props {
-  order: Omit<Order, 'from' | 'destination'>
+  order: Omit<Order, 'from' | 'destination'> //This should be an id
   onSuccess: (receipt: Receipt) => void
   onError: (error: Bloom.BloomError<any>) => void
 }
