@@ -8,7 +8,6 @@ import { SDKContext } from '../../../../wrapper/context'
 interface Props {
   onContinue: (paymentMethod: PaymentMethods) => void
   disabledPaymentMethods?: PaymentMethods[]
-  merchant: User | undefined
 }
 const PreviewPage = (props: Props): JSX.Element => {
   const [hasMounted, setHasMounted] = useState(false)
@@ -18,11 +17,10 @@ const PreviewPage = (props: Props): JSX.Element => {
   const { isConnected } = useAccount()
   const { switchNetwork } = useSwitchNetwork()
   const { chain } = useNetwork()
-  const { testnet } = useContext(SDKContext)
+  const { test } = useContext(SDKContext)
   useEffect(() => {
     setHasMounted(true)
   }, [])
-  if (!props.merchant?.plugins) return <>Loading...</>
 
   return (
     <>
@@ -34,11 +32,11 @@ const PreviewPage = (props: Props): JSX.Element => {
               setPaymentMethod(e.target.value as PaymentMethod)
             }}
           >
-            {props.merchant.plugins.map((plugin) => {
+            {[{ enabled: true, id: 'crypto', auth: undefined }].map((plugin) => {
               if (
                 !plugin.enabled ||
                 (plugin.id === 'creditCard' && !plugin.auth) ||
-                props.disabledPaymentMethods?.includes(plugin.id)
+                props.disabledPaymentMethods?.includes(plugin.id as PaymentMethods)
               )
                 return
               return (
@@ -66,7 +64,7 @@ const PreviewPage = (props: Props): JSX.Element => {
               {paymentMethod === 'crypto' && isConnected && chain && <h3>Connected to {getChainNameById(chain.id)}</h3>}
               <button
                 onClick={() => {
-                  !testnet && isTestnet(chain?.id as number) && switchNetwork && switchNetwork(1)
+                  !test && isTestnet(chain?.id as number) && switchNetwork && switchNetwork(1)
                   props.onContinue(paymentMethod)
                 }}
               >

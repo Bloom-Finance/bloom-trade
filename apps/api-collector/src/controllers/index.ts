@@ -1,2 +1,4 @@
 export * from './ping.controller';
-export * from './payment.controller';
+export * from './order.controller';
+export * from './vault.controller';
+export * from './wallet.controller';

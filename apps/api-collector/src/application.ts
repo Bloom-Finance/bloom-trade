@@ -9,8 +9,6 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
-import {AuthenticationComponent} from '@loopback/authentication';
-import {JWTAuthenticationComponent} from '@loopback/authentication-jwt';
 
 export {ApplicationConfig};
 
@@ -20,8 +18,6 @@ export class ApiCollectorApplication extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
-    this.component(AuthenticationComponent);
-    this.component(JWTAuthenticationComponent);
     // Set up the custom sequence
     this.sequence(MySequence);
 

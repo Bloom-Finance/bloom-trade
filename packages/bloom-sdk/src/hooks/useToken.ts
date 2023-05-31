@@ -12,7 +12,7 @@ import { useContext, useState } from 'react'
 import {
   erc20ABI,
   useAccount,
-  useProvider,
+  usePublicClient,
   usePrepareContractWrite,
   useContractWrite,
   useWaitForTransaction,
@@ -22,10 +22,10 @@ import { SDKContext } from '../wrapper/context'
 export default function useToken() {
   /*WAGMI  and WalletConnect Hooks*/
   const { isConnected, address } = useAccount()
-  const provider = useProvider()
+  const client = usePublicClient()
 
   /*Hooks and functions regarding useToken*/
-  const { testnet } = useContext(SDKContext)
+  const { test } = useContext(SDKContext)
   const [erc20Token, setErc20Token] = useState<
     | {
         address: `0x${string}`
@@ -53,7 +53,7 @@ export default function useToken() {
     address: erc20Token?.address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [erc20Token?.args.spender as `0x${string}`, erc20Token?.args.amount as BigNumber],
+    args: [erc20Token?.args.spender as `0x${string}`, erc20Token?.args.amount as unknown as bigint],
     enabled: erc20Token !== undefined,
   })
 
@@ -126,28 +126,30 @@ export default function useToken() {
         to: { chain: Chain; token: StableCoin; address: string },
         amount: string,
       ) => {
-        const allowanceContract = new ethers.Contract(
-          getTokenContractMetadataBySymbolAndChain(
-            from.token,
-            testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
-          )?.address as string,
-          erc20ABI,
-          provider,
-        )
-
         const type = from.token === to.token ? 'transfers' : 'swapper'
         const bloomContractAddress = getBloomContractsByChain(
-          testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+          test ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
           type,
         ) as `0x${string}`
-        const allowanceOfToken = (await allowanceContract.allowance(address, bloomContractAddress)) as BigNumber
+        if (!address) {
+          throw new Error('You must be signed in to a wallet to request token access')
+        }
+        const allowanceOfToken = await client.readContract({
+          address: getTokenContractMetadataBySymbolAndChain(
+            from.token,
+            test ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+          )?.address as `0x${string}`,
+          abi: erc20ABI,
+          functionName: 'allowance',
+          args: [address, bloomContractAddress],
+        })
         if (
           parseInt(
             convertTokenToDecimalsUnit(
               allowanceOfToken.toString(),
               getTokenContractMetadataBySymbolAndChain(
                 from.token,
-                testnet ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
+                test ? (getTestnetFromMainnet(to.chain) as Testnet) : to.chain,
               )?.decimals as number,
             ),
           ) < parseInt(amount)

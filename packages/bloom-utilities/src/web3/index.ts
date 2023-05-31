@@ -13,6 +13,7 @@ import {
   mainnet,
   polygon,
   avalanche,
+  Chain as WagmiChain,
 } from 'wagmi/chains';
 import Tokens from '../data/tokens.json';
 import Contracts from '../data/bloomContracts.json';
@@ -113,7 +114,7 @@ const getChainIdByName = (name: Chain | Testnet): number | undefined => {
  * @param {Testnet | Chain} chain - The chain you want to use.
  * @returns The wagmi instance for the chain
  */
-const getWagmiInstanceByChainName = (chain: Testnet | Chain) => {
+const getWagmiInstanceByChainName = (chain: Testnet | Chain): WagmiChain => {
   switch (chain) {
     case 'goerli':
       return goerli;

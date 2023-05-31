@@ -8,7 +8,7 @@ const config = {
   port: process.env.POSTGRES_PORT,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  database: process.env.PG_DATABASE,
+  database: process.env.POSTGRES_DB,
 };
 
 // Observe application's life cycle to disconnect the datasource when

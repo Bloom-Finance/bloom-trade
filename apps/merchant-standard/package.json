@@ -41,7 +41,7 @@
     "alchemy-sdk": "^2.2.0",
     "aos": "^3.0.0-beta.6",
     "apexcharts": "^3.37.0",
-    "axios": "^0.27.2",
+    "axios": "^1.4.0",
     "ethers": "^5.7.2",
     "firebase": "^9.15.0",
     "iconify": "^1.4.0",
@@ -66,7 +66,7 @@
     "storybook-addon-next-router": "^4.0.2",
     "stripe": "^11.14.0",
     "uuid": "^9.0.0",
-    "wagmi": "^0.10.11"
+    "wagmi": "^1.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

@@ -1,11 +1,9 @@
 import React from 'react'
 
 export const SDKContext = React.createContext<{
-  apiKey: string
-  apiSecret: string
-  testnet: boolean
+  test: boolean
+  apiUrl: string
 }>({
-  apiKey: '',
-  apiSecret: '',
-  testnet: false,
+  test: false,
+  apiUrl: '',
 })

@@ -1,9 +1,11 @@
 import {
+  ApiResponse,
   Balance,
   Chain,
   CustodialProvider,
   Environment,
   IBloomServices,
+  Order,
   User,
   Vault,
 } from '@bloom-trade/types';
@@ -19,9 +21,6 @@ interface IProvidersRequest {
 
 class BloomServices implements IBloomServices {
   private url: string;
-  private apiKey: string;
-
-  private apiSecret: string;
   private isTestnet: boolean = false;
 
   public stripe: {
@@ -40,7 +39,6 @@ class BloomServices implements IBloomServices {
           },
           {
             headers: {
-              apiKey: this.apiKey,
               'Content-Type': 'application/json',
             },
           }
@@ -52,26 +50,15 @@ class BloomServices implements IBloomServices {
     },
   };
 
-  constructor(
-    apiKey: string,
-    apiSecret: string,
-    params?: { test?: boolean; local?: boolean }
-  ) {
-    this.apiKey = apiKey;
-    this.apiSecret = apiSecret;
-    if (params?.test) {
-      this.url = 'https://test.bloom.trade/api';
-      this.isTestnet = true;
-    } else {
-      this.url = 'https://merchant.bloom.trade/api';
-    }
+  constructor(params: { test?: boolean; apiUrl: string }) {
+    this.url = params.apiUrl;
+    this.isTestnet = params.test || false;
   }
 
   async getUser(): Promise<{ user: User }> {
     try {
       const { data } = await axios.get<{ user: User }>(`${this.url}/user`, {
         headers: {
-          apiKey: this.apiKey,
           'Content-Type': 'application/json',
         },
       });
@@ -80,18 +67,19 @@ class BloomServices implements IBloomServices {
       throw new Error(error as any);
     }
   }
+
   async getVaults(): Promise<{ vaults: Vault[] }> {
     try {
-      const { data } = await axios.get<{ vaults: Bloom.Vault[] }>(
-        `${this.url}/vault`,
-        {
-          headers: {
-            apiKey: this.apiKey,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      return data;
+      const {
+        data: { data: res },
+      } = await axios.get<ApiResponse<Bloom.Vault[]>>(`${this.url}/vaults`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return {
+        vaults: res,
+      };
     } catch (error) {
       throw new Error(error as any);
     }
@@ -132,7 +120,7 @@ class BloomServices implements IBloomServices {
         });
       });
     }
-    let url = `${this.url}/wallets/balance?testnet=${this.isTestnet}`;
+    let url = `${this.url}/wallet/balance?testnet=${this.isTestnet}`;
     if (params?.onlyStableCoins) {
       url += `&stableCoins=true`;
     }
@@ -145,12 +133,27 @@ class BloomServices implements IBloomServices {
       },
       {
         headers: {
-          apiKey: this.apiKey,
           'Content-Type': 'application/json',
         },
       }
     );
     return data.balance;
+  }
+
+  async getOrder(id: string): Promise<Order> {
+    try {
+      const { data: res } = await axios.get<ApiResponse<Order>>(
+        `${this.url}/order/${id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return res.data;
+    } catch (error) {
+      throw new Error(error as any);
+    }
   }
 }
 

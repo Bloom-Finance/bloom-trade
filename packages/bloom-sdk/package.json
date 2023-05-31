@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1-alpha",
   "description": "Software development kit of bloom trade",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -45,6 +45,7 @@
   "dependencies": {
     "@bloom-trade/services": "0.0.8",
     "@bloom-trade/utilities": "0.1.7",
+    "axios": "^1.4.0",
     "nanoid": "^4.0.1",
     "pullstate": "^1.25.0",
     "typescript": "^4.9.5"

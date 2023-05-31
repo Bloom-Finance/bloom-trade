@@ -1,36 +1,33 @@
-/* eslint-disable no-case-declarations */
-import React, { useContext, useEffect, useState } from 'react'
-import Bloom, { Asset, Chain, Order, PaymentMethods, Receipt, StableCoin, Testnet } from '@bloom-trade/types'
-import PreviewPage from './views/preview'
-import useWallet from '../../hooks/useWallet'
-import CurrencySelector from './views/currencySelector'
-import useToken from '../../hooks/useToken'
-import { useAccount, useNetwork } from 'wagmi'
-import { getChainNameById, getMainnetFromTestnet, getTestnetFromMainnet } from '@bloom-trade/utilities'
-import { SDKContext } from '../../wrapper/context'
-import SummaryComponent from './views/summary'
-import useMerchant from '../../hooks/useMerchant'
+/* eslint-disable @typescript-eslint/no-extra-semi */
 import BloomServices from '@bloom-trade/services'
-import CreditCard from './views/creditCard'
-import { Elements } from '@stripe/react-stripe-js'
-import { loadStripe, Stripe } from '@stripe/stripe-js'
+import { Asset, Chain, Order, PaymentMethods, Receipt, StableCoin, Testnet } from '@bloom-trade/types'
+import { getChainNameById, getMainnetFromTestnet, getTestnetFromMainnet } from '@bloom-trade/utilities'
 import { customAlphabet } from 'nanoid'
+import React, { useContext, useEffect, useState } from 'react'
+import { useAccount, useNetwork } from 'wagmi'
+import useMerchant from '../../hooks/useMerchant'
+import useToken from '../../hooks/useToken'
+import useWallet from '../../hooks/useWallet'
 import { OrderContext } from '../../order/context'
+import { SDKContext } from '../../wrapper/context'
+import CurrencySelector from './views/currencySelector'
+import PreviewPage from './views/preview'
+import SummaryComponent from './views/summary'
 
 interface Props {
-  order: Omit<Order, 'from' | 'destination'> //This should be an id
+  orderId: string
   onSuccess: (receipt: Receipt) => void
   onError: (error: Bloom.BloomError<any>) => void
 }
 
 const Collector = (props: Props): JSX.Element => {
   const { address } = useAccount()
-  const { vaults, merchant } = useMerchant()
-  const [disabledPaymentMethods, setDisabledPaymentMethods] = useState<PaymentMethods[]>([])
-  const [stripe, setStripe] = useState<Stripe | null>(null)
-  const [order, setOrder] = useState<Order>({
-    ...props.order,
-  })
+  const { vaults } = useMerchant()
+  const { approve, transfer } = useToken()
+  const { getBalance, balance } = useWallet()
+  const { chain } = useNetwork()
+  const [activeStep, setActiveStep] = useState(0)
+  const { test, apiUrl } = useContext(SDKContext)
   const [collectorContext, setCollectorContext] = useState<{
     type: 'crypto' | 'creditCard' | 'bankAccount'
     status: 'processing' | 'completed' | 'failed' | 'cancelled' | 'idle'
@@ -41,44 +38,31 @@ const Collector = (props: Props): JSX.Element => {
     type: 'crypto',
     status: 'idle',
   })
-  useEffect(() => {
-    if (!merchant) return
-    ;(async () => {
-      if (!merchant?.plugins) {
-        setDisabledPaymentMethods(['creditCard', 'bankAccount', 'crypto'])
-        return
-      }
-      const creditCard = merchant.plugins.find((p) => p.id === 'creditCard')
-      if (!creditCard || !creditCard.auth) {
-        setDisabledPaymentMethods(['creditCard'])
-        return
-      }
-      const stripeResolved = await loadStripe(creditCard.auth.apiKey)
-      setStripe(stripeResolved)
-    })()
-  }, [merchant])
 
-  const { approve, transfer } = useToken()
-  const { getBalance, balance } = useWallet()
-  const { chain } = useNetwork()
-  const [activeStep, setActiveStep] = useState(0)
-  const { testnet, apiKey, apiSecret } = useContext(SDKContext)
-  const bloomServices = new BloomServices(apiKey, apiSecret, {
-    test: testnet,
+  const bloomServices = new BloomServices({
+    test,
+    apiUrl,
   })
+
+  const [order, setOrder] = useState<Order>()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethods>()
-  const [clientSecret, setClientSecret] = useState<string>()
+  useEffect(() => {
+    ;(async () => {
+      const order = await bloomServices.getOrder(props.orderId)
+      setOrder(order)
+    })()
+  }, [])
   useEffect(() => {
     if (
       activeStep === 2 &&
       !transfer.waitingForUserResponse &&
       !transfer.waitingForBlockchain &&
       !transfer.error &&
-      order.from
+      order?.from
     ) {
       if (!vaults) throw new Error('Merchant has no vaults configured.')
       const addr = vaults.find(
-        (v) => v.chain === (testnet ? getTestnetFromMainnet(order.from?.chain as Chain) : order.from?.chain),
+        (v) => v.chain === (test ? getTestnetFromMainnet(order.from?.chain as Chain) : order.from?.chain),
       )?.address
       if (!addr) throw new Error('Vault not found.')
       setOrder({
@@ -110,11 +94,11 @@ const Collector = (props: Props): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [approve.waitingForUserResponse, approve.waitingForBlockchain])
 
-  if (transfer.status === 'success' && transfer.receipt) {
+  if (transfer.status === 'success' && transfer.receipt && order) {
     const receipt: Receipt = {
       id: customAlphabet('1234567890abcdef', 10)(),
       txHash: transfer.txHash,
-      createdAt: order.date,
+      createdAt: order?.iat,
       chain: order.from?.chain as Chain,
       type: 'crypto',
       currency: order.from?.token as Asset,
@@ -137,18 +121,17 @@ const Collector = (props: Props): JSX.Element => {
       label: 'Preview order',
       component: (
         <PreviewPage
-          disabledPaymentMethods={disabledPaymentMethods}
-          merchant={merchant}
+          disabledPaymentMethods={['bankAccount', 'creditCard']}
           onContinue={async (paymentMethod) => {
             setSelectedPaymentMethod(paymentMethod)
             switch (paymentMethod) {
               case 'crypto':
                 await getBalance()
                 break
-              case 'creditCard':
-                const { clientSecret } = await bloomServices.stripe.createPaymentIntent(order.total.amount, 'usd')
-                setClientSecret(clientSecret)
-                break
+              // case 'creditCard':
+              //   const { clientSecret } = await bloomServices.stripe.createPaymentIntent(order.total.amount, 'usd')
+              //   setClientSecret(clientSecret)
+              //   break
               default:
                 break
             }
@@ -166,10 +149,10 @@ const Collector = (props: Props): JSX.Element => {
             onSelect={async function (selectedToken: StableCoin): Promise<boolean | void> {
               try {
                 setOrder({
-                  ...order,
+                  ...(order as Order),
                   from: {
                     token: selectedToken,
-                    chain: testnet
+                    chain: test
                       ? getMainnetFromTestnet(getChainNameById(chain?.id as number) as Testnet)
                       : (getChainNameById(chain?.id as number) as Chain),
                     address: address as string,
@@ -179,7 +162,7 @@ const Collector = (props: Props): JSX.Element => {
                 approve.prepare(
                   selectedToken,
                   getChainNameById(chain?.id as number),
-                  props.order.total.amount.toString(),
+                  (order as Order).total.amount.toString() as string,
                   'transfers',
                 )
                 return true
@@ -192,41 +175,40 @@ const Collector = (props: Props): JSX.Element => {
               approve.execute()
             }}
           />
-        ) : !clientSecret ? (
-          'Loading...'
         ) : (
-          <Elements
-            options={{
-              clientSecret: clientSecret,
-              appearance: {
-                theme: 'stripe',
-              },
-            }}
-            stripe={stripe}
-          >
-            <CreditCard
-              clientSecret={clientSecret}
-              onError={(error) => {
-                props.onError({
-                  msg: error,
-                  isError: true,
-                })
-              }}
-              onSuccess={(payment) => {
-                const receipt: Receipt = {
-                  id: customAlphabet('1234567890abcdef', 10)(),
-                  createdAt: order.date,
-                  type: 'creditCard',
-                  currency: payment.currency,
-                  status: payment.status === 'succeeded' ? 'completed' : 'failed',
-                  total: {
-                    ...order.total,
-                  },
-                }
-                props.onSuccess(receipt)
-              }}
-            />
-          </Elements>
+          <>Stripe option disabled</>
+          // <Elements
+          //   options={{
+          //     clientSecret: clientSecret,
+          //     appearance: {
+          //       theme: 'stripe',
+          //     },
+          //   }}
+          //   stripe={stripe}
+          // >
+          //   <CreditCard
+          //     clientSecret={clientSecret}
+          //     onError={(error) => {
+          //       props.onError({
+          //         msg: error,
+          //         isError: true,
+          //       })
+          //     }}
+          //     onSuccess={(payment) => {
+          //       const receipt: Receipt = {
+          //         id: customAlphabet('1234567890abcdef', 10)(),
+          //         createdAt: order.date,
+          //         type: 'creditCard',
+          //         currency: payment.currency,
+          //         status: payment.status === 'succeeded' ? 'completed' : 'failed',
+          //         total: {
+          //           ...order.total,
+          //         },
+          //       }
+          //       props.onSuccess(receipt)
+          //     }}
+          //   />
+          // </Elements>
         ),
     },
     {

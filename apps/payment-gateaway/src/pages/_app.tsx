@@ -22,11 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <WagmiConfig config={wagmiConfig}>
-        <BloomSdk
-          testnet={true}
-          apiKey='YOUR_BLOOM_API_KEY'
-          apiSecret='YOUR_BLOOM_API_SECRET'
-        >
+        <BloomSdk test={true} apiUrl={'http://localhost:3000'}>
           <Component {...pageProps} />;
         </BloomSdk>
       </WagmiConfig>

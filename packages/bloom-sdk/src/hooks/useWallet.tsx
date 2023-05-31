@@ -20,13 +20,14 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
   const { open, isOpen } = useWeb3Modal()
 
   const { isConnected, address } = useAccount()
-  const { apiKey, apiSecret, testnet } = useContext(SDKContext)
+  const { apiUrl, test } = useContext(SDKContext)
   const { chain: selectedChain } = useNetwork()
   const [hasMounted, setHasMounted] = useState(false)
   /*Hooks and functions regarding useWallet*/
   const [balance, setBalance] = useState<{ currency: Bloom.StableCoin; amount: string }[]>([])
-  const bloomServices = new BloomServices(apiKey, apiSecret, {
-    test: testnet || false,
+  const bloomServices = new BloomServices({
+    test: test || false,
+    apiUrl,
   })
 
   /* A function that returns a button that connects to a wallet. */
@@ -75,7 +76,7 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
             dex: {
               addresses: [address as string],
               chains: [
-                testnet
+                test
                   ? getMainnetFromTestnet(getChainNameById(selectedChain.id) as Testnet)
                   : (getChainNameById(selectedChain.id) as Chain),
               ],
@@ -113,7 +114,7 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
   } => {
     if (!selectedChain) throw new Error('Chain not supported')
     const sourceChainId = selectedChain.id
-    const destinationChainName = testnet ? (getTestnetFromMainnet(desiredChain) as Chain | Testnet) : desiredChain
+    const destinationChainName = test ? (getTestnetFromMainnet(desiredChain) as Chain | Testnet) : desiredChain
     const destinationChainId = getChainIdByName(destinationChainName)
     if (!sourceChainId || !destinationChainId || !switchNetwork) {
       throw new Error('Chain not supported')
@@ -143,7 +144,7 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
           dex: {
             addresses: [address as string],
             chains: [
-              testnet
+              test
                 ? getMainnetFromTestnet(getChainNameById(selectedChain.id) as Testnet)
                 : (getChainNameById(selectedChain.id) as Chain),
             ],

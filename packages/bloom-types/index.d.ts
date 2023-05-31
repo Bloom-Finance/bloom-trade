@@ -48,6 +48,12 @@ declare namespace Bloom {
     avax = 'https://snowtrace.io',
   }
 
+  interface ApiResponse<T> {
+    data: T;
+    message: string;
+    status: number;
+  }
+
   type User = {
     id: string;
     displayName?: string;
@@ -167,10 +173,12 @@ declare namespace Bloom {
     };
   };
   type Order = {
-    id: string;
+    _id: number;
     orderId: string;
+    status: 'pending' | 'completed' | 'failed';
+    type: 'crypto' | 'creditCard' | 'bankAccount';
     txHash?: `0x${string}`;
-    date: number;
+    iat: number;
     from?: {
       chain: Chain;
       address: string;
@@ -247,8 +255,8 @@ declare namespace Bloom {
     };
   };
   type Vault = {
-    id: string;
-    user: string;
+    _id?: string;
+    uid: string;
     chain: Chain | 'goerli';
     address: string;
     owners?: string[];

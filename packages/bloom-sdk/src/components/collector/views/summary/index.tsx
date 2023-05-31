@@ -1,17 +1,18 @@
-import { Order, Testnet } from '@bloom-trade/types'
+import { Chain, Order, Testnet } from '@bloom-trade/types'
 import { capitalize, formatWalletAddress, getTestnetFromMainnet } from '@bloom-trade/utilities'
 import React, { useContext } from 'react'
 import { SDKContext } from '../../../../wrapper/context'
 
 export interface Props {
-  order: Order
+  order: Order | undefined
   actions: {
     button: JSX.Element
   }
 }
 
 const SummaryComponent = (props: Props): JSX.Element => {
-  const { testnet } = useContext(SDKContext)
+  const { test } = useContext(SDKContext)
+  if (!props.order) return <></>
   return (
     <div
       style={{
@@ -20,16 +21,17 @@ const SummaryComponent = (props: Props): JSX.Element => {
     >
       <div>
         <div>
-          {props.order.destination.description?.image && <img src={props.order.destination.description.image} />}
+          {props.order.destination?.description?.image && <img src={props.order.destination.description.image} />}
         </div>
         <div>
           <label>
-            {props.order.destination.description?.name || formatWalletAddress(props.order.destination.address)}
+            {props.order.destination?.description?.name ||
+              formatWalletAddress(props.order.destination?.address as string)}
           </label>
           <label>
-            {`${capitalize(props.order.destination.chain)} ${
-              testnet ? `(${getTestnetFromMainnet(props.order.destination.chain) as Testnet})` : ''
-            }, ${props.order.destination.token.toUpperCase()}`}
+            {`${capitalize(props.order.destination?.chain as string)} ${
+              test ? `(${getTestnetFromMainnet(props.order.destination?.chain as Chain) as Testnet})` : ''
+            }, ${props.order.destination?.token.toUpperCase()}`}
           </label>
         </div>
       </div>
