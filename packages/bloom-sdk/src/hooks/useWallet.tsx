@@ -13,6 +13,7 @@ import { SDKContext } from '../wrapper/context'
 import BloomServices from '@bloom-trade/services'
 import { useWeb3Modal } from '@web3modal/react'
 import React from 'react'
+
 export default function useWallet(params?: { preFetchBalance: boolean }) {
   /*WAGMI  and WalletConnect Hooks*/
   const { switchNetwork } = useSwitchNetwork()
@@ -64,9 +65,10 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
       </button>
     )
   }
-
   useEffect(() => {
     setHasMounted(true)
+  }, [])
+  useEffect(() => {
     if (!params?.preFetchBalance || !params) return
     ;(async () => {
       try {
@@ -139,6 +141,7 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
   const getBalance = async () => {
     try {
       if (!address || !isConnected || !selectedChain) return
+
       const balance = await bloomServices.getBalance(
         {
           dex: {
@@ -154,6 +157,7 @@ export default function useWallet(params?: { preFetchBalance: boolean }) {
           onlyStableCoins: true,
         },
       )
+
       const newBalances: React.SetStateAction<any[]> = []
       balance.forEach((b) => {
         if (parseFloat(b.balance).toFixed(2).toString() !== '0.00') {

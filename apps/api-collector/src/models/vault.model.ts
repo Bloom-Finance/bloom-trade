@@ -1,6 +1,9 @@
 import {Entity, model, property} from '@loopback/repository';
+import {customAlphabet} from 'nanoid';
 
-@model({settings: {strict: false}})
+@model({
+  settings: {postgresql: {schema: 'public', table: 'vaults'}},
+})
 export class Vault extends Entity {
   @property({
     type: 'number',
@@ -8,6 +11,15 @@ export class Vault extends Entity {
     generated: true,
   })
   _id?: number;
+
+  @property({
+    type: 'string',
+    required: true,
+    default: () => {
+      return customAlphabet('1234567890abcdef', 10)();
+    },
+  })
+  uid: string;
 
   @property({
     type: 'string',

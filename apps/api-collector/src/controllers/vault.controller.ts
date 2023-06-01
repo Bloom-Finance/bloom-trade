@@ -27,10 +27,27 @@ export class VaultController {
     public vaultRepository: VaultRepository,
   ) {}
 
-  @post('/vaults')
+  @post('/vault')
   @response(200, {
     description: 'Vault model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Vault)}},
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            message: {
+              type: 'string',
+              default: 'Vault created successfully',
+            },
+            data: getModelSchemaRef(Vault),
+            status: {
+              type: 'number',
+              default: 200,
+            },
+          },
+        },
+      },
+    },
   })
   async create(
     @requestBody({
@@ -38,7 +55,7 @@ export class VaultController {
         'application/json': {
           schema: getModelSchemaRef(Vault, {
             title: 'NewVault',
-            exclude: ['_id'],
+            exclude: ['_id', 'uid'],
           }),
         },
       },
@@ -53,7 +70,7 @@ export class VaultController {
     };
   }
 
-  @get('/vaults/count')
+  @get('/vault/count')
   @response(200, {
     description: 'Vault model count',
     content: {'application/json': {schema: CountSchema}},
@@ -62,14 +79,25 @@ export class VaultController {
     return this.vaultRepository.count(where);
   }
 
-  @get('/vaults')
+  @get('/vault')
   @response(200, {
     description: 'Array of Vault model instances',
     content: {
       'application/json': {
         schema: {
-          type: 'array',
-          items: getModelSchemaRef(Vault, {includeRelations: true}),
+          type: 'object',
+          properties: {
+            message: {
+              type: 'string',
+            },
+            data: {
+              type: 'array',
+              items: getModelSchemaRef(Vault, {includeRelations: true}),
+            },
+            status: {
+              type: 'number',
+            },
+          },
         },
       },
     },
@@ -85,7 +113,7 @@ export class VaultController {
     };
   }
 
-  @get('/vaults/{id}')
+  @get('/vault/{id}')
   @response(200, {
     description: 'Vault model instance',
     content: {
@@ -102,7 +130,7 @@ export class VaultController {
     return this.vaultRepository.findById(id, filter);
   }
 
-  @patch('/vaults/{id}')
+  @patch('/vault/{id}')
   @response(204, {
     description: 'Vault PATCH success',
   })
@@ -120,7 +148,7 @@ export class VaultController {
     await this.vaultRepository.updateById(id, vault);
   }
 
-  @put('/vaults/{id}')
+  @put('/vault/{id}')
   @response(204, {
     description: 'Vault PUT success',
   })

@@ -72,7 +72,7 @@ class BloomServices implements IBloomServices {
     try {
       const {
         data: { data: res },
-      } = await axios.get<ApiResponse<Bloom.Vault[]>>(`${this.url}/vaults`, {
+      } = await axios.get<ApiResponse<Bloom.Vault[]>>(`${this.url}/vault`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -124,7 +124,7 @@ class BloomServices implements IBloomServices {
     if (params?.onlyStableCoins) {
       url += `&stableCoins=true`;
     }
-    const { data } = await axios.post<{ balance: Balance }>(
+    const { data: res } = await axios.post<ApiResponse<Balance>>(
       url,
       {
         addresses,
@@ -137,7 +137,7 @@ class BloomServices implements IBloomServices {
         },
       }
     );
-    return data.balance;
+    return res.data;
   }
 
   async getOrder(id: string): Promise<Order> {

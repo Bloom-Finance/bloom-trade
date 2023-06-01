@@ -6,7 +6,6 @@ import {
   HttpErrors,
   param,
   post,
-  put,
   Request,
   requestBody,
   response,
@@ -15,9 +14,8 @@ import {
 import {OrderRepository} from '../repositories';
 import {ApiResponse} from '../@types';
 import {Order} from '../models';
-import {customAlphabet} from 'nanoid';
 export class OrderController {
-  private FRONTEND = process.env.FRONTEND as string;
+  private FRONTEND = process.env.PAYMENT_GATEAWAY as string;
   constructor(
     @inject(RestBindings.Http.REQUEST) private req: Request,
     @repository(OrderRepository)
@@ -160,9 +158,11 @@ export class OrderController {
   // @get('/payment/user')
   // async retrieveMerchantInfo() {}
 
-  @get('/order/${id}')
-  async getOrder(@param.path.string('id') id: number) {
-    const paymentOrder = this.orderModel.find({
+  @get('/order/{id}')
+  async getOrder(
+    @param.path.string('id') id: number,
+  ): Promise<ApiResponse<Order>> {
+    const paymentOrder = await this.orderModel.findOne({
       where: {
         uid: id,
       },
@@ -170,6 +170,10 @@ export class OrderController {
     if (!paymentOrder) {
       throw new HttpErrors.NotFound('Payment order not found');
     }
-    return paymentOrder;
+    return {
+      data: paymentOrder,
+      message: 'Payment order found',
+      status: 200,
+    };
   }
 }

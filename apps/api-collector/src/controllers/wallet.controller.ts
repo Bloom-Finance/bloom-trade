@@ -1,6 +1,6 @@
 // Uncomment these imports to begin using these cool features!
 
-import {get, param, requestBody} from '@loopback/rest';
+import {get, param, post, requestBody, response} from '@loopback/rest';
 import {Chain, Provider} from '@bloom-trade/types';
 import Connector from '@bloom-trade/finance-connector';
 import {
@@ -20,11 +20,109 @@ interface IProvidersRequest {
 
 export class WalletController {
   constructor() {}
-  @get('/wallet/balance')
+  @post('/wallet/balance')
+  @response(200, {
+    description: 'Balance model instance',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            message: {
+              type: 'string',
+              default: 'Balance fetched successfully',
+            },
+            data: {
+              type: 'object',
+              properties: {
+                asset: {
+                  type: 'string',
+                },
+                balance: {
+                  type: 'number',
+                },
+                description: {
+                  type: 'string',
+                },
+                detail: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      address: {
+                        type: 'string',
+                      },
+                      provider: {
+                        type: 'string',
+                      },
+                      chain: {
+                        type: 'string',
+                      },
+                      balance: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            status: {
+              type: 'number',
+              default: 200,
+            },
+          },
+        },
+      },
+    },
+  })
   async getBalance(
     @param.query.string('testnet') testnet: string,
     @param.query.string('stableCoins') stableCoins: string,
-    @requestBody()
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              addresses: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+              providers: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    type: {
+                      type: 'string',
+                    },
+                    auth: {
+                      type: 'object',
+                      properties: {
+                        apiKey: {
+                          type: 'string',
+                        },
+                        apiSecret: {
+                          type: 'string',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              chains: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    })
     body: {
       addresses: string[];
       providers?: IProvidersRequest[];
@@ -85,9 +183,13 @@ export class WalletController {
           addresses: body.addresses,
           chain: chain,
           provider: {
-            useTestnet:
-              (mode === 'DEV' ? true : false) ||
-              (testnet === 'true' ? true : false),
+            useTestnet: testnet
+              ? testnet === 'true'
+                ? true
+                : false
+              : mode === 'DEV'
+              ? true
+              : false,
             id: scanner,
             auth: {
               apiKey: scannerApiKey,
@@ -99,9 +201,13 @@ export class WalletController {
     if (circleCreds) {
       providerCreds.push({
         provider: {
-          useTestnet:
-            (mode === 'DEV' ? true : false) ||
-            (testnet === 'true' ? true : false),
+          useTestnet: testnet
+            ? testnet === 'true'
+              ? true
+              : false
+            : mode === 'DEV'
+            ? true
+            : false,
           id: 'circle',
           auth: {
             apiKey: circleCreds.auth.apiKey,

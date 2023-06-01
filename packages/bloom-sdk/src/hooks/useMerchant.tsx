@@ -16,7 +16,7 @@ export default function useMerchant() {
       const { vaults } = await bloomServices.getVaults()
       setVaults(vaults)
     })()
-  }, [bloomServices])
+  }, [])
 
   return {
     vaults,

@@ -48,10 +48,12 @@ const Collector = (props: Props): JSX.Element => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethods>()
   useEffect(() => {
     ;(async () => {
+      if (!props.orderId) return
       const order = await bloomServices.getOrder(props.orderId)
       setOrder(order)
     })()
-  }, [])
+  }, [props.orderId])
+  console.log(order)
   useEffect(() => {
     if (
       activeStep === 2 &&
@@ -65,14 +67,7 @@ const Collector = (props: Props): JSX.Element => {
         (v) => v.chain === (test ? getTestnetFromMainnet(order.from?.chain as Chain) : order.from?.chain),
       )?.address
       if (!addr) throw new Error('Vault not found.')
-      setOrder({
-        ...order,
-        destination: {
-          chain: order.from?.chain as Chain,
-          address: addr,
-          token: order.from?.token as StableCoin,
-        },
-      })
+
       transfer.prepare(
         {
           token: order.from?.token,
@@ -148,16 +143,29 @@ const Collector = (props: Props): JSX.Element => {
             balance={balance}
             onSelect={async function (selectedToken: StableCoin): Promise<boolean | void> {
               try {
+                if (!vaults) throw new Error('Merchant has no vaults configured.')
+                if (!order) throw new Error('Order not found.')
+                const from = {
+                  token: selectedToken,
+                  chain: test
+                    ? getMainnetFromTestnet(getChainNameById(chain?.id as number) as Testnet)
+                    : (getChainNameById(chain?.id as number) as Chain),
+                  address: address as string,
+                }
+                const addr = vaults.find(
+                  (v) => v.chain === (test ? getTestnetFromMainnet(from.chain as Chain) : from.chain),
+                )?.address
+                if (!addr) throw new Error('Vault not found.')
                 setOrder({
                   ...(order as Order),
-                  from: {
-                    token: selectedToken,
-                    chain: test
-                      ? getMainnetFromTestnet(getChainNameById(chain?.id as number) as Testnet)
-                      : (getChainNameById(chain?.id as number) as Chain),
-                    address: address as string,
+                  from,
+                  destination: {
+                    chain: from.chain,
+                    address: addr,
+                    token: from.token as StableCoin,
                   },
                 })
+
                 //Prepare contract and gas
                 approve.prepare(
                   selectedToken,

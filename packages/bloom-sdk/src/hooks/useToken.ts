@@ -3,6 +3,7 @@ import {
   convertDecimalsUnitToToken,
   convertTokenToDecimalsUnit,
   getBloomContractsByChain,
+  getChainIdByName,
   getSwapperAbi,
   getTestnetFromMainnet,
   getTokenContractMetadataBySymbolAndChain,
@@ -17,7 +18,7 @@ import {
   useContractWrite,
   useWaitForTransaction,
 } from 'wagmi'
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { SDKContext } from '../wrapper/context'
 export default function useToken() {
   /*WAGMI  and WalletConnect Hooks*/
@@ -31,12 +32,11 @@ export default function useToken() {
         address: `0x${string}`
         args: {
           spender: `0x${string}`
-          amount: BigNumber
+          amount: bigint
         }
       }
     | undefined
   >()
-
   const [transferData, setTransferData] = useState<
     | {
         address: `0x${string}`
@@ -53,10 +53,10 @@ export default function useToken() {
     address: erc20Token?.address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [erc20Token?.args.spender as `0x${string}`, erc20Token?.args.amount as unknown as bigint],
+    args: [erc20Token?.args.spender as `0x${string}`, erc20Token?.args.amount as bigint],
     enabled: erc20Token !== undefined,
   })
-
+  console.log(tokenApprovalConfig)
   const {
     write: approve,
     data: tokenApprovalTxResult,
@@ -100,11 +100,12 @@ export default function useToken() {
         const retrievedToken = getTokenContractMetadataBySymbolAndChain(token, chain)
         if (!isConnected) throw new Error('You must be signed in to a wallet to request token access')
         if (!retrievedToken) throw new Error('No token found')
+
         setErc20Token({
           address: retrievedToken.address as `0x${string}`,
           args: {
             spender: getBloomContractsByChain(chain, type) as `0x${string}`,
-            amount: ethers.BigNumber.from(convertDecimalsUnitToToken(amount, retrievedToken.decimals)),
+            amount: BigInt(convertDecimalsUnitToToken(amount, retrievedToken.decimals)),
           },
         })
       },
