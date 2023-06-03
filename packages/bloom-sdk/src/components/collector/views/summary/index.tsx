@@ -12,7 +12,7 @@ export interface Props {
 
 const SummaryComponent = (props: Props): JSX.Element => {
   const { test } = useContext(SDKContext)
-  if (!props.order) return <></>
+  if (!props.order) return <>Loading component...</>
   return (
     <div
       style={{

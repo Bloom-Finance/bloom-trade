@@ -19,11 +19,14 @@ const wagmiConfig = createConfig({
 });
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
 export default function App({ Component, pageProps }: AppProps) {
+  const API_URL = process.env.API_URL as string;
+  const AnyComponent = Component as any;
+  const test = (process.env.MODE as string) === 'PROD' ? false : true;
   return (
     <>
       <WagmiConfig config={wagmiConfig}>
-        <BloomSdk test={false} apiUrl={'http://localhost:3000'}>
-          <Component {...pageProps} />;
+        <BloomSdk test={test} apiUrl={API_URL}>
+          <AnyComponent {...pageProps} />;
         </BloomSdk>
       </WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />

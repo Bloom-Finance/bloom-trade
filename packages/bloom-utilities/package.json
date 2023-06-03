@@ -1,6 +1,6 @@
 {
   "name": "@bloom-trade/utilities",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -39,7 +39,7 @@
     "firebase": "^9.15.0",
     "moment": "^2.29.4",
     "numeral": "^2.0.6",
-    "wagmi": "^1.0.9",
+    "wagmi": "^1.1.0",
     "web3": "^1.8.2"
   },
   "devDependencies": {

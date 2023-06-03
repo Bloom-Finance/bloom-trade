@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  # Payment gateaway
+  payment-gateaway:
+    image: payment-gateaway:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+  # Api Collector backend
+  api-collector:
+    image: api-collector:latest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+  #PostgreSQL
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+       - "5432:5432"
+  #PgAdmin
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
+
+

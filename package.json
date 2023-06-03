@@ -9,11 +9,16 @@
     "docs": "npx lerna run dev --scope=bloom-trade-docs",
     "graph": "npx nx graph",
     "build:all": "npx lerna run build",
-    "dev:merchant-standard": "npx lerna run dev --scope=merchant-standard",
+    "dev:payment-gateaway": "npx lerna run dev --scope=payment-gateaway",
+    "start:payment-gateaway": "cd apps/payment-gateaway && yarn run dev",
+    "start:api-collector": "cd apps/api-collector && yarn run start",
     "upgrade:packages": "npx lerna version --no-private",
     "release": "cross-env HUSKY_BYPASS=true HUSKY=0 lerna publish --no-private",
     "prepare": "husky install",
-    "dev:https:merchant-standard": "npx lerna run dev:https --scope=merchant-standard"
+    "upgrade:deps": "yarn upgrade-interactive --latest",
+    "docker": "yarn lerna run docker:build",
+    "migrate": "npx lerna run migrate --scope=migrator",
+    "compose": "docker-compose up -d"
   },
   "license": "MIT",
   "private": true,

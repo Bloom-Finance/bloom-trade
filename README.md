@@ -32,13 +32,16 @@ yarn setup
 
 For a detailed and step by step guide, you can check the [Get Started Guide](./docs/GetStarted.md).
 
+If you want the docs for the packages, you can check the [Bloom Docs](https://docs.bloom.trade).
+
 ## Packages
 
 - [bloom-themes](./packages/bloom-themes) - Bloom Themes and custom visuals
-- [bloom-react-sdk](./packages/bloom-react-sdk) - Bloom SDK
+- [bloom-sdk](./packages/bloom-sdk) - Bloom SDK
+- [bloom-types](./packages/bloom-types) - Bloom Types
+- [bloom-services](./packages/bloom-services) - Bloom Services
 - [bloom-utilities](./packages/bloom-utilities) - Bloom Utils to be used freely
-- [bloom-erp](./packages/bloom-erp) - Bloom connector with erps
-- [bloom-positions-connector](./packages/bloom-positions-connector) - Bloom connector that allows you to get your balances in different providers
+- [bloom-finance-connector](./packages/bloom-finance-connector) - Bloom connector that allows you to get your balances in different providers
 
 ## Husky 🐕 and Lerna 🐉
 
